@@ -31,20 +31,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .limit(500);
 
     const eventRoutes: MetadataRoute.Sitemap = (events || [])
-      .filter((event) => event.slug)
-      .map((event) => ({
+      .filter((event: { slug: string | null; created_at: string | null }) => event.slug)
+      .map((event: { slug: string; created_at: string | null }) => ({
         url: `${siteUrl}/events/${event.slug}`,
         lastModified: event.created_at || new Date().toISOString(),
-        changeFrequency: "weekly",
+        changeFrequency: "weekly" as const,
         priority: 0.8,
       }));
 
     const hostRoutes: MetadataRoute.Sitemap = (hosts || [])
-      .filter((host) => host.slug)
-      .map((host) => ({
+      .filter((host: { slug: string | null; created_at: string | null }) => host.slug)
+      .map((host: { slug: string; created_at: string | null }) => ({
         url: `${siteUrl}/hosts/${host.slug}`,
         lastModified: host.created_at || new Date().toISOString(),
-        changeFrequency: "monthly",
+        changeFrequency: "monthly" as const,
         priority: 0.6,
       }));
 
