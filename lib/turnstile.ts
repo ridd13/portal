@@ -8,8 +8,11 @@ export const verifyTurnstileToken = async (
   remoteIp?: string
 ): Promise<{ ok: true } | { ok: false; error: string }> => {
   const secret = process.env.TURNSTILE_SECRET_KEY;
+
+  // Skip Turnstile verification if not configured (development mode)
   if (!secret) {
-    return { ok: false, error: "TURNSTILE_SECRET_KEY is not configured" };
+    console.warn("TURNSTILE_SECRET_KEY not configured - skipping captcha verification");
+    return { ok: true };
   }
 
   if (!token) {

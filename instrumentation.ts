@@ -1,4 +1,9 @@
 export async function register() {
+  // Only load Sentry if configured
+  if (!process.env.SENTRY_DSN) {
+    return;
+  }
+
   if (process.env.NEXT_RUNTIME === "nodejs") {
     await import("./sentry.server.config");
   }
