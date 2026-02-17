@@ -54,7 +54,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const tags = [
     ...new Set(
       (allEventsData || [])
-        .flatMap((event) => event.tags || [])
+        .flatMap((event: { tags: string[] | null }) => event.tags || [])
         .filter(Boolean)
     ),
   ].sort((a, b) => a.localeCompare(b, "de"));
