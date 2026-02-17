@@ -1,0 +1,149 @@
+{
+  "name": "Eventabruf (Supabase)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "events-abrufer",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "f4e12251-c72a-4576-9ecb-5adee31ca20e",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        220,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const inJson = $input.first().json ?? {};\nconst query = inJson.query ?? {};\n\nconst toText = (value) => (value ?? '').toString().trim();\nconst toNumber = (value, fallback) => {\n  const n = Number(value);\n  return Number.isFinite(n) ? n : fallback;\n};\n\nconst tag = toText(query.tag);\nconst city = toText(query.city);\nconst q = toText(query.q);\nconst limit = Math.min(Math.max(toNumber(query.limit, 20), 1), 100);\nconst offset = Math.max(toNumber(query.offset, 0), 0);\nconst from = toText(query.from) || new Date().toISOString();\n\nconst supabaseUrl = (process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim();\nconst supabaseKey = (process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim();\n\nif (!supabaseUrl || !supabaseKey) {\n  throw new Error('Missing env vars: set SUPABASE_URL (or NEXT_PUBLIC_SUPABASE_URL) and SUPABASE_SERVICE_ROLE_KEY/SUPABASE_ANON_KEY');\n}\n\nconst baseUrl = supabaseUrl.replace(/\\/$/, '');\nconst params = new URLSearchParams();\nparams.set('select', '*,hosts(name,slug)');\nparams.set('is_public', 'eq.true');\nparams.set('status', 'eq.published');\nparams.set('start_at', `gte.${from}`);\nparams.set('order', 'start_at.asc');\nparams.set('limit', String(limit));\nparams.set('offset', String(offset));\n\nif (tag) params.set('tags', `cs.{${tag}}`);\nif (city) params.set('address', `ilike.*${city}*`);\nif (q) params.set('title', `ilike.*${q}*`);\n\nconst url = `${baseUrl}/rest/v1/events?${params.toString()}`;\n\nreturn [{\n  json: {\n    request: { tag, city, q, limit, offset, from },\n    url,\n    headers: {\n      apikey: supabaseKey,\n      authorization: `Bearer ${supabaseKey}`\n    }\n  }\n}];"
+      },
+      "id": "725078eb-ed3a-4637-9ab5-8ec521e7e5df",
+      "name": "Build Supabase Query",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{$json.url}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{$json.headers.apikey}}"
+            },
+            {
+              "name": "Authorization",
+              "value": "={{$json.headers.authorization}}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c6a0368f-c188-4897-a70f-0e4f5f1fa0a0",
+      "name": "Fetch Events",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        820,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "const incoming = $input.first().json;\nconst request = $('Build Supabase Query').first().json.request;\n\nconst events = Array.isArray(incoming)\n  ? incoming\n  : Array.isArray(incoming?.data)\n    ? incoming.data\n    : [];\n\nreturn [{\n  json: {\n    ok: true,\n    meta: {\n      ...request,\n      count: events.length\n    },\n    events\n  }\n}];"
+      },
+      "id": "ed084fe5-3154-4782-bf7c-1090fce8ea9e",
+      "name": "Normalize Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1080,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{$json}}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "7f348110-8dd8-4540-a0e7-cf6da54d8a40",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.2,
+      "position": [
+        1320,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Build Supabase Query",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Supabase Query": {
+      "main": [
+        [
+          {
+            "node": "Fetch Events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Events": {
+      "main": [
+        [
+          {
+            "node": "Normalize Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Response": {
+      "main": [
+        [
+          {
+            "node": "Respond",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "active": false,
+  "versionId": "2e9f9cc9-8f91-4d0d-a23a-86c3d4ec2a1f",
+  "meta": {
+    "instanceId": "event-workflow-supabase"
+  },
+  "pinData": {}
+}
