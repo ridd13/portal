@@ -2,8 +2,10 @@ import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
-import { formatEventDate, getHostPreview } from "@/lib/event-utils";
+import type { Metadata } from "next";
+import { formatEventDate, getHostPreview, getCityFromAddress } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { getSiteUrl } from "@/lib/site-url";
 import type { Event, Host } from "@/lib/types";
 
 interface EventDetailProps {
@@ -12,30 +14,58 @@ interface EventDetailProps {
 
 type EventWithHost = Omit<Event, "hosts"> & { hosts: Host | Host[] | null };
 
-export default async function EventDetailPage({ params }: EventDetailProps) {
+async function getEvent(slug: string) {
   const supabase = getSupabaseServerClient();
-  const { slug } = await params;
-
   const { data, error } = await supabase
     .from("events")
     .select("*, hosts(name, slug, description, website_url, social_links)")
     .eq("slug", slug)
     .eq("is_public", true)
+    .eq("status", "published")
     .maybeSingle();
+  if (error || !data) return null;
+  return data as EventWithHost;
+}
 
-  if (error) {
-    return (
-      <article className="mx-auto max-w-3xl rounded-2xl border border-[#e4b6a8] bg-[#f7e8e2] p-6 text-[#7a3f2c]">
-        Event konnte nicht geladen werden. Bitte später erneut versuchen.
-      </article>
-    );
-  }
+export async function generateMetadata({ params }: EventDetailProps): Promise<Metadata> {
+  const { slug } = await params;
+  const event = await getEvent(slug);
+  if (!event) return { title: "Event nicht gefunden" };
 
-  if (!data) {
-    notFound();
-  }
+  const siteUrl = getSiteUrl();
+  const city = getCityFromAddress(event.address);
+  const hostPreview = getHostPreview({ ...event, hosts: event.hosts });
 
-  const event = data as EventWithHost;
+  const description = event.description
+    ? event.description.slice(0, 155).replace(/\n/g, " ") + "…"
+    : `${event.title} – ${formatEventDate(event.start_at)}${city ? ` in ${city}` : ""}`;
+
+  return {
+    title: [event.title, city].filter(Boolean).join(" in "),
+    description,
+    openGraph: {
+      type: "article",
+      locale: "de_DE",
+      url: `${siteUrl}/events/${slug}`,
+      title: event.title,
+      description,
+      ...(event.cover_image_url ? { images: [{ url: event.cover_image_url, width: 1200, height: 630 }] } : {}),
+    },
+    twitter: {
+      card: event.cover_image_url ? "summary_large_image" : "summary",
+      title: event.title,
+      description,
+      ...(event.cover_image_url ? { images: [event.cover_image_url] } : {}),
+    },
+    alternates: { canonical: `/events/${slug}` },
+  };
+}
+
+export default async function EventDetailPage({ params }: EventDetailProps) {
+  const { slug } = await params;
+  const event = await getEvent(slug);
+  if (!event) notFound();
+
   const hostRaw = event.hosts;
   const host = Array.isArray(hostRaw) ? hostRaw[0] : hostRaw;
   const hostPreview = getHostPreview({
