@@ -6,6 +6,8 @@ import type { Metadata } from "next";
 import { formatEventDate, getHostPreview, getCityFromAddress } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
+import { generateICS } from "@/lib/ics";
+import { CalendarDownloadButton } from "@/components/CalendarDownloadButton";
 import type { Event, Host } from "@/lib/types";
 
 interface EventDetailProps {
@@ -199,16 +201,22 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             <p className="text-sm font-medium text-text-secondary">
               {event.price_model || "Preis auf Anfrage"}
             </p>
-            {event.ticket_link ? (
-              <a
-                href={event.ticket_link}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="rounded-full bg-accent-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
-              >
-                Zur Anmeldung
-              </a>
-            ) : null}
+            <div className="flex flex-wrap gap-3">
+              <CalendarDownloadButton
+                icsContent={generateICS(event)}
+                filename={`${event.slug || "event"}.ics`}
+              />
+              {event.ticket_link ? (
+                <a
+                  href={event.ticket_link}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="rounded-full bg-accent-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  Zur Anmeldung
+                </a>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
