@@ -1,12 +1,43 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { EventCard } from "@/components/EventCard";
 import { formatEventDate } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { getSiteUrl } from "@/lib/site-url";
 import type { Event, Host } from "@/lib/types";
 
 interface HostPageProps {
   params: Promise<{ slug: string }>;
+}
+
+export async function generateMetadata({ params }: HostPageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const supabase = getSupabaseServerClient();
+  const { data: host } = await supabase
+    .from("hosts")
+    .select("name, slug, description")
+    .eq("slug", slug)
+    .maybeSingle();
+
+  if (!host) return { title: "Host nicht gefunden" };
+
+  const siteUrl = getSiteUrl();
+  const typedHost = host as { name: string; slug: string; description: string | null };
+  const description = typedHost.description?.slice(0, 155) || `Events von ${typedHost.name}`;
+
+  return {
+    title: typedHost.name,
+    description,
+    openGraph: {
+      type: "profile",
+      locale: "de_DE",
+      url: `${siteUrl}/hosts/${slug}`,
+      title: typedHost.name,
+      description,
+    },
+    alternates: { canonical: `/hosts/${slug}` },
+  };
 }
 
 export default async function HostPage({ params }: HostPageProps) {
