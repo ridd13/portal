@@ -13,6 +13,14 @@ export function Footer() {
         <Link href="/kontakt" className="transition hover:text-text-primary">
           Kontakt
         </Link>
+        <a
+          href="https://t.me/dasgrosseportal"
+          target="_blank"
+          rel="noreferrer noopener"
+          className="transition hover:text-text-primary"
+        >
+          Telegram
+        </a>
       </div>
     </footer>
   );
