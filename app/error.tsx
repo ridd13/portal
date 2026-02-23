@@ -7,11 +7,11 @@ interface ErrorPageProps {
 
 export default function ErrorPage({ reset }: ErrorPageProps) {
   return (
-    <div className="mx-auto max-w-3xl rounded-2xl border border-[#e4b6a8] bg-[#f7e8e2] p-6">
-      <h2 className="text-2xl font-semibold text-[#7a3f2c]">
+    <div className="mx-auto max-w-3xl rounded-2xl border border-error-border bg-error-bg p-6">
+      <h2 className="text-2xl font-semibold text-error-text">
         Ein Fehler ist aufgetreten
       </h2>
-      <p className="mt-2 text-sm text-[#7a3f2c]">
+      <p className="mt-2 text-sm text-error-text">
         Bitte versuche es erneut. Wenn das Problem bleibt, lade die Seite neu.
       </p>
       <button

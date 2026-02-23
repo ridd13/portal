@@ -81,7 +81,7 @@ export default async function Home({ searchParams }: HomeProps) {
       />
 
       {error ? (
-        <div className="rounded-2xl border border-[#e4b6a8] bg-[#f7e8e2] p-4 text-sm text-[#7a3f2c]">
+        <div className="rounded-2xl border border-error-border bg-error-bg p-4 text-sm text-error-text">
           Events konnten gerade nicht geladen werden. Bitte Seite neu laden.
         </div>
       ) : null}

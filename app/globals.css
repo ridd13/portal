@@ -11,6 +11,13 @@
   --color-accent-secondary: #7b6d4e;
   --color-accent-sage: #8b9d77;
   --color-border: #e5ddd3;
+  --color-error-bg: #f7e8e2;
+  --color-error-border: #e4b6a8;
+  --color-error-text: #7a3f2c;
+  --color-success-bg: #edf5e6;
+  --color-success-border: #bfd1b0;
+  --color-success-text: #4b6841;
+  --color-tag-bg: #efe6da;
 
   --font-serif: var(--font-serif), "Baskerville", Georgia, serif;
   --font-sans: var(--font-sans), system-ui, sans-serif;

@@ -38,7 +38,7 @@ export function EventCard({ event }: EventCardProps) {
           {event.tags?.slice(0, 3).map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-[#efe6da] px-2.5 py-1 text-xs font-medium text-text-secondary"
+              className="rounded-full bg-tag-bg px-2.5 py-1 text-xs font-medium text-text-secondary"
             >
               {tag}
             </span>

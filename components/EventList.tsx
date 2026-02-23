@@ -89,7 +89,7 @@ export function EventList({
   return (
     <section>
       {loadError ? (
-        <div className="mb-4 rounded-xl border border-[#e4b6a8] bg-[#f7e8e2] px-4 py-3 text-sm text-[#7a3f2c]">
+        <div className="mb-4 rounded-xl border border-error-border bg-error-bg px-4 py-3 text-sm text-error-text">
           {loadError}
         </div>
       ) : null}

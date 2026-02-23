@@ -158,13 +158,13 @@ export function AuthForm() {
         </div>
 
         {error ? (
-          <p className="rounded-xl border border-[#e4b6a8] bg-[#f7e8e2] px-3 py-2 text-sm text-[#7a3f2c]">
+          <p className="rounded-xl border border-error-border bg-error-bg px-3 py-2 text-sm text-error-text">
             {error}
           </p>
         ) : null}
 
         {success ? (
-          <p className="rounded-xl border border-[#bfd1b0] bg-[#edf5e6] px-3 py-2 text-sm text-[#4b6841]">
+          <p className="rounded-xl border border-success-border bg-success-bg px-3 py-2 text-sm text-success-text">
             {success}
           </p>
         ) : null}

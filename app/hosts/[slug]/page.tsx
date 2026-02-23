@@ -53,7 +53,7 @@ export default async function HostPage({ params }: HostPageProps) {
 
   if (hostError) {
     return (
-      <section className="mx-auto max-w-4xl rounded-2xl border border-[#e4b6a8] bg-[#f7e8e2] p-6 text-[#7a3f2c]">
+      <section className="mx-auto max-w-4xl rounded-2xl border border-error-border bg-error-bg p-6 text-error-text">
         Host-Profil konnte nicht geladen werden. Bitte spaeter erneut versuchen.
       </section>
     );
@@ -125,7 +125,7 @@ export default async function HostPage({ params }: HostPageProps) {
         </div>
 
         {eventsError ? (
-          <div className="rounded-2xl border border-[#e4b6a8] bg-[#f7e8e2] p-4 text-sm text-[#7a3f2c]">
+          <div className="rounded-2xl border border-error-border bg-error-bg p-4 text-sm text-error-text">
             Events dieses Hosts konnten nicht geladen werden.
           </div>
         ) : null}
