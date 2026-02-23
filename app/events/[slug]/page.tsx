@@ -73,8 +73,41 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
     hosts: hostRaw,
   });
 
+  const siteUrl = getSiteUrl();
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Event",
+    name: event.title,
+    description: event.description || undefined,
+    startDate: event.start_at,
+    endDate: event.end_at || undefined,
+    eventStatus: "https://schema.org/EventScheduled",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    url: `${siteUrl}/events/${event.slug}`,
+    image: event.cover_image_url || undefined,
+    location: (event.location_name || event.address) ? {
+      "@type": "Place",
+      name: event.location_name || undefined,
+      address: event.address || undefined,
+    } : undefined,
+    organizer: hostPreview ? {
+      "@type": "Organization",
+      name: hostPreview.name,
+      url: hostPreview.slug ? `${siteUrl}/hosts/${hostPreview.slug}` : undefined,
+    } : undefined,
+    offers: event.price_model ? {
+      "@type": "Offer",
+      price: event.price_model === "kostenlos" ? "0" : undefined,
+      priceCurrency: "EUR",
+      url: event.ticket_link || `${siteUrl}/events/${event.slug}`,
+      availability: "https://schema.org/InStock",
+    } : undefined,
+  };
+
   return (
-    <article className="mx-auto max-w-4xl space-y-8">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <article className="mx-auto max-w-4xl space-y-8">
       <div className="overflow-hidden rounded-3xl border border-border bg-bg-card shadow-[0_10px_30px_rgba(44,36,24,0.08)]">
         {event.cover_image_url ? (
           <Image
@@ -187,5 +220,6 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
         Zurück zur Übersicht
       </Link>
     </article>
+    </>
   );
 }
