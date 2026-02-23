@@ -13,7 +13,7 @@ export function Navbar() {
         </Link>
         <nav className="flex items-center gap-3 text-sm font-medium text-text-secondary">
           <Link
-            href="/"
+            href="/events"
             className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
           >
             Events
