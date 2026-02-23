@@ -1,6 +1,6 @@
 import { EventFilters } from "@/components/EventFilters";
 import { EventList } from "@/components/EventList";
-import { PAGE_SIZE } from "@/lib/event-utils";
+import { PAGE_SIZE, getCityFromAddress } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import type { Event } from "@/lib/types";
 
@@ -59,6 +59,21 @@ export default async function Home({ searchParams }: HomeProps) {
     ),
   ].sort((a, b) => a.localeCompare(b, "de"));
 
+  const { data: allEventsForCities } = await supabase
+    .from("events")
+    .select("address")
+    .eq("is_public", true)
+    .eq("status", "published")
+    .gte("start_at", new Date().toISOString());
+
+  const cities = [
+    ...new Set(
+      (allEventsForCities || [])
+        .map((e: { address: string | null }) => getCityFromAddress(e.address))
+        .filter(Boolean)
+    ),
+  ].sort((a, b) => a!.localeCompare(b!, "de")) as string[];
+
   return (
     <div className="space-y-8">
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] p-6 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:p-8">
@@ -75,6 +90,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
       <EventFilters
         tags={tags}
+        cities={cities}
         selectedTag={selectedTag}
         selectedCity={selectedCity}
         searchQuery={searchQuery}

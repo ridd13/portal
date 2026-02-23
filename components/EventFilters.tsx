@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 
 interface EventFiltersProps {
   tags: string[];
+  cities: string[];
   selectedTag?: string;
   selectedCity?: string;
   searchQuery?: string;
@@ -12,6 +13,7 @@ interface EventFiltersProps {
 
 export function EventFilters({
   tags,
+  cities,
   selectedTag = "",
   selectedCity = "",
   searchQuery = "",
@@ -58,12 +60,16 @@ export function EventFilters({
           ))}
         </select>
 
-        <input
+        <select
           value={city}
           onChange={(event) => setCity(event.target.value)}
-          placeholder="Stadt oder Region"
-          className="rounded-xl border border-border bg-bg-card px-3 py-2 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-accent-sage"
-        />
+          className="rounded-xl border border-border bg-bg-card px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-sage"
+        >
+          <option value="">Alle Städte</option>
+          {cities.map((c) => (
+            <option key={c} value={c}>{c}</option>
+          ))}
+        </select>
 
         <input
           value={query}
