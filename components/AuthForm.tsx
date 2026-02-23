@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { TurnstileField } from "@/components/TurnstileField";
@@ -12,9 +12,12 @@ export function AuthForm() {
   const router = useRouter();
   const modeParam = searchParams.get("mode");
   const nextParam = searchParams.get("next");
-  const initialMode: Mode = modeParam === "signup" ? "signup" : "login";
+  const derivedMode: Mode = useMemo(
+    () => (modeParam === "signup" ? "signup" : "login"),
+    [modeParam]
+  );
 
-  const [mode, setMode] = useState<Mode>(initialMode);
+  const [mode, setMode] = useState<Mode>(derivedMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
@@ -22,10 +25,10 @@ export function AuthForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  useEffect(() => {
-    setMode(modeParam === "signup" ? "signup" : "login");
+  if (mode !== derivedMode) {
+    setMode(derivedMode);
     setCaptchaToken(null);
-  }, [modeParam]);
+  }
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useEffect, useId } from "react";
 import Script from "next/script";
 
 declare global {
@@ -19,25 +19,17 @@ interface TurnstileFieldProps {
 
 export function TurnstileField({ onTokenChange }: TurnstileFieldProps) {
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
-  const containerId = useMemo(
-    () => `turnstile-${Math.random().toString(36).slice(2, 10)}`,
-    []
-  );
-  const callbackName = useMemo(
-    () => `turnstileCallback_${Math.random().toString(36).slice(2, 10)}`,
-    []
-  );
-  const expiredName = useMemo(
-    () => `turnstileExpired_${Math.random().toString(36).slice(2, 10)}`,
-    []
-  );
-  const errorName = useMemo(
-    () => `turnstileError_${Math.random().toString(36).slice(2, 10)}`,
-    []
-  );
+  const id = useId().replace(/:/g, "");
+  const containerId = `turnstile-${id}`;
+  const callbackName = `turnstileCallback_${id}`;
+  const expiredName = `turnstileExpired_${id}`;
+  const errorName = `turnstileError_${id}`;
 
   useEffect(() => {
-    if (!siteKey) return;
+    if (!siteKey) {
+      onTokenChange("dev-bypass-token");
+      return;
+    }
 
     (window as Window)[callbackName] = (token: string) => onTokenChange(token);
     (window as Window)[expiredName] = () => onTokenChange(null);
@@ -67,11 +59,6 @@ export function TurnstileField({ onTokenChange }: TurnstileFieldProps) {
   }, [callbackName, containerId, errorName, expiredName, onTokenChange, siteKey]);
 
   if (!siteKey) {
-    // Auto-pass captcha validation in development if not configured
-    useEffect(() => {
-      onTokenChange("dev-bypass-token");
-    }, [onTokenChange]);
-
     return null;
   }
 

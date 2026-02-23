@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import type { Event } from "@/lib/types";
 import { createBrowserClient } from "@/lib/supabase";
 import { PAGE_SIZE } from "@/lib/event-utils";
@@ -24,16 +24,18 @@ export function EventList({
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [hasMore, setHasMore] = useState(initialEvents.length === PAGE_SIZE);
+  const [prevInitial, setPrevInitial] = useState(initialEvents);
 
   const supabase = useMemo(() => createBrowserClient(), []);
 
   // Reset state when filters change (new initialEvents)
-  useEffect(() => {
+  if (prevInitial !== initialEvents) {
+    setPrevInitial(initialEvents);
     setEvents(initialEvents);
     setPage(1);
     setHasMore(initialEvents.length === PAGE_SIZE);
     setLoadError(null);
-  }, [initialEvents]);
+  }
 
   const loadMore = async () => {
     setIsLoading(true);

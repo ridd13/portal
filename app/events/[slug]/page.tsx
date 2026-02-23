@@ -37,7 +37,6 @@ export async function generateMetadata({ params }: EventDetailProps): Promise<Me
 
   const siteUrl = getSiteUrl();
   const city = getCityFromAddress(event.address);
-  const hostPreview = getHostPreview({ ...event, hosts: event.hosts });
 
   const description = event.description
     ? event.description.slice(0, 155).replace(/\n/g, " ") + "…"
