@@ -8,6 +8,7 @@ import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
 import { generateICS } from "@/lib/ics";
 import { CalendarDownloadButton } from "@/components/CalendarDownloadButton";
+import { SocialLinks } from "@/components/SocialLinks";
 import type { Event, Host } from "@/lib/types";
 
 interface EventDetailProps {
@@ -193,6 +194,11 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 >
                   Website besuchen
                 </a>
+              ) : null}
+              {host.social_links ? (
+                <div className="mt-3">
+                  <SocialLinks links={host.social_links as Record<string, string>} />
+                </div>
               ) : null}
             </section>
           ) : null}

@@ -5,6 +5,7 @@ import { EventCard } from "@/components/EventCard";
 import { formatEventDate } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
+import { SocialLinks } from "@/components/SocialLinks";
 import type { Event, Host } from "@/lib/types";
 
 interface HostPageProps {
@@ -106,6 +107,11 @@ export default async function HostPage({ params }: HostPageProps) {
             Zur Event-Übersicht
           </Link>
         </div>
+        {typedHost.social_links ? (
+          <div className="mt-4">
+            <SocialLinks links={typedHost.social_links as Record<string, string>} />
+          </div>
+        ) : null}
       </section>
 
       <section>
