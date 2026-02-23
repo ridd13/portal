@@ -22,8 +22,8 @@ const siteUrl = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Portal | Spirituelle Events",
-    template: "%s | Portal",
+    default: "Das Portal | Spirituelle Events",
+    template: "%s | Das Portal",
   },
   description:
     "Event-Plattform für ganzheitliche und spirituelle Events in deutschsprachigen Städten.",
@@ -31,14 +31,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "de_DE",
     url: siteUrl,
-    siteName: "Portal",
-    title: "Portal | Spirituelle Events",
+    siteName: "Das Portal",
+    title: "Das Portal | Spirituelle Events",
     description:
       "Entdecke Tanz-, Meditations- und Coaching-Events in deiner Nähe.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Portal | Spirituelle Events",
+    title: "Das Portal | Spirituelle Events",
     description:
       "Entdecke Tanz-, Meditations- und Coaching-Events in deiner Nähe.",
   },

@@ -9,7 +9,7 @@ export function Navbar() {
           href="/"
           className="font-serif text-2xl font-semibold tracking-tight text-text-primary"
         >
-          Portal
+          Das Portal
         </Link>
         <nav className="flex items-center gap-3 text-sm font-medium text-text-secondary">
           <Link

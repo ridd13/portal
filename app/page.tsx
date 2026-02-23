@@ -3,7 +3,7 @@ import Link from "next/link";
 import { WaitlistForm } from "@/components/WaitlistForm";
 
 export const metadata: Metadata = {
-  title: "Portal | Sichtbarkeit für Coaches, Heiler & Facilitators",
+  title: "Das Portal | Sichtbarkeit für Coaches, Heiler & Facilitators",
   description:
     "Die Plattform für ganzheitliche Anbieter in Norddeutschland. Werde sichtbar, zeige deine Events und erreiche die Menschen, die dich suchen.",
 };
@@ -22,7 +22,7 @@ export default function LandingPage() {
           Sichtbarkeit.
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-text-secondary sm:text-xl">
-          Portal ist die Plattform für Coaches, Heiler:innen und Facilitators, die ihre Events
+          Das Portal ist die Plattform für Coaches, Heiler:innen und Facilitators, die ihre Events
           und Angebote den richtigen Menschen zeigen wollen — ohne Marketing-Stress.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
@@ -85,11 +85,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Was Portal bietet */}
+      {/* Was Das Portal bietet */}
       <section className="space-y-10">
         <div className="text-center">
           <h2 className="text-3xl font-semibold text-text-primary sm:text-4xl">
-            Was Portal für dich tut
+            Was Das Portal für dich tut
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-text-secondary">
             Wir machen dich sichtbar — ohne dass du dafür zum Marketing-Profi werden musst.
@@ -142,7 +142,7 @@ export default function LandingPage() {
       {/* Für wen */}
       <section className="rounded-3xl bg-bg-secondary px-6 py-10 sm:px-10">
         <h2 className="mb-6 text-center text-3xl font-semibold text-text-primary sm:text-4xl">
-          Für wen ist Portal?
+          Für wen ist Das Portal?
         </h2>
         <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3">
           {[
@@ -167,7 +167,7 @@ export default function LandingPage() {
         </div>
         <p className="mt-6 text-center text-text-secondary">
           Wenn du ganzheitlich arbeitest und in Schleswig-Holstein oder Hamburg aktiv bist,
-          ist Portal für dich gemacht.
+          ist das Portal für dich gemacht.
         </p>
       </section>
 
@@ -225,7 +225,7 @@ export default function LandingPage() {
           </h2>
           <p className="mt-3 text-text-secondary">
             Wir starten 2026 mit einem kleinen Pilotprojekt in Schleswig-Holstein und Hamburg.
-            Sichere dir jetzt deinen Platz und gestalte Portal von Beginn an mit.
+            Sichere dir jetzt deinen Platz und gestalte das Portal von Beginn an mit.
           </p>
         </div>
 
