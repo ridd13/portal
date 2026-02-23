@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { AuthNav } from "@/components/AuthNav";
 
 export function Navbar() {
   return (
@@ -18,7 +17,12 @@ export function Navbar() {
           >
             Events
           </Link>
-          <AuthNav />
+          <Link
+            href="/#warteliste"
+            className="rounded-full border border-accent-primary px-4 py-2 text-accent-primary transition hover:bg-accent-primary hover:text-white"
+          >
+            Auf die Warteliste
+          </Link>
         </nav>
       </div>
     </header>
