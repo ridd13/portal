@@ -8,9 +8,32 @@ export const metadata: Metadata = {
     "Die Plattform für ganzheitliche Anbieter in Norddeutschland. Werde sichtbar, zeige deine Events und erreiche die Menschen, die dich suchen.",
 };
 
-export default function LandingPage() {
+interface LandingPageProps {
+  searchParams: Promise<{ confirmed?: string }>;
+}
+
+export default async function LandingPage({ searchParams }: LandingPageProps) {
+  const params = await searchParams;
+
   return (
     <div className="space-y-16 pb-8">
+      {/* Bestätigungs-Banner */}
+      {params.confirmed === "success" && (
+        <div className="rounded-2xl border border-success-border bg-success-bg p-4 text-center text-success-text">
+          Deine E-Mail ist bestätigt — du bist offiziell auf der Warteliste!
+        </div>
+      )}
+      {params.confirmed === "already" && (
+        <div className="rounded-2xl border border-border bg-bg-card p-4 text-center text-text-secondary">
+          Deine E-Mail wurde bereits bestätigt.
+        </div>
+      )}
+      {params.confirmed === "invalid" && (
+        <div className="rounded-2xl border border-error-border bg-error-bg p-4 text-center text-error-text">
+          Ungültiger Bestätigungslink. Bitte trage dich erneut ein.
+        </div>
+      )}
+
       {/* Hero */}
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-12 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-16">
         <p className="mb-3 text-sm uppercase tracking-[0.18em] text-accent-sage font-medium">

@@ -1,6 +1,7 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { sendConfirmationEmail } from "@/lib/email";
 
 export type WaitlistResult = {
   success: boolean;
@@ -23,20 +24,53 @@ export async function joinWaitlist(
   const supabase = getSupabaseServerClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("waitlist") as any).insert({
-    email,
-    name,
-    role,
-    city,
-  });
+  const { data, error } = await (supabase.from("waitlist") as any)
+    .insert({ email, name, role, city, confirmed: false })
+    .select("confirmation_token")
+    .single();
 
   if (error) {
     if (error.code === "23505") {
+      // Bereits registriert — prüfen ob schon confirmed
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { data: existing } = await (supabase.from("waitlist") as any)
+        .select("confirmed, confirmation_token")
+        .eq("email", email)
+        .single();
+
+      if (existing?.confirmed) {
+        return { success: true, message: "Du bist bereits auf der Warteliste und bestätigt!" };
+      }
+
+      // Nicht bestätigt → E-Mail erneut senden
+      if (existing?.confirmation_token) {
+        try {
+          await sendConfirmationEmail(email, name, existing.confirmation_token);
+        } catch (e) {
+          console.error("Resend error:", e);
+        }
+        return {
+          success: true,
+          message: "Wir haben dir erneut eine Bestätigungs-E-Mail geschickt. Bitte check dein Postfach!",
+        };
+      }
+
       return { success: true, message: "Du bist bereits auf der Warteliste!" };
     }
     console.error("Waitlist insert error:", error);
     return { success: false, message: "Etwas ist schiefgelaufen. Bitte versuche es erneut." };
   }
 
-  return { success: true, message: "Du bist dabei! Wir melden uns bald bei dir." };
+  // E-Mail senden
+  try {
+    await sendConfirmationEmail(email, name, data.confirmation_token);
+  } catch (e) {
+    console.error("Resend error:", e);
+    // Insert hat geklappt, nur E-Mail nicht — trotzdem Erfolg zeigen
+  }
+
+  return {
+    success: true,
+    message: "Fast geschafft! Bitte bestätige deine E-Mail-Adresse — check dein Postfach.",
+  };
 }
