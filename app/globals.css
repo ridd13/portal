@@ -19,8 +19,8 @@
   --color-success-text: #4b6841;
   --color-tag-bg: #efe6da;
 
-  --font-serif: var(--font-serif), "Baskerville", Georgia, serif;
-  --font-sans: var(--font-sans), system-ui, sans-serif;
+  --font-serif: var(--font-serif), "Cinzel", Georgia, serif;
+  --font-sans: var(--font-sans), "DM Sans", system-ui, sans-serif;
 }
 
 body {
