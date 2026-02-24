@@ -1,3 +1,5 @@
+// TODO: Platzhalter (Portal GmbH, kontakt@deine-domain.de) durch echte Daten ersetzen
+// und Datenschutzerklärung vor Launch juristisch prüfen lassen.
 export default function DatenschutzPage() {
   return (
     <article className="mx-auto max-w-3xl rounded-3xl border border-border bg-bg-card p-6 shadow-[0_8px_24px_rgba(44,36,24,0.07)] sm:p-8">

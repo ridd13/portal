@@ -5,9 +5,20 @@ import { getSiteUrl } from "@/lib/site-url";
 const siteUrl = getSiteUrl();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Known city slugs for SEO landing pages
+  const citySlugs = [
+    "hamburg", "kiel", "luebeck", "flensburg", "neumuenster",
+    "norderstedt", "elmshorn", "pinneberg", "schleswig", "husum",
+  ];
+
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, changeFrequency: "daily", priority: 1.0 },
     { url: `${siteUrl}/events`, changeFrequency: "daily", priority: 0.9 },
+    ...citySlugs.map((slug) => ({
+      url: `${siteUrl}/events/${slug}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
     { url: `${siteUrl}/auth`, changeFrequency: "monthly", priority: 0.5 },
     { url: `${siteUrl}/impressum`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/datenschutz`, changeFrequency: "yearly", priority: 0.2 },

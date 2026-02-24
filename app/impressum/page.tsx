@@ -1,3 +1,5 @@
+// TODO: Alle Platzhalter (Portal GmbH, Max Mustermann, kontakt@deine-domain.de, DE123456789)
+// durch echte Unternehmensdaten ersetzen bevor die Seite live geht.
 export default function ImpressumPage() {
   return (
     <article className="mx-auto max-w-3xl rounded-3xl border border-border bg-bg-card p-6 shadow-[0_8px_24px_rgba(44,36,24,0.07)] sm:p-8">

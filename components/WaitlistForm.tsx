@@ -14,6 +14,7 @@ const roles = [
   { value: "facilitator", label: "Facilitator / Workshop-Leiter:in" },
   { value: "yogalehrer", label: "Yogalehrer:in" },
   { value: "meditationslehrer", label: "Meditationslehrer:in" },
+  { value: "teilnehmer", label: "Nur als Teilnehmer:in interessiert" },
   { value: "sonstige", label: "Sonstiges" },
 ];
 

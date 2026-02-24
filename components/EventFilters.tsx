@@ -38,7 +38,11 @@ export function EventFilters({
     if (query.trim()) next.set("q", query.trim());
     else next.delete("q");
 
-    router.push(`/?${next.toString()}`);
+    // Remove PLZ param (comes from middleware rewrite, not user-controlled)
+    next.delete("plz");
+
+    const params = next.toString();
+    router.push(params ? `/events?${params}` : "/events");
   };
 
   return (
