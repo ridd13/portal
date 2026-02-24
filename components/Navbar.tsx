@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 function TelegramIcon({ className }: { className?: string }) {
@@ -14,9 +15,16 @@ export function Navbar() {
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="font-serif text-2xl font-semibold tracking-tight text-text-primary"
+          className="flex items-center gap-2 font-serif text-2xl font-semibold tracking-tight text-text-primary"
         >
-          Das Portal
+          <Image
+            src="/logo.png"
+            alt="Das Portal Logo"
+            width={32}
+            height={32}
+            className="h-8 w-auto"
+          />
+          <span>Das Portal</span>
         </Link>
         <nav className="flex items-center gap-3 text-sm font-medium text-text-secondary">
           <Link

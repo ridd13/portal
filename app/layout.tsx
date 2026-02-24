@@ -27,6 +27,10 @@ export const metadata: Metadata = {
   },
   description:
     "Event-Plattform für ganzheitliche und spirituelle Events in deutschsprachigen Städten.",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
   openGraph: {
     type: "website",
     locale: "de_DE",
@@ -35,12 +39,14 @@ export const metadata: Metadata = {
     title: "Das Portal | Ganzheitliche Events",
     description:
       "Entdecke Tanz-, Meditations- und Coaching-Events in deiner Nähe.",
+    images: [{ url: "/logo.png", width: 512, height: 512, alt: "Das Portal Logo" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Das Portal | Ganzheitliche Events",
     description:
       "Entdecke Tanz-, Meditations- und Coaching-Events in deiner Nähe.",
+    images: ["/logo.png"],
   },
   alternates: {
     canonical: "/",
