@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 import { WaitlistForm } from "@/components/WaitlistForm";
 
@@ -37,15 +36,6 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
 
       {/* Hero */}
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-12 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-16">
-        <Image
-          src="/logo.png"
-          alt="Das Portal Logo"
-          width={160}
-          height={160}
-          priority
-          quality={85}
-          className="mb-6 h-[120px] w-auto sm:h-[140px] lg:h-[160px]"
-        />
         <p className="mb-3 text-sm uppercase tracking-[0.18em] text-accent-sage font-medium">
           Bald verfügbar — Schleswig-Holstein & Hamburg
         </p>
