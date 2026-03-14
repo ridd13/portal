@@ -7,6 +7,9 @@ export interface Host {
   social_links: Record<string, string> | null;
   owner_id: string | null;
   created_at: string | null;
+  telegram_username: string | null;
+  email: string | null;
+  avatar_url: string | null;
 }
 
 export interface HostPreview {
@@ -34,4 +37,6 @@ export interface Event {
   ticket_link: string | null;
   created_at: string | null;
   hosts: HostPreview | HostPreview[] | null;
+  source_type: "manual" | "telegram" | "form" | null;
+  source_message_id: string | null;
 }
