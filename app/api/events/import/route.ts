@@ -34,6 +34,47 @@ async function geocode(
   return null;
 }
 
+/**
+ * Telegram-Bild runterladen und in Supabase Storage hochladen.
+ * Gibt die öffentliche URL zurück oder null bei Fehler.
+ */
+async function uploadPhotoToStorage(
+  photoUrl: string,
+  slug: string,
+  supabase: ReturnType<typeof getSupabaseAdminClient>
+): Promise<string | null> {
+  try {
+    const res = await fetch(photoUrl);
+    if (!res.ok) return null;
+
+    const contentType = res.headers.get("content-type") || "image/jpeg";
+    const ext = contentType.includes("png") ? "png" : "jpg";
+    const filePath = `events/${slug}.${ext}`;
+    const buffer = Buffer.from(await res.arrayBuffer());
+
+    const { error } = await supabase.storage
+      .from("covers")
+      .upload(filePath, buffer, {
+        contentType,
+        upsert: true,
+      });
+
+    if (error) {
+      console.error("Storage upload error:", error);
+      return null;
+    }
+
+    const { data: urlData } = supabase.storage
+      .from("covers")
+      .getPublicUrl(filePath);
+
+    return urlData.publicUrl;
+  } catch (e) {
+    console.error("Photo upload failed:", e);
+    return null;
+  }
+}
+
 function validateApiKey(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const apiKey = authHeader?.replace("Bearer ", "");
@@ -143,12 +184,6 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Default-Cover basierend auf erstem Tag
-  const coverUrl =
-    body.cover_image_url ||
-    DEFAULT_COVERS[body.tags?.[0]?.toLowerCase()] ||
-    "/images/defaults/event-default.svg";
-
   // Slug generieren (Umlaute normalisieren + Timestamp für Eindeutigkeit)
   const slug =
     title
@@ -161,6 +196,19 @@ export async function POST(request: NextRequest) {
       .replace(/^-|-$/g, "") +
     "-" +
     Date.now().toString(36);
+
+  // Cover-Bild: Telegram-Bild → Supabase Storage, sonst Default
+  let coverUrl: string | null = body.cover_image_url || null;
+
+  if (!coverUrl && body.photo_url) {
+    coverUrl = await uploadPhotoToStorage(body.photo_url, slug, supabase);
+  }
+
+  if (!coverUrl) {
+    coverUrl =
+      DEFAULT_COVERS[body.tags?.[0]?.toLowerCase()] ||
+      "/images/defaults/event-default.svg";
+  }
 
   // Event anlegen
   const { data: event, error: insertError } = await supabase
