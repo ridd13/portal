@@ -73,7 +73,9 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   }
 
   if (searchQuery) {
-    query = query.ilike("title", `%${searchQuery}%`);
+    query = query.or(
+      `title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,location_name.ilike.%${searchQuery}%,address.ilike.%${searchQuery}%`
+    );
   }
 
   // PLZ filtering: load all events with coordinates and filter by distance client-side
@@ -99,7 +101,9 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     mapQuery = mapQuery.ilike("address", `%${selectedCity}%`);
   }
   if (searchQuery) {
-    mapQuery = mapQuery.ilike("title", `%${searchQuery}%`);
+    mapQuery = mapQuery.or(
+      `title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,location_name.ilike.%${searchQuery}%,address.ilike.%${searchQuery}%`
+    );
   }
 
   const { data: mapData } = await mapQuery;

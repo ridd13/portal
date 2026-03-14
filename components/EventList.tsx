@@ -61,7 +61,9 @@ export function EventList({
     }
 
     if (searchQuery) {
-      query = query.ilike("title", `%${searchQuery}%`);
+      query = query.or(
+        `title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,location_name.ilike.%${searchQuery}%,address.ilike.%${searchQuery}%`
+      );
     }
 
     const { data, error } = await query;
