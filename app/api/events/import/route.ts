@@ -1,6 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 
+const DEFAULT_COVERS: Record<string, string> = {
+  breathwork: "/images/defaults/breathwork.svg",
+  yoga: "/images/defaults/yoga.svg",
+  "sound-healing": "/images/defaults/sound-healing.svg",
+  "kakao-zeremonie": "/images/defaults/kakao-zeremonie.svg",
+  tantra: "/images/defaults/tantra.svg",
+  meditation: "/images/defaults/meditation.svg",
+  community: "/images/defaults/community.svg",
+  workshop: "/images/defaults/workshop.svg",
+};
+
+async function geocode(
+  query: string
+): Promise<{ lat: number; lng: number; address?: string } | null> {
+  try {
+    const res = await fetch(
+      `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`,
+      { headers: { "User-Agent": "DasPortal/1.0" } }
+    );
+    const data = await res.json();
+    if (data.length > 0) {
+      return {
+        lat: parseFloat(data[0].lat),
+        lng: parseFloat(data[0].lon),
+        address: data[0].display_name,
+      };
+    }
+  } catch (e) {
+    console.error("Geocoding failed:", e);
+  }
+  return null;
+}
+
 function validateApiKey(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const apiKey = authHeader?.replace("Bearer ", "");
@@ -94,6 +127,28 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Geocoding: Koordinaten ermitteln wenn nicht im Request
+  let geoLat = body.geo_lat || null;
+  let geoLng = body.geo_lng || null;
+  let address = body.address || null;
+
+  if (!geoLat && (body.location_name || body.address)) {
+    const query =
+      body.address || `${body.location_name} Hamburg Schleswig-Holstein`;
+    const geo = await geocode(query);
+    if (geo) {
+      geoLat = geo.lat;
+      geoLng = geo.lng;
+      if (!address) address = geo.address || null;
+    }
+  }
+
+  // Default-Cover basierend auf erstem Tag
+  const coverUrl =
+    body.cover_image_url ||
+    DEFAULT_COVERS[body.tags?.[0]?.toLowerCase()] ||
+    "/images/defaults/event-default.svg";
+
   // Slug generieren (Umlaute normalisieren + Timestamp für Eindeutigkeit)
   const slug =
     title
@@ -117,9 +172,10 @@ export async function POST(request: NextRequest) {
       start_at: body.start_at,
       end_at: body.end_at || null,
       location_name: body.location_name || null,
-      address: body.address || null,
-      geo_lat: body.geo_lat || null,
-      geo_lng: body.geo_lng || null,
+      address,
+      geo_lat: geoLat,
+      geo_lng: geoLng,
+      cover_image_url: coverUrl,
       host_id: host.id,
       is_public: true,
       status: body.auto_publish ? "published" : "draft",

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e0c8b0"/>
+      <stop offset="100%" stop-color="#d0b898"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Flame with heart shape -->
+  <g transform="translate(600, 295)" opacity="0.18">
+    <!-- Outer flame -->
+    <path d="M0,-80 Q30,-50 35,-20 Q40,10 25,35 Q15,50 0,60 Q-15,50 -25,35 Q-40,10 -35,-20 Q-30,-50 0,-80 Z" fill="none" stroke="#2c2418" stroke-width="5"/>
+    <!-- Inner flame -->
+    <path d="M0,-50 Q18,-30 20,-10 Q22,8 12,22 Q7,30 0,35 Q-7,30 -12,22 Q-22,8 -20,-10 Q-18,-30 0,-50 Z" fill="#2c2418" opacity="0.3"/>
+    <!-- Heart at center -->
+    <path d="M0,0 Q-10,-10 -9,-16 Q-8,-22 0,-15 Q8,-22 9,-16 Q10,-10 0,0 Z" fill="#b5651d" opacity="0.6"/>
+  </g>
+  <text x="600" y="420" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#2c2418" opacity="0.35" letter-spacing="4">TANTRA</text>
+</svg>

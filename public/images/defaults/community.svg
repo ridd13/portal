@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ddd0c0"/>
+      <stop offset="100%" stop-color="#cdc0b0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- People in circle / community symbol -->
+  <g transform="translate(600, 285)" opacity="0.18">
+    <!-- Circle of people represented as abstract figures around a ring -->
+    <circle cx="0" cy="0" r="50" fill="none" stroke="#2c2418" stroke-width="3" stroke-dasharray="8,6"/>
+    <!-- Top person -->
+    <circle cx="0" cy="-65" r="12" fill="#2c2418"/>
+    <line x1="0" y1="-53" x2="0" y2="-35" stroke="#2c2418" stroke-width="4" stroke-linecap="round"/>
+    <!-- Top-right person -->
+    <circle cx="56" cy="-33" r="12" fill="#2c2418"/>
+    <line x1="56" y1="-21" x2="56" y2="-3" stroke="#2c2418" stroke-width="4" stroke-linecap="round"/>
+    <!-- Bottom-right person -->
+    <circle cx="56" cy="33" r="12" fill="#2c2418"/>
+    <line x1="56" y1="45" x2="56" y2="63" stroke="#2c2418" stroke-width="4" stroke-linecap="round"/>
+    <!-- Bottom person -->
+    <circle cx="0" cy="65" r="12" fill="#2c2418"/>
+    <line x1="0" y1="77" x2="0" y2="95" stroke="#2c2418" stroke-width="4" stroke-linecap="round"/>
+    <!-- Bottom-left person -->
+    <circle cx="-56" cy="33" r="12" fill="#2c2418"/>
+    <line x1="-56" y1="45" x2="-56" y2="63" stroke="#2c2418" stroke-width="4" stroke-linecap="round"/>
+    <!-- Top-left person -->
+    <circle cx="-56" cy="-33" r="12" fill="#2c2418"/>
+    <line x1="-56" y1="-21" x2="-56" y2="-3" stroke="#2c2418" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <text x="600" y="420" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#2c2418" opacity="0.35" letter-spacing="4">COMMUNITY</text>
+</svg>

@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d5decb"/>
+      <stop offset="100%" stop-color="#c4d0b8"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Lotus flower symbol -->
+  <g transform="translate(600, 290)" opacity="0.18">
+    <!-- Center petal up -->
+    <ellipse cx="0" cy="-40" rx="18" ry="45" fill="#2c2418"/>
+    <!-- Left petals -->
+    <ellipse cx="-35" cy="-25" rx="18" ry="42" fill="#2c2418" transform="rotate(-30, -35, -25)"/>
+    <ellipse cx="-55" cy="0" rx="16" ry="38" fill="#2c2418" transform="rotate(-60, -55, 0)"/>
+    <!-- Right petals -->
+    <ellipse cx="35" cy="-25" rx="18" ry="42" fill="#2c2418" transform="rotate(30, 35, -25)"/>
+    <ellipse cx="55" cy="0" rx="16" ry="38" fill="#2c2418" transform="rotate(60, 55, 0)"/>
+    <!-- Base -->
+    <ellipse cx="0" cy="15" rx="40" ry="12" fill="#2c2418"/>
+  </g>
+  <circle cx="600" cy="290" r="6" fill="#8b9d77" opacity="0.3"/>
+  <text x="600" y="420" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#2c2418" opacity="0.35" letter-spacing="4">YOGA</text>
+</svg>

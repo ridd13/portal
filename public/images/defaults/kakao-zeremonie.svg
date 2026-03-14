@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d4b896"/>
+      <stop offset="100%" stop-color="#c4a67e"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Ceremonial cup/chalice -->
+  <g transform="translate(600, 290)" opacity="0.18">
+    <!-- Cup body -->
+    <path d="M-40,-35 L-30,35 Q0,50 30,35 L40,-35 Z" fill="none" stroke="#2c2418" stroke-width="5" stroke-linejoin="round"/>
+    <!-- Cup rim -->
+    <ellipse cx="0" cy="-35" rx="40" ry="10" fill="none" stroke="#2c2418" stroke-width="5"/>
+    <!-- Steam wisps -->
+    <path d="M-12,-55 Q-15,-75 -8,-90" fill="none" stroke="#2c2418" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M5,-55 Q2,-78 8,-95" fill="none" stroke="#2c2418" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M20,-52 Q22,-70 18,-85" fill="none" stroke="#2c2418" stroke-width="3" stroke-linecap="round"/>
+    <!-- Heart in the cup -->
+    <path d="M0,5 Q-15,-12 -12,-22 Q-10,-30 0,-20 Q10,-30 12,-22 Q15,-12 0,5 Z" fill="#2c2418" opacity="0.5"/>
+  </g>
+  <text x="600" y="420" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#2c2418" opacity="0.35" letter-spacing="4">KAKAO-ZEREMONIE</text>
+</svg>

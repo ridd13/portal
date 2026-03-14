@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#e8d5c4"/>
+      <stop offset="100%" stop-color="#d5c4b0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Wind/breath curves -->
+  <g transform="translate(600, 300)" opacity="0.18">
+    <path d="M-80,-30 Q-40,-60 0,-30 Q40,0 80,-30 Q120,-60 160,-30" fill="none" stroke="#2c2418" stroke-width="6" stroke-linecap="round"/>
+    <path d="M-100,0 Q-50,-35 0,0 Q50,35 100,0 Q150,-35 200,0" fill="none" stroke="#2c2418" stroke-width="6" stroke-linecap="round"/>
+    <path d="M-80,30 Q-40,60 0,30 Q40,0 80,30 Q120,60 160,30" fill="none" stroke="#2c2418" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <!-- Small circle as breath source -->
+  <circle cx="600" cy="300" r="8" fill="#b5651d" opacity="0.25"/>
+  <text x="600" y="420" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#2c2418" opacity="0.35" letter-spacing="4">BREATHWORK</text>
+</svg>

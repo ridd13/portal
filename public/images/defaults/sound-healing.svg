@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#dbd0c4"/>
+      <stop offset="100%" stop-color="#c9bdb0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Sound wave concentric arcs -->
+  <g transform="translate(600, 300)" opacity="0.18">
+    <!-- Center dot -->
+    <circle cx="0" cy="0" r="8" fill="#2c2418"/>
+    <!-- Concentric sound arcs -->
+    <path d="M30,-50 A60,60 0 0,1 30,50" fill="none" stroke="#2c2418" stroke-width="5" stroke-linecap="round"/>
+    <path d="M55,-70 A90,90 0 0,1 55,70" fill="none" stroke="#2c2418" stroke-width="5" stroke-linecap="round"/>
+    <path d="M80,-85 A120,120 0 0,1 80,85" fill="none" stroke="#2c2418" stroke-width="4" stroke-linecap="round"/>
+    <path d="M-30,-50 A60,60 0 0,0 -30,50" fill="none" stroke="#2c2418" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-55,-70 A90,90 0 0,0 -55,70" fill="none" stroke="#2c2418" stroke-width="5" stroke-linecap="round"/>
+    <path d="M-80,-85 A120,120 0 0,0 -80,85" fill="none" stroke="#2c2418" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <text x="600" y="420" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#2c2418" opacity="0.35" letter-spacing="4">SOUND HEALING</text>
+</svg>

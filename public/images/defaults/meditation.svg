@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" width="1200" height="675">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#c8d4c0"/>
+      <stop offset="100%" stop-color="#b8c4b0"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <!-- Crescent moon with circle -->
+  <g transform="translate(600, 280)" opacity="0.18">
+    <!-- Full circle (outer) -->
+    <circle cx="0" cy="0" r="55" fill="none" stroke="#2c2418" stroke-width="5"/>
+    <!-- Crescent moon overlay -->
+    <circle cx="0" cy="0" r="55" fill="#2c2418" opacity="0.15"/>
+    <circle cx="18" cy="-10" r="45" fill="#c8d4c0"/>
+    <!-- Small dot/star -->
+    <circle cx="-25" cy="-15" r="4" fill="#2c2418" opacity="0.4"/>
+  </g>
+  <text x="600" y="420" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="32" fill="#2c2418" opacity="0.35" letter-spacing="4">MEDITATION</text>
+</svg>
