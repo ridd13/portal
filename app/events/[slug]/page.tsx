@@ -3,11 +3,12 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import type { Metadata } from "next";
-import { formatEventDate, getHostPreview, getCityFromAddress } from "@/lib/event-utils";
+import { formatEventDate, getHostPreview, getCityFromAddress, buildGoogleCalendarUrl } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
 import { generateICS } from "@/lib/ics";
 import { CalendarDownloadButton } from "@/components/CalendarDownloadButton";
+import { SingleEventMap } from "@/components/SingleEventMap";
 import { SocialLinks } from "@/components/SocialLinks";
 import type { Event, Host } from "@/lib/types";
 
@@ -76,6 +77,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
   });
 
   const siteUrl = getSiteUrl();
+  const googleCalUrl = buildGoogleCalendarUrl(event);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Event",
@@ -110,150 +113,212 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <article className="mx-auto max-w-4xl space-y-8">
-      <div className="overflow-hidden rounded-3xl border border-border bg-bg-card shadow-[0_10px_30px_rgba(44,36,24,0.08)]">
-        {event.cover_image_url ? (
-          <Image
-            src={event.cover_image_url}
-            alt={event.title}
-            width={1200}
-            height={384}
-            className="h-72 w-full object-cover sm:h-96"
-          />
-        ) : (
-          <div className="h-72 w-full bg-linear-to-br from-[#f0e2d1] via-[#eadfce] to-[#d5decb] sm:h-96" />
-        )}
+        <div className="overflow-hidden rounded-3xl border border-border bg-bg-card shadow-[0_10px_30px_rgba(44,36,24,0.08)]">
+          {event.cover_image_url ? (
+            <Image
+              src={event.cover_image_url}
+              alt={event.title}
+              width={1200}
+              height={384}
+              priority
+              className="h-72 w-full object-cover sm:h-96"
+            />
+          ) : (
+            <div className="h-72 w-full bg-linear-to-br from-[#f0e2d1] via-[#eadfce] to-[#d5decb] sm:h-96" />
+          )}
 
-        <div className="space-y-5 p-6 sm:p-8">
-          <div className="space-y-3">
-            <p className="text-sm font-medium text-text-secondary">
-              {formatEventDate(event.start_at)}
-              {event.end_at ? ` - ${formatEventDate(event.end_at)}` : ""}
-            </p>
+          <div className="space-y-6 p-6 sm:p-8">
+            {/* Title */}
             <h1 className="text-3xl font-semibold text-text-primary sm:text-4xl">
               {event.title}
             </h1>
-            <div className="flex flex-wrap gap-2">
-              {event.tags?.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-tag-bg px-3 py-1 text-xs font-medium text-text-secondary"
-                >
-                  {tag}
-                </span>
-              ))}
-            </div>
-          </div>
 
-          {event.description ? (
-            <div className="space-y-3 text-sm leading-relaxed text-text-secondary">
-              <ReactMarkdown
-                components={{
-                  h2: ({ children }) => (
-                    <h2 className="text-xl font-normal text-text-primary">
-                      {children}
-                    </h2>
-                  ),
-                  h3: ({ children }) => (
-                    <h3 className="text-lg font-normal text-text-primary">
-                      {children}
-                    </h3>
-                  ),
-                  p: ({ children }) => <p>{children}</p>,
-                  ul: ({ children }) => (
-                    <ul className="list-disc space-y-1 pl-5">{children}</ul>
-                  ),
-                }}
-              >
-                {event.description}
-              </ReactMarkdown>
-            </div>
-          ) : null}
+            {/* Quick-Info-Box */}
+            <div className="space-y-3 rounded-2xl border border-border bg-bg-secondary p-4 sm:p-5">
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 text-lg" aria-hidden="true">📅</span>
+                <p className="font-medium text-text-primary">
+                  {formatEventDate(event.start_at)}
+                  {event.end_at ? ` – ${formatEventDate(event.end_at)}` : ""}
+                </p>
+              </div>
 
-          <section className="rounded-2xl border border-border bg-bg-secondary p-4">
-            <h2 className="mb-2 text-xl font-normal text-text-primary">Ort</h2>
-            <p className="text-text-secondary">
-              {[event.location_name, event.address].filter(Boolean).join(", ") ||
-                "Ort wird noch bekanntgegeben."}
-            </p>
-            {(event.address || event.location_name) ? (
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  [event.location_name, event.address].filter(Boolean).join(", ")
-                )}`}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-accent-secondary hover:underline"
-              >
-                In Google Maps öffnen
-                <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
-                  <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Zm7.5-3a.75.75 0 0 1 .75-.75H17a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0V4.06l-5.97 5.97a.75.75 0 1 1-1.06-1.06L15.19 3h-3.44a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
-                </svg>
-              </a>
-            ) : null}
-          </section>
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 text-lg" aria-hidden="true">📍</span>
+                <div>
+                  <p className="font-medium text-text-primary">
+                    {event.location_name || "Ort wird noch bekanntgegeben"}
+                  </p>
+                  {event.address ? (
+                    <p className="text-sm text-text-secondary">{event.address}</p>
+                  ) : null}
+                  {(event.address || event.location_name) ? (
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                        [event.location_name, event.address].filter(Boolean).join(", ")
+                      )}`}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                      className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-accent-secondary hover:underline"
+                    >
+                      In Google Maps öffnen
+                      <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
+                        <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Zm7.5-3a.75.75 0 0 1 .75-.75H17a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0V4.06l-5.97 5.97a.75.75 0 1 1-1.06-1.06L15.19 3h-3.44a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
+                      </svg>
+                    </a>
+                  ) : null}
+                </div>
+              </div>
 
-          {host ? (
-            <section className="rounded-2xl border border-border bg-bg-secondary p-4">
-              <h2 className="mb-2 text-xl font-normal text-text-primary">Host</h2>
-              <p className="font-medium text-text-primary">{hostPreview?.name}</p>
-              {host.description ? (
-                <p className="mt-2 text-sm text-text-secondary">{host.description}</p>
-              ) : null}
-              {host.website_url ? (
-                <a
-                  href={host.website_url}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="mt-3 inline-block text-sm font-semibold text-accent-secondary hover:underline"
-                >
-                  Website besuchen
-                </a>
-              ) : null}
-              {host.social_links ? (
-                <div className="mt-3">
-                  <SocialLinks links={host.social_links as Record<string, string>} />
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 text-lg" aria-hidden="true">💰</span>
+                <p className="font-medium text-text-primary">
+                  {event.price_model || "Preis auf Anfrage"}
+                </p>
+              </div>
+
+              {event.tags && event.tags.length > 0 ? (
+                <div className="flex items-start gap-3">
+                  <span className="mt-0.5 text-lg" aria-hidden="true">🏷</span>
+                  <div className="flex flex-wrap gap-2">
+                    {event.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="rounded-full bg-tag-bg px-3 py-1 text-xs font-medium text-text-secondary"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               ) : null}
-            </section>
-          ) : null}
-
-          <div className="flex flex-wrap items-center justify-between gap-4 border-t border-border pt-4">
-            <p className="text-sm font-medium text-text-secondary">
-              {event.price_model || "Preis auf Anfrage"}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <CalendarDownloadButton
-                icsContent={generateICS(event)}
-                filename={`${event.slug || "event"}.ics`}
-              />
-              {event.ticket_link ? (
-                <a
-                  href={event.ticket_link}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="rounded-full bg-accent-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
-                >
-                  Zur Anmeldung
-                </a>
-              ) : null}
             </div>
+
+            {/* CTA Button */}
+            {event.ticket_link ? (
+              <a
+                href={event.ticket_link}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="inline-block rounded-full bg-accent-primary px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+              >
+                Jetzt anmelden
+              </a>
+            ) : null}
+
+            {/* Description */}
+            {event.description ? (
+              <div className="space-y-3 text-sm leading-relaxed text-text-secondary">
+                <ReactMarkdown
+                  components={{
+                    h2: ({ children }) => (
+                      <h2 className="text-xl font-normal text-text-primary">
+                        {children}
+                      </h2>
+                    ),
+                    h3: ({ children }) => (
+                      <h3 className="text-lg font-normal text-text-primary">
+                        {children}
+                      </h3>
+                    ),
+                    p: ({ children }) => <p>{children}</p>,
+                    ul: ({ children }) => (
+                      <ul className="list-disc space-y-1 pl-5">{children}</ul>
+                    ),
+                  }}
+                >
+                  {event.description}
+                </ReactMarkdown>
+              </div>
+            ) : null}
+
+            {/* Facilitator / Host Box */}
+            {host ? (
+              <section className="rounded-2xl border border-border bg-bg-secondary p-4">
+                <h2 className="mb-3 text-xl font-normal text-text-primary">Facilitator</h2>
+                {hostPreview?.slug ? (
+                  <Link
+                    href={`/hosts/${hostPreview.slug}`}
+                    className="font-medium text-accent-secondary hover:underline"
+                  >
+                    {hostPreview.name}
+                  </Link>
+                ) : (
+                  <p className="font-medium text-text-primary">{hostPreview?.name}</p>
+                )}
+                {host.description ? (
+                  <p className="mt-2 text-sm text-text-secondary">{host.description}</p>
+                ) : null}
+                {host.website_url ? (
+                  <a
+                    href={host.website_url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                    className="mt-3 inline-block text-sm font-semibold text-accent-secondary hover:underline"
+                  >
+                    Website besuchen
+                  </a>
+                ) : null}
+                {host.social_links ? (
+                  <div className="mt-3">
+                    <SocialLinks links={host.social_links as Record<string, string>} />
+                  </div>
+                ) : null}
+              </section>
+            ) : (
+              <section className="rounded-2xl border border-dashed border-accent-secondary bg-bg-secondary p-4">
+                <p className="font-medium text-text-primary">Ist das dein Event?</p>
+                <p className="mt-1 text-sm text-text-secondary">
+                  Registriere dich als Facilitator und verwalte dein Listing.
+                </p>
+                <Link
+                  href="/fuer-facilitators"
+                  className="mt-3 inline-block rounded-full border border-accent-secondary px-4 py-2 text-sm font-semibold text-accent-secondary transition hover:bg-bg-primary"
+                >
+                  Mehr erfahren
+                </Link>
+              </section>
+            )}
           </div>
         </div>
-      </div>
 
-      {event.source_type === "telegram" ? (
-        <p className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-xs text-text-muted">
-          Dieses Event wurde automatisch aus einer Telegram-Gruppe importiert. Angaben ohne Gewähr.
-        </p>
-      ) : null}
+        {/* Map (single event) */}
+        {event.geo_lat && event.geo_lng ? (
+          <section className="space-y-3">
+            <h2 className="text-lg font-normal text-text-primary">Standort</h2>
+            <SingleEventMap event={event} />
+          </section>
+        ) : null}
 
-      <Link
-        href="/events"
-        className="inline-flex items-center text-sm font-semibold text-accent-secondary hover:underline"
-      >
-        Zurück zur Übersicht
-      </Link>
-    </article>
+        {/* Calendar Buttons */}
+        <section className="flex flex-wrap gap-3">
+          <a
+            href={googleCalUrl}
+            target="_blank"
+            rel="noreferrer noopener"
+            className="rounded-full border border-accent-secondary px-4 py-2 text-sm font-semibold text-accent-secondary transition hover:bg-bg-secondary"
+          >
+            Zu Google Calendar hinzufügen
+          </a>
+          <CalendarDownloadButton
+            icsContent={generateICS(event)}
+            filename={`${event.slug || "event"}.ics`}
+          />
+        </section>
+
+        {event.source_type === "telegram" ? (
+          <p className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-xs text-text-muted">
+            Dieses Event wurde automatisch aus einer Telegram-Gruppe importiert. Angaben ohne Gewähr.
+          </p>
+        ) : null}
+
+        <Link
+          href="/events"
+          className="inline-flex items-center text-sm font-semibold text-accent-secondary hover:underline"
+        >
+          Zurück zur Übersicht
+        </Link>
+      </article>
     </>
   );
 }

@@ -22,7 +22,7 @@ export function CalendarDownloadButton({ icsContent, filename }: CalendarDownloa
       onClick={handleDownload}
       className="rounded-full border border-accent-secondary px-4 py-2 text-sm font-semibold text-accent-secondary transition hover:bg-bg-secondary"
     >
-      Zum Kalender hinzufügen
+      Zu Apple Calendar hinzufügen
     </button>
   );
 }

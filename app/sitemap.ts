@@ -19,7 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly" as const,
       priority: 0.7,
     })),
-    { url: `${siteUrl}/auth`, changeFrequency: "monthly", priority: 0.5 },
+    { url: `${siteUrl}/fuer-facilitators`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${siteUrl}/impressum`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/datenschutz`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/kontakt`, changeFrequency: "monthly", priority: 0.3 },

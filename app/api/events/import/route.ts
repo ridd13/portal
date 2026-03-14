@@ -168,19 +168,28 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Geocoding: Koordinaten ermitteln wenn nicht im Request
+  // Geocoding: Multi-Query-Strategie — mehrere Versuche mit zunehmend breiterem Suchbegriff
   let geoLat = body.geo_lat || null;
   let geoLng = body.geo_lng || null;
   let address = body.address || null;
 
   if (!geoLat && (body.location_name || body.address)) {
-    const query =
-      body.address || `${body.location_name} Hamburg Schleswig-Holstein`;
-    const geo = await geocode(query);
-    if (geo) {
-      geoLat = geo.lat;
-      geoLng = geo.lng;
-      if (!address) address = geo.address || null;
+    const city = body.city || "Hamburg";
+    const queries = [
+      body.address,
+      body.location_name && city ? `${body.location_name} ${city}` : null,
+      body.location_name,
+      city,
+    ].filter((q): q is string => Boolean(q));
+
+    for (const query of queries) {
+      const geo = await geocode(query);
+      if (geo) {
+        geoLat = geo.lat;
+        geoLng = geo.lng;
+        if (!address) address = geo.address || null;
+        break;
+      }
     }
   }
 

@@ -25,6 +25,12 @@ export function Navbar() {
           >
             Events
           </Link>
+          <Link
+            href="/fuer-facilitators"
+            className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
+          >
+            Für Facilitators
+          </Link>
           <a
             href="https://t.me/dasgrosseportal"
             target="_blank"
@@ -34,12 +40,6 @@ export function Navbar() {
           >
             <TelegramIcon className="h-5 w-5" />
           </a>
-          <Link
-            href="/#warteliste"
-            className="rounded-full border border-accent-primary px-4 py-2 text-accent-primary transition hover:bg-accent-primary hover:text-white"
-          >
-            Auf die Warteliste
-          </Link>
         </nav>
       </div>
     </header>

@@ -66,9 +66,20 @@ export async function POST(request: NextRequest) {
     for (const event of noGeoEvents) {
       if (!event.location_name && !event.address) continue;
 
-      const query =
-        event.address || `${event.location_name} Hamburg Schleswig-Holstein`;
-      const geo = await geocode(query);
+      // Multi-Query-Strategie: Mehrere Versuche mit zunehmend breiterem Suchbegriff
+      const queries = [
+        event.address,
+        event.location_name ? `${event.location_name} Hamburg` : null,
+        event.location_name,
+        "Hamburg",
+      ].filter((q): q is string => Boolean(q));
+
+      let geo: { lat: number; lng: number; address?: string } | null = null;
+      for (const query of queries) {
+        geo = await geocode(query);
+        if (geo) break;
+        await sleep(1100);
+      }
 
       if (geo) {
         const update: Record<string, unknown> = {
