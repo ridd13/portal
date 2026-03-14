@@ -45,7 +45,7 @@ export function EventCard({ event }: EventCardProps) {
           ))}
         </div>
 
-        <h2 className="line-clamp-2 text-xl font-semibold text-text-primary">
+        <h2 className="line-clamp-2 text-xl font-normal text-text-primary">
           {event.title}
         </h2>
 

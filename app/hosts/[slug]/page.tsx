@@ -116,7 +116,7 @@ export default async function HostPage({ params }: HostPageProps) {
 
       <section>
         <div className="mb-4 flex items-end justify-between gap-4">
-          <h2 className="text-2xl font-semibold text-text-primary">Kommende Events</h2>
+          <h2 className="text-2xl font-normal text-text-primary">Kommende Events</h2>
           {events[0] ? (
             <p className="text-sm text-text-secondary">
               Nächstes Event: {formatEventDate(events[0].start_at)}

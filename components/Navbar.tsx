@@ -14,7 +14,7 @@ export function Navbar() {
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="font-serif text-xl font-bold tracking-tight text-text-primary"
+          className="font-serif text-xl font-normal tracking-tight text-text-primary"
         >
           Das Portal
         </Link>

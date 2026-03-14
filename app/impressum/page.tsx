@@ -11,7 +11,7 @@ export default function ImpressumPage() {
 
       <section className="mt-6 space-y-4 text-sm leading-relaxed text-text-secondary">
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">
+          <h2 className="text-lg font-normal text-text-primary">
             Angaben gemäß § 5 TMG
           </h2>
           <p>
@@ -26,12 +26,12 @@ export default function ImpressumPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">Vertreten durch</h2>
+          <h2 className="text-lg font-normal text-text-primary">Vertreten durch</h2>
           <p>Max Mustermann, Geschäftsführer</p>
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">Kontakt</h2>
+          <h2 className="text-lg font-normal text-text-primary">Kontakt</h2>
           <p>
             E-Mail: kontakt@deine-domain.de
             <br />
@@ -40,7 +40,7 @@ export default function ImpressumPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">USt-IdNr.</h2>
+          <h2 className="text-lg font-normal text-text-primary">USt-IdNr.</h2>
           <p>DE123456789</p>
         </div>
       </section>

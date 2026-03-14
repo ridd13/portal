@@ -11,7 +11,7 @@ export default function DatenschutzPage() {
 
       <section className="mt-6 space-y-5 text-sm leading-relaxed text-text-secondary">
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">
+          <h2 className="text-lg font-normal text-text-primary">
             Verantwortliche Stelle
           </h2>
           <p>
@@ -20,7 +20,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">
+          <h2 className="text-lg font-normal text-text-primary">
             Verarbeitete Daten
           </h2>
           <p>
@@ -32,7 +32,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">Zwecke</h2>
+          <h2 className="text-lg font-normal text-text-primary">Zwecke</h2>
           <p>
             Bereitstellung der Plattform, Sicherheit, Nutzerverwaltung und
             Kommunikation zu Buchungen/Events.
@@ -40,7 +40,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">
+          <h2 className="text-lg font-normal text-text-primary">
             Dienstleister
           </h2>
           <p>
@@ -50,7 +50,7 @@ export default function DatenschutzPage() {
         </div>
 
         <div>
-          <h2 className="text-lg font-semibold text-text-primary">Rechte</h2>
+          <h2 className="text-lg font-normal text-text-primary">Rechte</h2>
           <p>
             Betroffene haben Rechte auf Auskunft, Berichtigung, Löschung,
             Einschränkung, Datenübertragbarkeit und Widerspruch.

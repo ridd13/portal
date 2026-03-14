@@ -149,12 +149,12 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               <ReactMarkdown
                 components={{
                   h2: ({ children }) => (
-                    <h2 className="text-xl font-semibold text-text-primary">
+                    <h2 className="text-xl font-normal text-text-primary">
                       {children}
                     </h2>
                   ),
                   h3: ({ children }) => (
-                    <h3 className="text-lg font-semibold text-text-primary">
+                    <h3 className="text-lg font-normal text-text-primary">
                       {children}
                     </h3>
                   ),
@@ -170,16 +170,31 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           ) : null}
 
           <section className="rounded-2xl border border-border bg-bg-secondary p-4">
-            <h2 className="mb-2 text-xl font-semibold text-text-primary">Ort</h2>
+            <h2 className="mb-2 text-xl font-normal text-text-primary">Ort</h2>
             <p className="text-text-secondary">
               {[event.location_name, event.address].filter(Boolean).join(", ") ||
                 "Ort wird noch bekanntgegeben."}
             </p>
+            {(event.address || event.location_name) ? (
+              <a
+                href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                  [event.location_name, event.address].filter(Boolean).join(", ")
+                )}`}
+                target="_blank"
+                rel="noreferrer noopener"
+                className="mt-2 inline-flex items-center gap-1 text-sm font-medium text-accent-secondary hover:underline"
+              >
+                In Google Maps öffnen
+                <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
+                  <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Zm7.5-3a.75.75 0 0 1 .75-.75H17a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0V4.06l-5.97 5.97a.75.75 0 1 1-1.06-1.06L15.19 3h-3.44a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
+                </svg>
+              </a>
+            ) : null}
           </section>
 
           {host ? (
             <section className="rounded-2xl border border-border bg-bg-secondary p-4">
-              <h2 className="mb-2 text-xl font-semibold text-text-primary">Host</h2>
+              <h2 className="mb-2 text-xl font-normal text-text-primary">Host</h2>
               <p className="font-medium text-text-primary">{hostPreview?.name}</p>
               {host.description ? (
                 <p className="mt-2 text-sm text-text-secondary">{host.description}</p>
@@ -226,8 +241,14 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
         </div>
       </div>
 
+      {event.source_type === "telegram" ? (
+        <p className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-xs text-text-muted">
+          Dieses Event wurde automatisch aus einer Telegram-Gruppe importiert. Angaben ohne Gewähr.
+        </p>
+      ) : null}
+
       <Link
-        href="/"
+        href="/events"
         className="inline-flex items-center text-sm font-semibold text-accent-secondary hover:underline"
       >
         Zurück zur Übersicht

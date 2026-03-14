@@ -53,7 +53,7 @@ export function EventMapWrapper({ events, initialPlz }: EventMapWrapperProps) {
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-4">
-        <h2 className="text-lg font-semibold text-text-primary">
+        <h2 className="text-lg font-normal text-text-primary">
           Events auf der Karte
         </h2>
         <LocationInput onLocationChange={handleLocationChange} />

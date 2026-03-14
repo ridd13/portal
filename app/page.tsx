@@ -67,7 +67,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
       {/* Problem → Lösung */}
       <section className="space-y-10">
         <div className="text-center">
-          <h2 className="text-3xl font-semibold text-text-primary sm:text-4xl">
+          <h2 className="text-3xl font-normal text-text-primary sm:text-4xl">
             Kennst du das?
           </h2>
         </div>
@@ -75,7 +75,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
         <div className="grid gap-6 sm:grid-cols-3">
           <div className="rounded-2xl border border-border bg-bg-card p-6">
             <div className="mb-3 text-2xl">🔇</div>
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               Deine Events bleiben unsichtbar
             </h3>
             <p className="text-text-secondary">
@@ -86,7 +86,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
 
           <div className="rounded-2xl border border-border bg-bg-card p-6">
             <div className="mb-3 text-2xl">😤</div>
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               Marketing frisst deine Energie
             </h3>
             <p className="text-text-secondary">
@@ -97,7 +97,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
 
           <div className="rounded-2xl border border-border bg-bg-card p-6">
             <div className="mb-3 text-2xl">🏝️</div>
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               Du arbeitest allein statt vernetzt
             </h3>
             <p className="text-text-secondary">
@@ -111,7 +111,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
       {/* Was Das Portal bietet */}
       <section className="space-y-10">
         <div className="text-center">
-          <h2 className="text-3xl font-semibold text-text-primary sm:text-4xl">
+          <h2 className="text-3xl font-normal text-text-primary sm:text-4xl">
             Was Das Portal für dich tut
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-text-secondary">
@@ -121,7 +121,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
 
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="rounded-2xl border border-border bg-bg-card p-6">
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               📍 Dein Profil im Anbieter-Verzeichnis
             </h3>
             <p className="text-text-secondary">
@@ -131,7 +131,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
           </div>
 
           <div className="rounded-2xl border border-border bg-bg-card p-6">
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               🗓️ Deine Events auf einen Blick
             </h3>
             <p className="text-text-secondary">
@@ -141,7 +141,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
           </div>
 
           <div className="rounded-2xl border border-border bg-bg-card p-6">
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               🌱 Wachse mit der Community
             </h3>
             <p className="text-text-secondary">
@@ -151,7 +151,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
           </div>
 
           <div className="rounded-2xl border border-border bg-bg-card p-6">
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               📊 Verstehe deine Reichweite
             </h3>
             <p className="text-text-secondary">
@@ -164,7 +164,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
 
       {/* Für wen */}
       <section className="rounded-3xl bg-bg-secondary px-6 py-10 sm:px-10">
-        <h2 className="mb-6 text-center text-3xl font-semibold text-text-primary sm:text-4xl">
+        <h2 className="mb-6 text-center text-3xl font-normal text-text-primary sm:text-4xl">
           Für wen ist Das Portal?
         </h2>
         <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3">
@@ -196,7 +196,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
 
       {/* Wie es funktioniert */}
       <section className="space-y-10">
-        <h2 className="text-center text-3xl font-semibold text-text-primary sm:text-4xl">
+        <h2 className="text-center text-3xl font-normal text-text-primary sm:text-4xl">
           So funktioniert es
         </h2>
         <div className="grid gap-8 sm:grid-cols-3">
@@ -204,7 +204,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-sage text-xl font-bold text-white">
               1
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               Trag dich ein
             </h3>
             <p className="text-text-secondary">
@@ -215,7 +215,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-primary text-xl font-bold text-white">
               2
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               Erstelle dein Profil
             </h3>
             <p className="text-text-secondary">
@@ -226,7 +226,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-secondary text-xl font-bold text-white">
               3
             </div>
-            <h3 className="mb-2 text-lg font-semibold text-text-primary">
+            <h3 className="mb-2 text-lg font-normal text-text-primary">
               Werde gefunden
             </h3>
             <p className="text-text-secondary">
@@ -243,7 +243,7 @@ export default async function LandingPage({ searchParams }: LandingPageProps) {
         className="scroll-mt-24 rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-10 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-14"
       >
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="text-3xl font-semibold text-text-primary sm:text-4xl">
+          <h2 className="text-3xl font-normal text-text-primary sm:text-4xl">
             Sei von Anfang an dabei
           </h2>
           <p className="mt-3 text-text-secondary">
