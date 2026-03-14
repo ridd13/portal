@@ -1,0 +1,541 @@
+{
+  "name": "Das Portal — Event Intake via Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": ["message"],
+        "additionalFields": {}
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Das Portal Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Nachricht verarbeiten: Sender + Text + Bild extrahieren\n// Funktioniert für weitergeleitete UND direkte Nachrichten\nconst message = $('Telegram Trigger').item.json.message;\nconst isForwarded = !!message.forward_date;\n\nlet senderUsername = null;\nlet senderName = null;\n\nif (isForwarded) {\n  // WEITERGELEITET: Original-Absender extrahieren\n  if (message.forward_from) {\n    senderUsername = message.forward_from.username || null;\n    senderName = [message.forward_from.first_name, message.forward_from.last_name].filter(Boolean).join(' ');\n  }\n  if (!senderUsername && message.forward_origin) {\n    if (message.forward_origin.type === 'user' && message.forward_origin.sender_user) {\n      senderUsername = message.forward_origin.sender_user.username || null;\n      senderName = [message.forward_origin.sender_user.first_name, message.forward_origin.sender_user.last_name].filter(Boolean).join(' ');\n    } else if (message.forward_origin.type === 'hidden_user') {\n      senderName = message.forward_origin.sender_user_name || null;\n    }\n  }\n  if (!senderUsername && message.forward_sender_name) {\n    senderName = message.forward_sender_name;\n  }\n} else {\n  // DIREKTE NACHRICHT: Absender = Chat-User\n  senderUsername = message.from?.username || null;\n  senderName = [message.from?.first_name, message.from?.last_name].filter(Boolean).join(' ');\n}\n\n// Bild erkennen: Telegram liefert ein Array von PhotoSize-Objekten\n// Wir nehmen die größte Variante (letztes Element)\nlet photoFileId = null;\nif (message.photo && message.photo.length > 0) {\n  photoFileId = message.photo[message.photo.length - 1].file_id;\n}\n\nreturn {\n  json: {\n    sender_username: senderUsername,\n    sender_name: senderName,\n    message_text: message.text || message.caption || '',\n    message_id: String(message.message_id),\n    chat_id: message.chat.id,\n    has_username: !!senderUsername,\n    is_forwarded: isForwarded,\n    photo_file_id: photoFileId,\n    has_photo: !!photoFileId\n  }\n};"
+      },
+      "id": "process-message",
+      "name": "Nachricht verarbeiten",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-content",
+              "leftValue": "={{ $json.message_text.length > 5 || $json.has_photo }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-has-content",
+      "name": "Hat Event-Inhalt?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [500, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $credentials.telegramApi.accessToken }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chat_id\": {{ $('Nachricht verarbeiten').item.json.chat_id }},\n  \"text\": \"Ich konnte keinen Event-Inhalt erkennen. Bitte sende mir eine Event-Beschreibung als Text oder leite eine Event-Nachricht/Flyer weiter.\"\n}",
+        "options": {}
+      },
+      "id": "reply-no-content",
+      "name": "Antwort: Kein Inhalt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [750, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-username",
+              "leftValue": "={{ $json.has_username }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-has-username",
+      "name": "Username vorhanden?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [750, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://www.das-portal.online/api/hosts/lookup?telegram_username={{ $('Nachricht verarbeiten').item.json.sender_username }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "host-lookup",
+      "name": "Host-Lookup",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 200],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "HEADER_AUTH_CREDENTIAL_ID",
+          "name": "Portal Import API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $credentials.telegramApi.accessToken }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chat_id\": {{ $('Nachricht verarbeiten').item.json.chat_id }},\n  \"text\": \"Der Absender hat Telegram-Privatsphäre aktiviert — ich kann den Username nicht auslesen. Bitte den Absender bitten, das Event direkt an mich zu senden.\"\n}",
+        "options": {}
+      },
+      "id": "reply-no-username",
+      "name": "Antwort: Kein Username",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1000, 500]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "host-found",
+              "leftValue": "={{ $json.found }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-host-found",
+      "name": "Host registriert?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1250, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $credentials.telegramApi.accessToken }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chat_id\": {{ $('Nachricht verarbeiten').item.json.chat_id }},\n  \"text\": \"Der Absender @{{ $('Nachricht verarbeiten').item.json.sender_username }} ist noch nicht als Anbieter bei Das Portal registriert.\\n\\nIch schicke eine Einladung.\"\n}",
+        "options": {}
+      },
+      "id": "reply-host-not-found",
+      "name": "Antwort: Host nicht gefunden",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1500, 400]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $credentials.telegramApi.accessToken }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chat_id\": \"@{{ $('Nachricht verarbeiten').item.json.sender_username }}\",\n  \"text\": \"Hey! Jemand wollte ein Event von dir auf Das Portal veröffentlichen — einer Plattform für ganzheitliche Angebote in SH & Hamburg.\\n\\nDu bist noch nicht als Anbieter:in registriert. Melde dich gerne bei uns:\\nhttps://t.me/dasgrosseportal\"\n}",
+        "options": {}
+      },
+      "id": "outreach-message",
+      "name": "Outreach an Absender",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1750, 400],
+      "continueOnFail": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "has-photo",
+              "leftValue": "={{ $('Nachricht verarbeiten').item.json.has_photo }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "check-has-photo",
+      "name": "Hat Bild?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1500, 100]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.telegram.org/bot{{ $credentials.telegramApi.accessToken }}/getFile?file_id={{ $('Nachricht verarbeiten').item.json.photo_file_id }}",
+        "options": {}
+      },
+      "id": "get-photo-url",
+      "name": "Bild-URL holen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1750, 0],
+      "credentials": {
+        "telegramApi": {
+          "id": "TELEGRAM_CREDENTIAL_ID",
+          "name": "Das Portal Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// OpenAI Request MIT Bild bauen\nconst filePath = $input.item.json.result.file_path;\nconst botToken = '{{ $credentials.telegramApi.accessToken }}';\nconst imageUrl = `https://api.telegram.org/file/bot${botToken}/${filePath}`;\nconst messageText = $('Nachricht verarbeiten').item.json.message_text;\n\nconst systemPrompt = `Du extrahierst Event-Daten aus deutschen Telegram-Nachrichten und Event-Flyern/Bildern. Antworte ausschließlich als JSON mit diesen Feldern:\n{\n  \"title\": \"Event-Titel\",\n  \"description\": \"Beschreibung (max 500 Zeichen)\",\n  \"start_at\": \"ISO 8601 mit Timezone Europe/Berlin, z.B. 2026-03-15T19:00:00+01:00\",\n  \"end_at\": \"ISO 8601 oder null\",\n  \"location_name\": \"Veranstaltungsort oder null\",\n  \"address\": \"Vollständige Adresse oder null\",\n  \"tags\": [\"tag1\", \"tag2\"],\n  \"price_model\": \"free | paid | donation | null\",\n  \"ticket_link\": \"URL oder null\"\n}\n\nRegeln:\n- Datum immer mit Timezone Europe/Berlin\n- Wenn kein Jahr angegeben: 2026 annehmen\n- Tags aus: meditation, yoga, breathwork, tanz, heilung, coaching, retreat, workshop, zeremonie, kakao, sound-healing, achtsamkeit\n- Fehlende Felder als null\n- Beschreibung zusammenfassen, nicht 1:1 kopieren\n- Lies auch Text aus dem Bild/Flyer aus`;\n\nconst userContent = [];\nif (messageText) {\n  userContent.push({ type: 'text', text: messageText });\n}\nuserContent.push({\n  type: 'image_url',\n  image_url: { url: imageUrl, detail: 'high' }\n});\n\nreturn {\n  json: {\n    model: 'gpt-4o-mini',\n    temperature: 0.1,\n    response_format: { type: 'json_object' },\n    messages: [\n      { role: 'system', content: systemPrompt },\n      { role: 'user', content: userContent }\n    ]\n  }\n};"
+      },
+      "id": "build-ai-request-image",
+      "name": "AI-Request bauen (Bild)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 0]
+    },
+    {
+      "parameters": {
+        "jsCode": "// OpenAI Request NUR Text bauen\nconst messageText = $('Nachricht verarbeiten').item.json.message_text;\n\nconst systemPrompt = `Du extrahierst Event-Daten aus deutschen Telegram-Nachrichten. Antworte ausschließlich als JSON mit diesen Feldern:\n{\n  \"title\": \"Event-Titel\",\n  \"description\": \"Beschreibung (max 500 Zeichen)\",\n  \"start_at\": \"ISO 8601 mit Timezone Europe/Berlin, z.B. 2026-03-15T19:00:00+01:00\",\n  \"end_at\": \"ISO 8601 oder null\",\n  \"location_name\": \"Veranstaltungsort oder null\",\n  \"address\": \"Vollständige Adresse oder null\",\n  \"tags\": [\"tag1\", \"tag2\"],\n  \"price_model\": \"free | paid | donation | null\",\n  \"ticket_link\": \"URL oder null\"\n}\n\nRegeln:\n- Datum immer mit Timezone Europe/Berlin\n- Wenn kein Jahr angegeben: 2026 annehmen\n- Tags aus: meditation, yoga, breathwork, tanz, heilung, coaching, retreat, workshop, zeremonie, kakao, sound-healing, achtsamkeit\n- Fehlende Felder als null\n- Beschreibung zusammenfassen, nicht 1:1 kopieren`;\n\nreturn {\n  json: {\n    model: 'gpt-4o-mini',\n    temperature: 0.1,\n    response_format: { type: 'json_object' },\n    messages: [\n      { role: 'system', content: systemPrompt },\n      { role: 'user', content: messageText }\n    ]\n  }\n};"
+      },
+      "id": "build-ai-request-text",
+      "name": "AI-Request bauen (Text)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2000, 200]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {}
+      },
+      "id": "ai-parse-event",
+      "name": "AI: Event-Daten parsen",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2250, 100],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "OPENAI_HEADER_AUTH_ID",
+          "name": "OpenAI API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// AI-Response parsen und Import-Payload bauen\nconst aiResponse = $input.item.json;\nconst choices = aiResponse.choices;\n\nif (!choices || !choices.length) {\n  throw new Error('Keine AI-Antwort erhalten');\n}\n\nconst eventData = JSON.parse(choices[0].message.content);\nconst senderData = $('Nachricht verarbeiten').item.json;\nconst hostData = $('Host-Lookup').item.json;\n\nreturn {\n  json: {\n    title: eventData.title,\n    description: eventData.description,\n    start_at: eventData.start_at,\n    end_at: eventData.end_at,\n    location_name: eventData.location_name,\n    address: eventData.address,\n    tags: eventData.tags || [],\n    price_model: eventData.price_model,\n    ticket_link: eventData.ticket_link,\n    host_telegram_username: senderData.sender_username,\n    source_message_id: 'tg_' + senderData.message_id,\n    auto_publish: false,\n    chat_id: senderData.chat_id,\n    host_name: hostData.host?.name || senderData.sender_name\n  }\n};"
+      },
+      "id": "prepare-import",
+      "name": "Import-Payload bauen",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [2500, 100]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://www.das-portal.online/api/events/import",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ title: $json.title, description: $json.description, start_at: $json.start_at, end_at: $json.end_at, location_name: $json.location_name, address: $json.address, tags: $json.tags, price_model: $json.price_model, ticket_link: $json.ticket_link, host_telegram_username: $json.host_telegram_username, source_message_id: $json.source_message_id, auto_publish: $json.auto_publish }) }}",
+        "options": {}
+      },
+      "id": "event-import",
+      "name": "Event importieren",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2750, 100],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "HEADER_AUTH_CREDENTIAL_ID",
+          "name": "Portal Import API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.telegram.org/bot{{ $credentials.telegramApi.accessToken }}/sendMessage",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"chat_id\": {{ $('Import-Payload bauen').item.json.chat_id }},\n  \"text\": \"Event importiert!\\n\\nTitel: {{ $('Import-Payload bauen').item.json.title }}\\nHost: {{ $('Import-Payload bauen').item.json.host_name }}\\nDatum: {{ $('Import-Payload bauen').item.json.start_at }}\\nOrt: {{ $('Import-Payload bauen').item.json.location_name || 'Kein Ort' }}\\n\\nStatus: Draft\\n{{ $json.url || '' }}\"\n}",
+        "options": {}
+      },
+      "id": "reply-success",
+      "name": "Bestätigung senden",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [3000, 100]
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Nachricht verarbeiten",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Nachricht verarbeiten": {
+      "main": [
+        [
+          {
+            "node": "Hat Event-Inhalt?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hat Event-Inhalt?": {
+      "main": [
+        [
+          {
+            "node": "Username vorhanden?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Antwort: Kein Inhalt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Username vorhanden?": {
+      "main": [
+        [
+          {
+            "node": "Host-Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Antwort: Kein Username",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Host-Lookup": {
+      "main": [
+        [
+          {
+            "node": "Host registriert?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Host registriert?": {
+      "main": [
+        [
+          {
+            "node": "Hat Bild?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Antwort: Host nicht gefunden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Antwort: Host nicht gefunden": {
+      "main": [
+        [
+          {
+            "node": "Outreach an Absender",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Hat Bild?": {
+      "main": [
+        [
+          {
+            "node": "Bild-URL holen",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI-Request bauen (Text)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bild-URL holen": {
+      "main": [
+        [
+          {
+            "node": "AI-Request bauen (Bild)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI-Request bauen (Bild)": {
+      "main": [
+        [
+          {
+            "node": "AI: Event-Daten parsen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI-Request bauen (Text)": {
+      "main": [
+        [
+          {
+            "node": "AI: Event-Daten parsen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI: Event-Daten parsen": {
+      "main": [
+        [
+          {
+            "node": "Import-Payload bauen",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Import-Payload bauen": {
+      "main": [
+        [
+          {
+            "node": "Event importieren",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Event importieren": {
+      "main": [
+        [
+          {
+            "node": "Bestätigung senden",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [
+    {
+      "name": "Das Portal"
+    }
+  ],
+  "pinData": {}
+}
