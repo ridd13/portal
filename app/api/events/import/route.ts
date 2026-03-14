@@ -15,34 +15,67 @@ export async function POST(request: NextRequest) {
   const body = await request.json();
 
   // Pflichtfelder prüfen
-  const { title, start_at, host_telegram_username } = body;
-  if (!title || !start_at || !host_telegram_username) {
+  const { title, start_at } = body;
+  if (!title || !start_at) {
     return NextResponse.json(
-      {
-        error:
-          "Missing required fields: title, start_at, host_telegram_username",
-      },
+      { error: "Missing required fields: title, start_at" },
       { status: 400 }
     );
   }
 
   const supabase = getSupabaseAdminClient();
 
-  // Host über Telegram-Username finden
-  const { data: host, error: hostError } = await supabase
-    .from("hosts")
-    .select("id, name")
-    .eq(
-      "telegram_username",
-      host_telegram_username.toLowerCase().replace("@", "")
-    )
-    .single();
+  // Host finden: erst per telegram_username, dann per sender_name
+  let host: { id: string; name: string } | null = null;
 
-  if (hostError || !host) {
-    return NextResponse.json(
-      { error: "Host not found", telegram_username: host_telegram_username },
-      { status: 404 }
-    );
+  if (body.host_telegram_username) {
+    const { data } = await supabase
+      .from("hosts")
+      .select("id, name")
+      .eq(
+        "telegram_username",
+        body.host_telegram_username.toLowerCase().replace("@", "")
+      )
+      .single();
+    host = data;
+  }
+
+  // Fallback: Host per Name suchen
+  if (!host && body.sender_name) {
+    const { data } = await supabase
+      .from("hosts")
+      .select("id, name")
+      .ilike("name", `%${body.sender_name}%`)
+      .limit(1)
+      .single();
+    host = data;
+  }
+
+  // Kein Host gefunden → neuen Host anlegen
+  if (!host) {
+    const hostName = body.sender_name || body.host_telegram_username || "Unbekannt";
+    const hostSlug = hostName
+      .toLowerCase()
+      .replace(/[äÄ]/g, "ae").replace(/[öÖ]/g, "oe")
+      .replace(/[üÜ]/g, "ue").replace(/ß/g, "ss")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+      + "-" + Date.now().toString(36);
+
+    const { data: newHost, error: hostCreateError } = await supabase
+      .from("hosts")
+      .insert({
+        name: hostName,
+        slug: hostSlug,
+        telegram_username: body.host_telegram_username?.toLowerCase().replace("@", "") || null,
+      })
+      .select("id, name")
+      .single();
+
+    if (hostCreateError) {
+      console.error("Host create error:", hostCreateError);
+      return NextResponse.json({ error: "Host creation failed" }, { status: 500 });
+    }
+    host = newHost;
   }
 
   // Deduplizierung: Prüfen ob source_message_id schon existiert
@@ -109,7 +142,8 @@ export async function POST(request: NextRequest) {
     event_id: event.id,
     slug: event.slug,
     status: event.status,
-    host_name: host.name,
+    host_name: host!.name,
+    host_created: !body.host_telegram_username && !host ? true : false,
     url: `https://www.das-portal.online/events/${event.slug}`,
   });
 }
