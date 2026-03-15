@@ -55,9 +55,10 @@ interface EventMapProps {
   events: Event[];
   userLat?: number | null;
   userLng?: number | null;
+  radiusKm?: number;
 }
 
-export function EventMap({ events, userLat, userLng }: EventMapProps) {
+export function EventMap({ events, userLat, userLng, radiusKm = 25 }: EventMapProps) {
   const mappableEvents = events.filter(
     (e) => e.geo_lat != null && e.geo_lng != null
   );
@@ -106,11 +107,11 @@ export function EventMap({ events, userLat, userLng }: EventMapProps) {
           </Marker>
           <Circle
             center={[userLat, userLng]}
-            radius={25000}
+            radius={radiusKm * 1000}
             pathOptions={{
-              color: "#3b82f6",
-              fillColor: "#3b82f6",
-              fillOpacity: 0.06,
+              color: "#b5651d",
+              fillColor: "#b5651d",
+              fillOpacity: 0.08,
               weight: 1,
             }}
           />

@@ -78,7 +78,7 @@ export function EventFilters({
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Suche nach Titel"
+          placeholder="Suche nach Events..."
           className="rounded-xl border border-border bg-bg-card px-3 py-2 text-sm text-text-primary outline-none placeholder:text-text-muted focus:border-accent-sage"
         />
 

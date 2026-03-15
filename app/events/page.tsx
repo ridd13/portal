@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { EventFilters } from "@/components/EventFilters";
-import { EventList } from "@/components/EventList";
-import { EventMapWrapper } from "@/components/EventMapWrapper";
-import { PAGE_SIZE, getCityFromAddress } from "@/lib/event-utils";
+import { EventsClientWrapper } from "@/components/EventsClientWrapper";
+import { getCityFromAddress } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import type { Event } from "@/lib/types";
 
@@ -55,14 +54,14 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   const selectedPlz = params.plz?.trim() || "";
   const searchQuery = params.q?.trim() || "";
 
+  // Load ALL matching events (client handles radius filtering + display)
   let query = supabase
     .from("events")
     .select("*, hosts(name, slug)")
     .eq("is_public", true)
     .eq("status", "published")
     .gte("start_at", new Date().toISOString())
-    .order("start_at", { ascending: true })
-    .range(0, PAGE_SIZE - 1);
+    .order("start_at", { ascending: true });
 
   if (selectedTag) {
     query = query.contains("tags", [selectedTag]);
@@ -78,38 +77,43 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     );
   }
 
-  // PLZ filtering: load all events with coordinates and filter by distance client-side
-  // For the initial page load, we just pass the PLZ as context to the wrapper
   const { data, error } = await query;
-  const events = (data || []) as Event[];
+  let events = (data || []) as Event[];
 
-  // Load all events with geo coordinates for the map (no pagination limit)
-  let mapQuery = supabase
-    .from("events")
-    .select("id, title, slug, start_at, geo_lat, geo_lng, location_name, address")
-    .eq("is_public", true)
-    .eq("status", "published")
-    .gte("start_at", new Date().toISOString())
-    .not("geo_lat", "is", null)
-    .not("geo_lng", "is", null)
-    .order("start_at", { ascending: true });
-
-  if (selectedTag) {
-    mapQuery = mapQuery.contains("tags", [selectedTag]);
-  }
-  if (selectedCity) {
-    mapQuery = mapQuery.ilike("address", `%${selectedCity}%`);
-  }
+  // Also find events matching search query by tag (tags are arrays, not searchable via .or())
   if (searchQuery) {
-    mapQuery = mapQuery.or(
-      `title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,location_name.ilike.%${searchQuery}%,address.ilike.%${searchQuery}%`
-    );
+    const tagSearch = searchQuery
+      .toLowerCase()
+      .replace(/[äÄ]/g, "ae")
+      .replace(/[öÖ]/g, "oe")
+      .replace(/[üÜ]/g, "ue")
+      .replace(/ß/g, "ss")
+      .replace(/\s+/g, "-");
+
+    let tagQuery = supabase
+      .from("events")
+      .select("*, hosts(name, slug)")
+      .eq("is_public", true)
+      .eq("status", "published")
+      .gte("start_at", new Date().toISOString())
+      .contains("tags", [tagSearch])
+      .order("start_at", { ascending: true });
+
+    if (selectedTag) tagQuery = tagQuery.contains("tags", [selectedTag]);
+    if (selectedCity) tagQuery = tagQuery.ilike("address", `%${selectedCity}%`);
+
+    const { data: tagData } = await tagQuery;
+    if (tagData && tagData.length > 0) {
+      const existingIds = new Set(events.map((e) => e.id));
+      const newTagEvents = (tagData as Event[]).filter((e) => !existingIds.has(e.id));
+      events = [...events, ...newTagEvents];
+      events.sort(
+        (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime()
+      );
+    }
   }
 
-  const { data: mapData } = await mapQuery;
-  const mapEvents = (mapData || []) as Event[];
-
-  // Load all distinct tags from the database
+  // Load all distinct tags
   const { data: allEventsData } = await supabase
     .from("events")
     .select("tags")
@@ -125,6 +129,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     ),
   ].sort((a, b) => a.localeCompare(b, "de"));
 
+  // Load all distinct cities
   const { data: allEventsForCities } = await supabase
     .from("events")
     .select("address")
@@ -168,19 +173,15 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         searchQuery={searchQuery}
       />
 
-      <EventMapWrapper events={mapEvents} initialPlz={selectedPlz || undefined} />
-
       {error ? (
         <div className="rounded-2xl border border-error-border bg-error-bg p-4 text-sm text-error-text">
           Events konnten gerade nicht geladen werden. Bitte Seite neu laden.
         </div>
       ) : null}
 
-      <EventList
-        initialEvents={events}
-        selectedTag={selectedTag}
-        selectedCity={selectedCity}
-        searchQuery={searchQuery}
+      <EventsClientWrapper
+        events={events}
+        initialPlz={selectedPlz || undefined}
       />
     </div>
   );
