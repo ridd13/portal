@@ -3,6 +3,7 @@ import Image from "next/image";
 import type { Event } from "@/lib/types";
 import {
   formatEventDate,
+  formatPrice,
   getCityFromAddress,
   getHostPreview,
 } from "@/lib/event-utils";
@@ -19,7 +20,7 @@ export function EventCard({ event }: EventCardProps) {
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-card shadow-[0_8px_24px_rgba(44,36,24,0.08)] transition-shadow duration-200 hover:shadow-[0_12px_32px_rgba(44,36,24,0.14)]">
       <Link
         href={`/events/${event.slug}`}
-        className="absolute inset-0 z-0"
+        className="absolute inset-0 z-10"
         aria-label={`${event.title} — Details anzeigen`}
       />
       <div className="border-b border-border bg-bg-secondary px-4 py-3 text-xs font-semibold uppercase tracking-wide text-text-secondary">
@@ -61,7 +62,7 @@ export function EventCard({ event }: EventCardProps) {
               {host.slug ? (
                 <Link
                   href={`/hosts/${host.slug}`}
-                  className="relative z-10 font-medium text-accent-secondary hover:underline"
+                  className="relative z-20 font-medium text-accent-secondary hover:underline"
                 >
                   {host.name}
                 </Link>
@@ -88,7 +89,7 @@ export function EventCard({ event }: EventCardProps) {
 
         <div className="mt-auto flex items-center justify-between gap-3 pt-2">
           <span className="text-sm font-medium text-text-secondary">
-            {event.price_model || "Preis auf Anfrage"}
+            {formatPrice(event.price_model, event.price_amount)}
           </span>
           <span className="rounded-full bg-accent-primary px-4 py-2 text-sm font-semibold text-white transition group-hover:brightness-95">
             Details

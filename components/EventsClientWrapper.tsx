@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useCallback, useEffect, useMemo } from "react";
 import type { Event } from "@/lib/types";
 import type { UserLocation } from "@/lib/geo";
@@ -21,12 +22,34 @@ const EventMap = dynamic(
 interface EventsClientWrapperProps {
   events: Event[];
   initialPlz?: string;
+  selectedTag?: string;
+  selectedCity?: string;
+  searchQuery?: string;
+  fromDate?: string;
+  toDate?: string;
+}
+
+/** Format a YYYY-MM-DD string to a German short date like "16. Mär" */
+function formatShortDate(dateStr: string): string {
+  try {
+    const d = new Date(dateStr + "T00:00:00");
+    return d.toLocaleDateString("de-DE", { day: "numeric", month: "short" });
+  } catch {
+    return dateStr;
+  }
 }
 
 export function EventsClientWrapper({
   events,
   initialPlz,
+  selectedTag = "",
+  selectedCity = "",
+  searchQuery = "",
+  fromDate = "",
+  toDate = "",
 }: EventsClientWrapperProps) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [radius, setRadius] = useState(25);
 
@@ -88,8 +111,106 @@ export function EventsClientWrapper({
     return [...inRadius, ...noGeo].map((e) => e.event);
   }, [events, userLocation, radius]);
 
+  // Helper: navigate with a filter removed
+  const removeFilter = useCallback(
+    (key: string) => {
+      const next = new URLSearchParams(searchParams.toString());
+      next.delete(key);
+      next.delete("plz");
+      const qs = next.toString();
+      router.push(qs ? `/events?${qs}` : "/events");
+    },
+    [router, searchParams]
+  );
+
+  const clearAllFilters = useCallback(() => {
+    setUserLocation(null);
+    try {
+      localStorage.removeItem("portal_user_location");
+    } catch {
+      // ignore
+    }
+    router.push("/events");
+  }, [router]);
+
+  const hasAnyFilter =
+    selectedTag || selectedCity || searchQuery || fromDate || toDate || userLocation;
+
   return (
     <>
+      {/* Active Filter Chips */}
+      {hasAnyFilter ? (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-text-secondary">
+            {filteredEvents.length} Event{filteredEvents.length !== 1 ? "s" : ""} gefunden
+          </span>
+          <span className="text-text-muted">|</span>
+
+          {selectedTag ? (
+            <FilterChip
+              label={selectedTag}
+              onRemove={() => removeFilter("tag")}
+            />
+          ) : null}
+
+          {selectedCity ? (
+            <FilterChip
+              label={selectedCity}
+              onRemove={() => removeFilter("city")}
+            />
+          ) : null}
+
+          {searchQuery ? (
+            <FilterChip
+              label={`"${searchQuery}"`}
+              onRemove={() => removeFilter("q")}
+            />
+          ) : null}
+
+          {fromDate || toDate ? (
+            <FilterChip
+              label={
+                fromDate && toDate
+                  ? `${formatShortDate(fromDate)} – ${formatShortDate(toDate)}`
+                  : fromDate
+                    ? `ab ${formatShortDate(fromDate)}`
+                    : `bis ${formatShortDate(toDate)}`
+              }
+              onRemove={() => {
+                const next = new URLSearchParams(searchParams.toString());
+                next.delete("from");
+                next.delete("to");
+                next.delete("plz");
+                const qs = next.toString();
+                router.push(qs ? `/events?${qs}` : "/events");
+              }}
+            />
+          ) : null}
+
+          {userLocation ? (
+            <FilterChip
+              label={`${radius} km um ${userLocation.label}`}
+              onRemove={() => {
+                setUserLocation(null);
+                try {
+                  localStorage.removeItem("portal_user_location");
+                } catch {
+                  // ignore
+                }
+              }}
+            />
+          ) : null}
+
+          <button
+            type="button"
+            onClick={clearAllFilters}
+            className="text-xs text-text-secondary underline transition hover:text-text-primary"
+          >
+            Alle Filter entfernen
+          </button>
+        </div>
+      ) : null}
+
       {/* Map Section */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -159,5 +280,28 @@ export function EventsClientWrapper({
         </section>
       )}
     </>
+  );
+}
+
+/** A small removable filter chip. */
+function FilterChip({
+  label,
+  onRemove,
+}: {
+  label: string;
+  onRemove: () => void;
+}) {
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-bg-card px-3 py-1 text-sm text-text-primary">
+      {label}
+      <button
+        type="button"
+        onClick={onRemove}
+        className="font-bold text-text-muted transition hover:text-text-primary"
+        aria-label={`Filter "${label}" entfernen`}
+      >
+        x
+      </button>
+    </span>
   );
 }

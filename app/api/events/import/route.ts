@@ -206,16 +206,26 @@ export async function POST(request: NextRequest) {
     "-" +
     Date.now().toString(36);
 
-  // Cover-Bild: Telegram-Bild → Supabase Storage, sonst Default
+  // Cover-Bild: Bereits vorhandene URL → Telegram-Bild Upload → Default
   let coverUrl: string | null = body.cover_image_url || null;
 
   if (!coverUrl && body.photo_url) {
-    coverUrl = await uploadPhotoToStorage(body.photo_url, slug, supabase);
+    // Skip localhost URLs (not reachable from Vercel)
+    if (
+      body.photo_url.startsWith("http://localhost") ||
+      body.photo_url.startsWith("http://127.0.0.1")
+    ) {
+      console.warn(`Skipping localhost photo_url: ${body.photo_url}`);
+    } else {
+      coverUrl = await uploadPhotoToStorage(body.photo_url, slug, supabase);
+    }
   }
 
   if (!coverUrl) {
+    // Default-Cover basierend auf erstem Tag
+    const firstTag = body.tags?.[0]?.toLowerCase();
     coverUrl =
-      DEFAULT_COVERS[body.tags?.[0]?.toLowerCase()] ||
+      (firstTag && DEFAULT_COVERS[firstTag]) ||
       "/images/defaults/event-default.svg";
   }
 
@@ -238,6 +248,7 @@ export async function POST(request: NextRequest) {
       status: body.auto_publish ? "published" : "draft",
       tags: body.tags || [],
       price_model: body.price_model || null,
+      price_amount: body.price_amount || null,
       ticket_link: body.ticket_link || null,
       source_type: "telegram",
       source_message_id: body.source_message_id || null,

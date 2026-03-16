@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import type { Metadata } from "next";
-import { formatEventDate, getHostPreview, getCityFromAddress, buildGoogleCalendarUrl } from "@/lib/event-utils";
+import { formatEventDate, formatPrice, getHostPreview, getCityFromAddress, buildGoogleCalendarUrl } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
 import { generateICS } from "@/lib/ics";
@@ -100,9 +100,9 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
       name: hostPreview.name,
       url: hostPreview.slug ? `${siteUrl}/hosts/${hostPreview.slug}` : undefined,
     } : undefined,
-    offers: event.price_model ? {
+    offers: (event.price_model || event.price_amount) ? {
       "@type": "Offer",
-      price: event.price_model === "kostenlos" ? "0" : undefined,
+      price: event.price_model === "free" ? "0" : undefined,
       priceCurrency: "EUR",
       url: event.ticket_link || `${siteUrl}/events/${event.slug}`,
       availability: "https://schema.org/InStock",
@@ -172,8 +172,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
 
               <div className="flex items-start gap-3">
                 <span className="mt-0.5 text-lg" aria-hidden="true">💰</span>
-                <p className="font-medium text-text-primary">
-                  {event.price_model || "Preis auf Anfrage"}
+                <p className="text-lg font-medium text-text-primary">
+                  {formatPrice(event.price_model, event.price_amount)}
                 </p>
               </div>
 

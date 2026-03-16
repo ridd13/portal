@@ -34,6 +34,7 @@ export interface Event {
   status: string | null;
   tags: string[] | null;
   price_model: string | null;
+  price_amount: string | null;
   ticket_link: string | null;
   created_at: string | null;
   hosts: HostPreview | HostPreview[] | null;

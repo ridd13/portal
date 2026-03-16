@@ -11,6 +11,8 @@ interface EventsPageProps {
     city?: string;
     plz?: string;
     q?: string;
+    from?: string;
+    to?: string;
   }>;
 }
 
@@ -53,6 +55,14 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   const selectedCity = params.city?.trim() || "";
   const selectedPlz = params.plz?.trim() || "";
   const searchQuery = params.q?.trim() || "";
+  const fromDate = params.from?.trim() || "";
+  const toDate = params.to?.trim() || "";
+
+  // Determine the start_at lower bound:
+  // If user set a "from" date, use start of that day; otherwise use "now" (only future events)
+  const startFrom = fromDate
+    ? new Date(fromDate + "T00:00:00").toISOString()
+    : new Date().toISOString();
 
   // Load ALL matching events (client handles radius filtering + display)
   let query = supabase
@@ -60,8 +70,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     .select("*, hosts(name, slug)")
     .eq("is_public", true)
     .eq("status", "published")
-    .gte("start_at", new Date().toISOString())
+    .gte("start_at", startFrom)
     .order("start_at", { ascending: true });
+
+  // If user set a "to" date, limit to end of that day
+  if (toDate) {
+    query = query.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
+  }
 
   if (selectedTag) {
     query = query.contains("tags", [selectedTag]);
@@ -95,10 +110,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       .select("*, hosts(name, slug)")
       .eq("is_public", true)
       .eq("status", "published")
-      .gte("start_at", new Date().toISOString())
+      .gte("start_at", startFrom)
       .contains("tags", [tagSearch])
       .order("start_at", { ascending: true });
 
+    if (toDate) {
+      tagQuery = tagQuery.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
+    }
     if (selectedTag) tagQuery = tagQuery.contains("tags", [selectedTag]);
     if (selectedCity) tagQuery = tagQuery.ilike("address", `%${selectedCity}%`);
 
@@ -171,6 +189,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         selectedTag={selectedTag}
         selectedCity={selectedCity}
         searchQuery={searchQuery}
+        selectedFromDate={fromDate}
+        selectedToDate={toDate}
       />
 
       {error ? (
@@ -182,6 +202,11 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       <EventsClientWrapper
         events={events}
         initialPlz={selectedPlz || undefined}
+        selectedTag={selectedTag}
+        selectedCity={selectedCity}
+        searchQuery={searchQuery}
+        fromDate={fromDate}
+        toDate={toDate}
       />
     </div>
   );

@@ -43,6 +43,24 @@ export function buildGoogleCalendarUrl(event: {
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
 
+/**
+ * Format the price for display.
+ * Shows price_amount if available, otherwise a readable label from price_model.
+ */
+export function formatPrice(priceModel: string | null, priceAmount: string | null): string {
+  if (priceAmount) return priceAmount;
+  switch (priceModel) {
+    case "free":
+      return "Kostenlos";
+    case "donation":
+      return "Auf Spendenbasis";
+    case "paid":
+      return "Kostenpflichtig";
+    default:
+      return "Preis auf Anfrage";
+  }
+}
+
 export const getCityFromAddress = (address: string | null): string | null => {
   if (!address) return null;
   const parts = address.split(",").map((part) => part.trim()).filter(Boolean);
