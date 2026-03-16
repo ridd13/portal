@@ -99,36 +99,57 @@ export async function POST(request: NextRequest) {
 
   const supabase = getSupabaseAdminClient();
 
-  // Host finden: erst per telegram_username, dann per sender_name
+  // Host finden: erst per telegram_username, dann per Name
   let host: { id: string; name: string } | null = null;
+  const hostName = body.host_name || body.sender_name || null;
+  const cleanTelegramUsername = body.host_telegram_username
+    ? body.host_telegram_username.toLowerCase().replace("@", "")
+    : null;
 
-  if (body.host_telegram_username) {
+  // 1. Per Telegram Username suchen (eindeutigster Identifier)
+  if (cleanTelegramUsername) {
     const { data } = await supabase
       .from("hosts")
       .select("id, name")
-      .eq(
-        "telegram_username",
-        body.host_telegram_username.toLowerCase().replace("@", "")
-      )
+      .eq("telegram_username", cleanTelegramUsername)
       .single();
     host = data;
+
+    // Falls gefunden, Host-Daten aktualisieren (Name, Website)
+    if (host) {
+      const updates: Record<string, string> = {};
+      if (hostName && hostName !== host.name) updates.name = hostName;
+      if (body.ticket_link) updates.website_url = body.ticket_link;
+      if (Object.keys(updates).length > 0) {
+        await supabase.from("hosts").update(updates).eq("id", host.id);
+        if (updates.name) host.name = updates.name;
+      }
+    }
   }
 
-  // Fallback: Host per Name suchen
-  if (!host && body.sender_name) {
+  // 2. Fallback: Per Name suchen
+  if (!host && hostName) {
     const { data } = await supabase
       .from("hosts")
       .select("id, name")
-      .ilike("name", `%${body.sender_name}%`)
+      .ilike("name", `%${hostName}%`)
       .limit(1)
       .single();
     host = data;
+
+    // Falls gefunden und Telegram-Username vorhanden, diesen nachtragen
+    if (host && cleanTelegramUsername) {
+      await supabase
+        .from("hosts")
+        .update({ telegram_username: cleanTelegramUsername })
+        .eq("id", host.id);
+    }
   }
 
-  // Kein Host gefunden → neuen Host anlegen
+  // 3. Kein Host gefunden → neuen Host anlegen
   if (!host) {
-    const hostName = body.sender_name || body.host_telegram_username || "Unbekannt";
-    const hostSlug = hostName
+    const displayName = hostName || cleanTelegramUsername || "Unbekannt";
+    const hostSlug = displayName
       .toLowerCase()
       .replace(/[äÄ]/g, "ae").replace(/[öÖ]/g, "oe")
       .replace(/[üÜ]/g, "ue").replace(/ß/g, "ss")
@@ -138,9 +159,10 @@ export async function POST(request: NextRequest) {
     const { data: newHost, error: hostCreateError } = await supabase
       .from("hosts")
       .insert({
-        name: hostName,
+        name: displayName,
         slug: hostSlug,
-        telegram_username: body.host_telegram_username?.toLowerCase().replace("@", "") || null,
+        telegram_username: cleanTelegramUsername,
+        website_url: body.ticket_link || null,
       })
       .select("id, name")
       .single();
