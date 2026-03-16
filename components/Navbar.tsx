@@ -29,7 +29,7 @@ export function Navbar() {
             href="/fuer-facilitators"
             className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
           >
-            Für Facilitators
+            Für Anbieter:innen
           </Link>
           <a
             href="https://t.me/dasgrosseportal"

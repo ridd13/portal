@@ -66,7 +66,7 @@ export default async function LandingPage() {
             href="/fuer-facilitators"
             className="inline-flex items-center rounded-xl border border-border bg-bg-card px-6 py-3 text-base font-medium text-text-primary transition hover:bg-bg-secondary"
           >
-            Du bist Facilitator?
+            Du bist Anbieter:in?
           </Link>
         </div>
 

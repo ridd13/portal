@@ -76,7 +76,7 @@ export function EventCard({ event }: EventCardProps) {
               )}
             </>
           ) : (
-            "Unbekannter Host"
+            "Unbekannte:r Anbieter:in"
           )}
         </p>
 

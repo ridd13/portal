@@ -4,8 +4,19 @@ import type { Event, HostPreview } from "@/lib/types";
 
 export const PAGE_SIZE = 12;
 
-export const formatEventDate = (isoDate: string) =>
-  format(new Date(isoDate), "EEE dd.MM.yyyy HH:mm", { locale: de });
+export const formatEventDate = (isoDate: string) => {
+  const date = new Date(isoDate);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+
+  // Hide time if it's likely a parsing artifact (00:00, 01:00, 02:00) or placeholder (12:00)
+  const suspiciousTime =
+    minutes === 0 && (hours === 0 || hours === 1 || hours === 2 || hours === 12);
+
+  return suspiciousTime
+    ? format(date, "EEE dd.MM.yyyy", { locale: de })
+    : format(date, "EEE dd.MM.yyyy HH:mm", { locale: de });
+};
 
 export const getHostPreview = (event: Event): HostPreview | null => {
   if (!event.hosts) return null;

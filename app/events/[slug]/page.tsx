@@ -267,7 +267,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             {/* Facilitator / Host Box */}
             {host ? (
               <section className="rounded-2xl border border-border bg-bg-secondary p-4">
-                <h2 className="mb-3 text-xl font-normal text-text-primary">Facilitator</h2>
+                <h2 className="mb-3 text-xl font-normal text-text-primary">Anbieter:in</h2>
                 {hostPreview?.slug ? (
                   <Link
                     href={`/hosts/${hostPreview.slug}`}
@@ -301,7 +301,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               <section className="rounded-2xl border border-dashed border-accent-secondary bg-bg-secondary p-4">
                 <p className="font-medium text-text-primary">Ist das dein Event?</p>
                 <p className="mt-1 text-sm text-text-secondary">
-                  Registriere dich als Facilitator und verwalte dein Listing.
+                  Registriere dich als Anbieter:in und verwalte dein Listing.
                 </p>
                 <Link
                   href="/fuer-facilitators"

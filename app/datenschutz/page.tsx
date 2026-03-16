@@ -26,7 +26,7 @@ export default function DatenschutzPage() {
             <br />
             23843 Rümpel
             <br />
-            E-Mail: lennert.bewernick@gmail.com
+            E-Mail: portal@justclose.de
           </p>
         </div>
 
@@ -205,10 +205,62 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 9. Telegram */}
+        {/* 9. Automatische Event-Erfassung */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            9. Telegram-Kanal
+            9. Automatische Event-Erfassung
+          </h2>
+          <p>
+            Events werden teilweise automatisiert aus öffentlichen
+            Telegram-Gruppen erfasst. Dabei werden ausschließlich öffentlich
+            geteilte Event-Informationen übernommen: Titel, Datum, Ort und
+            Beschreibung.
+          </p>
+          <p className="mt-2">
+            Der Name des Absenders wird als Anbieter:in-Profil auf Das Portal
+            angelegt. Anbieter:innen können jederzeit die Löschung ihres
+            Profils und ihrer Events per E-Mail an{" "}
+            <a
+              href="mailto:portal@justclose.de"
+              className="text-accent-primary underline"
+            >
+              portal@justclose.de
+            </a>{" "}
+            beantragen.
+          </p>
+          <p className="mt-1">
+            <strong className="text-text-primary">Rechtsgrundlage:</strong>{" "}
+            Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der
+            Bereitstellung einer Event-Übersicht auf Basis öffentlich
+            zugänglicher Informationen).
+          </p>
+        </div>
+
+        {/* 10. Profil-Beanspruchung */}
+        <div>
+          <h2 className="font-serif text-lg font-normal text-text-primary">
+            10. Profil-Beanspruchung
+          </h2>
+          <p>
+            Anbieter:innen können ihr automatisch erstelltes Profil
+            beanspruchen. Dafür wird die E-Mail-Adresse verarbeitet, die bei
+            der Kontaktaufnahme angegeben wird.
+          </p>
+          <p className="mt-1">
+            <strong className="text-text-primary">Rechtsgrundlage:</strong>{" "}
+            Art. 6 Abs. 1 lit. a DSGVO (Einwilligung).
+          </p>
+          <p className="mt-2">
+            Zukünftig ist eine Authentifizierung per Magic Link geplant. Die
+            dafür erforderliche Datenverarbeitung wird zu gegebener Zeit hier
+            ergänzt.
+          </p>
+        </div>
+
+        {/* 11. Telegram */}
+        <div>
+          <h2 className="font-serif text-lg font-normal text-text-primary">
+            11. Telegram-Kanal
           </h2>
           <p>
             Auf der Website verlinken wir unseren Telegram-Kanal
@@ -218,10 +270,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 10. Betroffenenrechte */}
+        {/* 12. Betroffenenrechte */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            10. Deine Rechte
+            12. Deine Rechte
           </h2>
           <p>Du hast jederzeit das Recht auf:</p>
           <ul className="mt-2 list-inside list-disc space-y-1">
@@ -235,10 +287,10 @@ export default function DatenschutzPage() {
           <p className="mt-3">
             Zur Ausübung deiner Rechte wende dich an:{" "}
             <a
-              href="mailto:lennert.bewernick@gmail.com"
+              href="mailto:portal@justclose.de"
               className="text-accent-primary underline"
             >
-              lennert.bewernick@gmail.com
+              portal@justclose.de
             </a>
           </p>
           <p className="mt-2">

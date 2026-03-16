@@ -13,21 +13,17 @@ interface LocationInputProps {
 }
 
 /**
- * Read localStorage once during initial state.
+ * No auto-location on page load. User must explicitly enter PLZ or click "Standort verwenden".
  */
 function getInitialLocation(): UserLocation | null {
-  if (typeof window === "undefined") return null;
-  return loadUserLocation();
+  return null;
 }
 
 /**
- * Check if geolocation should be requested on mount.
- * Returns true if no saved location and browser supports geolocation.
+ * Never auto-request geolocation. User must explicitly opt in.
  */
 function shouldRequestGeo(): boolean {
-  if (typeof window === "undefined") return false;
-  if (loadUserLocation()) return false;
-  return !!navigator.geolocation;
+  return false;
 }
 
 export function LocationInput({ onLocationChange }: LocationInputProps) {
