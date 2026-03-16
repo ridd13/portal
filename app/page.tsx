@@ -27,6 +27,18 @@ export default async function LandingPage() {
 
   const upcomingEvents = (data || []) as Event[];
 
+  // Statistiken fuer Social Proof
+  const { count: eventCount } = await supabase
+    .from("events")
+    .select("*", { count: "exact", head: true })
+    .eq("is_public", true)
+    .eq("status", "published")
+    .gte("start_at", new Date().toISOString());
+
+  const { count: hostCount } = await supabase
+    .from("hosts")
+    .select("*", { count: "exact", head: true });
+
   return (
     <div className="space-y-16 pb-8">
       {/* Hero — Besucher-fokussiert */}
@@ -57,6 +69,24 @@ export default async function LandingPage() {
             Du bist Facilitator?
           </Link>
         </div>
+
+        {/* Social Proof */}
+        {(eventCount || hostCount) ? (
+          <div className="mt-8 flex gap-8">
+            {eventCount ? (
+              <div>
+                <p className="text-3xl font-bold text-accent-primary">{eventCount}+</p>
+                <p className="text-sm text-text-muted">Kommende Events</p>
+              </div>
+            ) : null}
+            {hostCount ? (
+              <div>
+                <p className="text-3xl font-bold text-accent-primary">{hostCount}+</p>
+                <p className="text-sm text-text-muted">Anbieter:innen</p>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </section>
 
       {/* Event-Previews */}

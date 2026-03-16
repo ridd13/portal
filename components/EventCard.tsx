@@ -40,15 +40,20 @@ export function EventCard({ event }: EventCardProps) {
       )}
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <div className="flex flex-wrap gap-2">
-          {event.tags?.slice(0, 3).map((tag) => (
+        <div className="flex flex-wrap gap-1.5">
+          {event.tags?.slice(0, 2).map((tag) => (
             <span
               key={tag}
-              className="rounded-full bg-tag-bg px-2.5 py-1 text-xs font-medium text-text-secondary"
+              className="rounded-full bg-tag-bg px-2.5 py-0.5 text-xs font-medium text-text-secondary"
             >
               {tag}
             </span>
           ))}
+          {event.tags && event.tags.length > 2 ? (
+            <span className="rounded-full bg-tag-bg px-2.5 py-0.5 text-xs font-medium text-text-muted">
+              +{event.tags.length - 2}
+            </span>
+          ) : null}
         </div>
 
         <h2 className="line-clamp-2 text-xl font-normal text-text-primary">

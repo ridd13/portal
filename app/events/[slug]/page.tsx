@@ -133,23 +133,31 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               {event.title}
             </h1>
 
-            {/* Quick-Info-Box */}
-            <div className="space-y-3 rounded-2xl border border-border bg-bg-secondary p-4 sm:p-5">
+            {/* Info-Grid */}
+            <div className="grid grid-cols-1 gap-4 rounded-2xl border border-border bg-bg-secondary p-5 sm:grid-cols-2">
+              {/* Datum */}
               <div className="flex items-start gap-3">
-                <span className="mt-0.5 text-lg" aria-hidden="true">📅</span>
-                <p className="font-medium text-text-primary">
-                  {formatEventDate(event.start_at)}
-                  {event.end_at ? ` – ${formatEventDate(event.end_at)}` : ""}
-                </p>
+                <span className="mt-0.5 text-xl" aria-hidden="true">📅</span>
+                <div>
+                  <p className="text-sm font-medium text-text-muted">Wann</p>
+                  <p className="font-medium text-text-primary">
+                    {formatEventDate(event.start_at)}
+                  </p>
+                  {event.end_at ? (
+                    <p className="text-sm text-text-secondary">bis {formatEventDate(event.end_at)}</p>
+                  ) : null}
+                </div>
               </div>
 
+              {/* Ort */}
               <div className="flex items-start gap-3">
-                <span className="mt-0.5 text-lg" aria-hidden="true">📍</span>
+                <span className="mt-0.5 text-xl" aria-hidden="true">📍</span>
                 <div>
+                  <p className="text-sm font-medium text-text-muted">Wo</p>
                   <p className="font-medium text-text-primary">
                     {event.location_name || "Ort wird noch bekanntgegeben"}
                   </p>
-                  {event.address ? (
+                  {event.address && event.location_name ? (
                     <p className="text-sm text-text-secondary">{event.address}</p>
                   ) : null}
                   {(event.address || event.location_name) ? (
@@ -170,29 +178,52 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 </div>
               </div>
 
+              {/* Preis */}
               <div className="flex items-start gap-3">
-                <span className="mt-0.5 text-lg" aria-hidden="true">💰</span>
-                <p className="text-lg font-medium text-text-primary">
-                  {formatPrice(event.price_model, event.price_amount)}
-                </p>
+                <span className="mt-0.5 text-xl" aria-hidden="true">💰</span>
+                <div>
+                  <p className="text-sm font-medium text-text-muted">Preis</p>
+                  <p className="text-lg font-medium text-text-primary">
+                    {formatPrice(event.price_model, event.price_amount)}
+                  </p>
+                </div>
               </div>
 
-              {event.tags && event.tags.length > 0 ? (
+              {/* Anbieter:in */}
+              {hostPreview ? (
                 <div className="flex items-start gap-3">
-                  <span className="mt-0.5 text-lg" aria-hidden="true">🏷</span>
-                  <div className="flex flex-wrap gap-2">
-                    {event.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full bg-tag-bg px-3 py-1 text-xs font-medium text-text-secondary"
+                  <span className="mt-0.5 text-xl" aria-hidden="true">🙋</span>
+                  <div>
+                    <p className="text-sm font-medium text-text-muted">Anbieter:in</p>
+                    {hostPreview.slug ? (
+                      <Link
+                        href={`/hosts/${hostPreview.slug}`}
+                        className="font-medium text-accent-primary hover:underline"
                       >
-                        {tag}
-                      </span>
-                    ))}
+                        {hostPreview.name}
+                      </Link>
+                    ) : (
+                      <p className="font-medium text-text-primary">{hostPreview.name}</p>
+                    )}
                   </div>
                 </div>
               ) : null}
             </div>
+
+            {/* Tags (klickbar) */}
+            {event.tags && event.tags.length > 0 ? (
+              <div className="flex flex-wrap gap-2">
+                {event.tags.map((tag) => (
+                  <Link
+                    key={tag}
+                    href={`/events?tag=${encodeURIComponent(tag)}`}
+                    className="rounded-full bg-bg-secondary px-3 py-1 text-sm text-text-secondary transition hover:bg-accent-sage hover:text-white"
+                  >
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            ) : null}
 
             {/* CTA Button */}
             {event.ticket_link ? (
@@ -200,9 +231,10 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 href={event.ticket_link}
                 target="_blank"
                 rel="noreferrer noopener"
-                className="inline-block rounded-full bg-accent-primary px-6 py-3 text-sm font-semibold text-white transition hover:brightness-95"
+                className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-3 text-lg font-semibold text-white transition hover:brightness-95"
               >
                 Jetzt anmelden
+                <span aria-hidden="true">&rarr;</span>
               </a>
             ) : null}
 
