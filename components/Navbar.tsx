@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { ACCESS_COOKIE } from "@/lib/auth-cookies";
 
 function TelegramIcon({ className }: { className?: string }) {
   return (
@@ -8,7 +10,10 @@ function TelegramIcon({ className }: { className?: string }) {
   );
 }
 
-export function Navbar() {
+export async function Navbar() {
+  const cookieStore = await cookies();
+  const isLoggedIn = !!cookieStore.get(ACCESS_COOKIE)?.value;
+
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-bg-primary/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -40,6 +45,21 @@ export function Navbar() {
           >
             <TelegramIcon className="h-5 w-5" />
           </a>
+          {isLoggedIn ? (
+            <Link
+              href="/konto"
+              className="rounded-full bg-accent-primary px-4 py-2 text-sm font-semibold text-white transition hover:brightness-95"
+            >
+              Mein Konto
+            </Link>
+          ) : (
+            <Link
+              href="/auth"
+              className="rounded-full border border-accent-primary px-4 py-2 text-sm font-semibold text-accent-primary transition hover:bg-bg-secondary"
+            >
+              Anmelden
+            </Link>
+          )}
         </nav>
       </div>
     </header>

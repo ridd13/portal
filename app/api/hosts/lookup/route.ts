@@ -8,19 +8,37 @@ function validateApiKey(request: NextRequest): boolean {
 }
 
 export async function GET(request: NextRequest) {
+  const slug = request.nextUrl.searchParams.get("slug");
+  const username = request.nextUrl.searchParams.get("telegram_username");
+
+  const supabase = getSupabaseAdminClient();
+
+  // Public lookup by slug (for claim flow — only returns name)
+  if (slug) {
+    const { data: host } = await supabase
+      .from("hosts")
+      .select("name, slug")
+      .eq("slug", slug)
+      .single();
+
+    if (!host) {
+      return NextResponse.json({ found: false });
+    }
+
+    return NextResponse.json({ found: true, name: host.name, slug: host.slug });
+  }
+
+  // Protected lookup by telegram_username (for import pipeline)
   if (!validateApiKey(request)) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const username = request.nextUrl.searchParams.get("telegram_username");
   if (!username) {
     return NextResponse.json(
-      { error: "Missing telegram_username" },
+      { error: "Missing telegram_username or slug parameter" },
       { status: 400 }
     );
   }
-
-  const supabase = getSupabaseAdminClient();
 
   const { data: host } = await supabase
     .from("hosts")

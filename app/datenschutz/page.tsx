@@ -26,7 +26,7 @@ export default function DatenschutzPage() {
             <br />
             23843 Rümpel
             <br />
-            E-Mail: portal@justclose.de
+            E-Mail: lennert.bewernick@gmail.com
           </p>
         </div>
 
@@ -219,12 +219,21 @@ export default function DatenschutzPage() {
           <p className="mt-2">
             Der Name des Absenders wird als Anbieter:in-Profil auf Das Portal
             angelegt. Anbieter:innen können jederzeit die Löschung ihres
-            Profils und ihrer Events per E-Mail an{" "}
+            Profils und ihrer Events per Telegram an{" "}
             <a
-              href="mailto:portal@justclose.de"
+              href="https://t.me/lbewernick"
+              target="_blank"
+              rel="noreferrer noopener"
               className="text-accent-primary underline"
             >
-              portal@justclose.de
+              @lbewernick
+            </a>{" "}
+            oder per E-Mail an{" "}
+            <a
+              href="mailto:lennert.bewernick@gmail.com"
+              className="text-accent-primary underline"
+            >
+              lennert.bewernick@gmail.com
             </a>{" "}
             beantragen.
           </p>
@@ -287,10 +296,10 @@ export default function DatenschutzPage() {
           <p className="mt-3">
             Zur Ausübung deiner Rechte wende dich an:{" "}
             <a
-              href="mailto:portal@justclose.de"
+              href="mailto:lennert.bewernick@gmail.com"
               className="text-accent-primary underline"
             >
-              portal@justclose.de
+              lennert.bewernick@gmail.com
             </a>
           </p>
           <p className="mt-2">

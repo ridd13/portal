@@ -171,12 +171,12 @@ export default async function HostPage({ params }: HostPageProps) {
               {typedHost.name} das Profil übernimmt, findest du hier mehr
               Informationen über Angebote, Hintergrund und Spezialisierungen.
             </p>
-            <a
-              href={`mailto:portal@justclose.de?subject=${encodeURIComponent(`Profil beanspruchen: ${typedHost.name}`)}&body=${encodeURIComponent(`Hallo, ich möchte mein Profil auf Das Portal beanspruchen.\n\nMein Name: ${typedHost.name}\nProfil-URL: ${profileUrl}`)}`}
+            <Link
+              href={`/auth?mode=claim&host=${typedHost.slug}`}
               className="mt-4 inline-block rounded-full border border-accent-secondary px-5 py-2 text-sm font-semibold text-accent-secondary transition hover:bg-bg-primary"
             >
               Du bist {typedHost.name}? Profil beanspruchen
-            </a>
+            </Link>
           </div>
         )}
 

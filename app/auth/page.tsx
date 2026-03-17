@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { AuthForm } from "@/components/AuthForm";
 
 export default function AuthPage() {
@@ -7,14 +8,16 @@ export default function AuthPage() {
         <p className="text-sm uppercase tracking-[0.16em] text-text-secondary">
           Zugang
         </p>
-        <h1 className="mt-2 text-4xl font-semibold text-text-primary">
-          Konto erstellen oder anmelden
+        <h1 className="mt-2 font-serif text-4xl font-semibold text-text-primary">
+          Anmelden bei Das Portal
         </h1>
         <p className="mt-3 text-text-secondary">
-          Für Buchungen, Favoriten und persönliche Event-Empfehlungen.
+          Verwalte dein Profil, deine Events und mehr.
         </p>
       </section>
-      <AuthForm />
+      <Suspense>
+        <AuthForm />
+      </Suspense>
     </div>
   );
 }
