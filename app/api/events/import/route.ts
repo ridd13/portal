@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     if (host) {
       const updates: Record<string, string> = {};
       if (hostName && hostName !== host.name) updates.name = hostName;
-      if (body.ticket_link) updates.website_url = body.ticket_link;
+      // website_url wird NICHT aus ticket_link abgeleitet — Anbieter:innen setzen das selbst nach Claim
       if (Object.keys(updates).length > 0) {
         await supabase.from("hosts").update(updates).eq("id", host.id);
         if (updates.name) host.name = updates.name;
@@ -162,7 +162,6 @@ export async function POST(request: NextRequest) {
         name: displayName,
         slug: hostSlug,
         telegram_username: cleanTelegramUsername,
-        website_url: body.ticket_link || null,
       })
       .select("id, name")
       .single();

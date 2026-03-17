@@ -9,56 +9,51 @@ V6 wurde vollständig umgesetzt. Cowork hat bereits folgende Änderungen gemacht
 - `components/MobileNav.tsx` — NEU: Client Component mit Hamburger-Menü für Mobile
 - `components/Footer.tsx` — Kontakt-Link entfernt
 - `components/LocationInput.tsx` — "Mein Standort"-Button hinzugefügt
+- `app/events/[slug]/page.tsx` — Host-Name und "Website besuchen" Link getrennt (block statt inline)
+- `app/api/events/import/route.ts` — website_url wird nicht mehr aus ticket_link abgeleitet
+- `app/hosts/[slug]/page.tsx` — Vergangene Events + Dedup (schon implementiert, NICHT anfassen)
+- `app/konto/page.tsx` — Dedup-Logik (schon implementiert, NICHT anfassen)
+- `app/favicon.ico` — umbenannt zu `.bak` (Vercel-Default entfernt)
 
 Diese Dateien sind bereits geändert. Bitte NICHT anfassen, außer es gibt einen Build-Fehler.
 
 ---
 
-## Task 1: Host-Profil Dedup
+## Task 1: Favicon bereinigen
 
-**Datei:** `app/hosts/[slug]/page.tsx`
+Die Datei `app/favicon.ico.bak` (ehemals Vercel-Default) muss gelöscht werden:
 
-Auf der Host-Profilseite können doppelte Events erscheinen (gleicher Titel + gleiches Datum, aber verschiedene DB-Einträge durch mehrfachen Telegram-Post).
-
-**Umsetzung:** Nach dem Supabase-Query (Zeile 72-80) Dedup-Logik einbauen:
-
-```typescript
-// Nach: const events = (eventsData || []) as Event[];
-// Dedup: gleicher Titel + gleiches Startdatum → nur neuestes behalten
-const seen = new Map<string, Event>();
-for (const event of events) {
-  const key = `${event.title}::${event.start_at}`;
-  const existing = seen.get(key);
-  if (!existing || new Date(event.created_at) > new Date(existing.created_at)) {
-    seen.set(key, event);
-  }
-}
-const dedupedEvents = Array.from(seen.values());
+```bash
+rm app/favicon.ico.bak
 ```
 
-Dann `dedupedEvents` statt `events` im JSX nutzen (Zeilen 195, 208, 214, 216).
+Sicherstellen, dass in `app/layout.tsx` die Metadata korrekt auf das Portal-Logo zeigt:
+```typescript
+icons: {
+  icon: "/favicon.png",
+  apple: "/favicon.png",
+},
+```
+
+Die `/public/favicon.png` enthält bereits das Portal-Logo. Prüfe ob es auch als `/public/logo.png` existiert (sollte es) und ob in layout.tsx ein `openGraph.images` gesetzt ist. Falls nicht:
+
+```typescript
+openGraph: {
+  images: [{ url: "/logo.png", width: 512, height: 512, alt: "Das Portal Logo" }],
+}
+```
+
+Das sorgt dafür, dass Telegram und Social-Media-Shares das Portal-Logo als Vorschaubild ziehen (für Seiten ohne eigenes og:image).
 
 ---
 
-## Task 2: Vergangene Events auf Host-Profil zeigen
+## ~~Task 2 + 3: BEREITS ERLEDIGT~~
 
-**Datei:** `app/hosts/[slug]/page.tsx`
-
-Aktuell werden auf der Host-Profilseite nur zukünftige Events angezeigt (`.gte("start_at", ...)`). Anbieter:innen sollen aber auch ihre vergangenen Events zeigen können — das baut Vertrauen auf.
-
-**Umsetzung:**
-
-1. **Zwei Queries:** Einen für kommende Events (wie bisher, `.gte("start_at", now)`), einen für vergangene (`.lt("start_at", now)`, `.order("start_at", { ascending: false })`, `limit(6)`).
-
-2. **Zwei Sektionen im JSX:**
-   - "Kommende Events von {name}" — wie bisher
-   - "Vergangene Events" — nur anzeigen wenn es welche gibt, etwas dezenter gestaltet (z.B. `text-text-muted` für die Section-Headline, eventuell leicht reduzierte Opacity auf den Cards)
-
-3. **Beide Queries dedupen** (wie in Task 1 beschrieben).
+Host-Profil Dedup + Vergangene Events + Konto-Seite Dedup — wurden bereits von Cowork implementiert. NICHT anfassen.
 
 ---
 
-## Task 3: Vergangene Events über Datumsfilter auf Events-Seite findbar machen
+## Task 2: Vergangene Events über Datumsfilter auf Events-Seite findbar machen
 
 **Datei:** `app/events/page.tsx`
 
@@ -72,15 +67,7 @@ Aktuell filtert die Events-Seite vergangene Events komplett raus. Wenn ein User 
 
 ---
 
-## Task 4: Konto-Seite Dedup
-
-**Datei:** `app/konto/page.tsx`
-
-Gleiche Dedup-Logik wie Task 1 für die Events auf der Konto-Seite (Zeile 36-47). Nach dem Query dedupen.
-
----
-
-## Task 5: Build verifizieren
+## Task 3: Build verifizieren
 
 `npm run build` ausführen. Sicherstellen:
 - Keine TypeScript-Fehler

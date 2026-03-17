@@ -271,7 +271,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 {hostPreview?.slug ? (
                   <Link
                     href={`/hosts/${hostPreview.slug}`}
-                    className="font-medium text-accent-secondary hover:underline"
+                    className="block font-medium text-accent-secondary hover:underline"
                   >
                     {hostPreview.name}
                   </Link>
@@ -286,7 +286,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                     href={host.website_url}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className="mt-3 inline-block text-sm font-semibold text-accent-secondary hover:underline"
+                    className="mt-2 block text-sm font-semibold text-accent-secondary hover:underline"
                   >
                     Website besuchen
                   </a>
