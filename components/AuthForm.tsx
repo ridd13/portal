@@ -23,7 +23,8 @@ export function AuthForm() {
   }, [modeParam, hostSlug]);
 
   const [mode, setMode] = useState<Mode>(derivedMode);
-  const [email, setEmail] = useState("");
+  const emailParam = searchParams.get("email");
+  const [email, setEmail] = useState(emailParam || "");
   const [password, setPassword] = useState("");
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);

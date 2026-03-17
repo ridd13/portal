@@ -1,42 +1,19 @@
 import type { Metadata } from "next";
-import { WaitlistForm } from "@/components/WaitlistForm";
+import { ProviderSignupForm } from "@/components/ProviderSignupForm";
 
 export const metadata: Metadata = {
-  title: "Für Facilitators | Das Portal",
+  title: "Für Anbieter:innen | Das Portal",
   description:
-    "Werde sichtbar als Coach, Heiler:in oder Facilitator. Liste deine Events auf Das Portal und erreiche die Menschen, die dich suchen.",
+    "Werde sichtbar als Coach, Heiler:in oder Facilitator. Registriere dich auf Das Portal und erreiche die Menschen, die dich suchen.",
 };
 
-interface FacilitatorsPageProps {
-  searchParams: Promise<{ confirmed?: string }>;
-}
-
-export default async function FacilitatorsPage({ searchParams }: FacilitatorsPageProps) {
-  const params = await searchParams;
-
+export default function FacilitatorsPage() {
   return (
     <div className="mx-auto max-w-4xl space-y-16 pb-8">
-      {/* Bestätigungs-Banner */}
-      {params.confirmed === "success" && (
-        <div className="rounded-2xl border border-success-border bg-success-bg p-4 text-center text-success-text">
-          Deine E-Mail ist bestätigt — du bist offiziell auf der Warteliste!
-        </div>
-      )}
-      {params.confirmed === "already" && (
-        <div className="rounded-2xl border border-border bg-bg-card p-4 text-center text-text-secondary">
-          Deine E-Mail wurde bereits bestätigt.
-        </div>
-      )}
-      {params.confirmed === "invalid" && (
-        <div className="rounded-2xl border border-error-border bg-error-bg p-4 text-center text-error-text">
-          Ungültiger Bestätigungslink. Bitte trage dich erneut ein.
-        </div>
-      )}
-
       {/* Hero */}
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-12 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-16">
         <p className="mb-3 text-sm font-medium uppercase tracking-[0.18em] text-accent-sage">
-          Für Facilitators & Anbieter
+          Für Anbieter:innen
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
           Deine Arbeit verdient
@@ -110,10 +87,11 @@ export default async function FacilitatorsPage({ searchParams }: FacilitatorsPag
           </div>
           <div className="rounded-2xl border border-border bg-bg-card p-6">
             <h3 className="mb-2 text-lg font-normal text-text-primary">
-              🗓️ Deine Events auf einen Blick
+              🗓️ Automatischer Event-Import
             </h3>
             <p className="text-text-secondary">
-              Zeige deine Workshops, Retreats und Zeremonien auf der regionalen Event-Übersicht.
+              Deine Events werden automatisch aus den Community-Gruppen importiert und auf deinem
+              Profil angezeigt.
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-bg-card p-6">
@@ -121,17 +99,17 @@ export default async function FacilitatorsPage({ searchParams }: FacilitatorsPag
               🌱 Wachse mit der Community
             </h3>
             <p className="text-text-secondary">
-              Vernetze dich mit anderen Anbietern in deiner Region. Empfehlungen und echtes
+              Vernetze dich mit anderen Anbieter:innen in deiner Region. Empfehlungen und echtes
               Miteinander statt Einzelkampf.
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-bg-card p-6">
             <h3 className="mb-2 text-lg font-normal text-text-primary">
-              📊 Verstehe deine Reichweite
+              ✏️ Ergänze dein Profil
             </h3>
             <p className="text-text-secondary">
-              Sieh, wer dein Profil besucht und welche Events Interesse wecken. Daten statt
-              Bauchgefühl.
+              Beschreibe deine Arbeit, verlinke deine Website und zeig, was dich ausmacht —
+              alles über dein persönliches Dashboard.
             </p>
           </div>
         </div>
@@ -179,18 +157,18 @@ export default async function FacilitatorsPage({ searchParams }: FacilitatorsPag
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-sage text-xl font-bold text-white">
               1
             </div>
-            <h3 className="mb-2 text-lg font-normal text-text-primary">Trag dich ein</h3>
+            <h3 className="mb-2 text-lg font-normal text-text-primary">Registriere dich</h3>
             <p className="text-text-secondary">
-              Komm auf die Warteliste. Wir starten mit einem kleinen Kreis in SH & Hamburg.
+              Gib deine E-Mail ein und bestätige sie per Magic Link. In wenigen Sekunden bist du dabei.
             </p>
           </div>
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-primary text-xl font-bold text-white">
               2
             </div>
-            <h3 className="mb-2 text-lg font-normal text-text-primary">Erstelle dein Profil</h3>
+            <h3 className="mb-2 text-lg font-normal text-text-primary">Beanspruche dein Profil</h3>
             <p className="text-text-secondary">
-              Beschreibe deine Arbeit, füge deine Events hinzu und zeig, was dich ausmacht.
+              Wenn deine Events bereits importiert wurden, kannst du dein Profil beanspruchen und ergänzen.
             </p>
           </div>
           <div className="text-center">
@@ -206,25 +184,22 @@ export default async function FacilitatorsPage({ searchParams }: FacilitatorsPag
         </div>
       </section>
 
-      {/* Waitlist CTA */}
+      {/* Registration CTA */}
       <section
-        id="warteliste"
+        id="registrierung"
         className="scroll-mt-24 rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-10 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-14"
       >
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-normal text-text-primary sm:text-4xl">
-            Sei von Anfang an dabei
+            Jetzt registrieren
           </h2>
           <p className="mt-3 text-text-secondary">
-            Sichere dir jetzt deinen Platz und gestalte Das Portal von Beginn an mit.
+            Registriere dich und werde Teil der Community. Dein Profil wartet auf dich.
           </p>
         </div>
         <div className="mx-auto mt-8 max-w-xl">
-          <WaitlistForm />
+          <ProviderSignupForm />
         </div>
-        <p className="mt-4 text-center text-xs text-text-muted">
-          Kein Spam. Nur Updates zum Launch. Du kannst dich jederzeit abmelden.
-        </p>
       </section>
     </div>
   );
