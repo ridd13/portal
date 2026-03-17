@@ -8,10 +8,19 @@ export default function KontaktPage() {
 
       <section className="mt-6 space-y-3 text-sm text-text-secondary">
         <p>
-          E-Mail: <a href="mailto:kontakt@deine-domain.de">kontakt@deine-domain.de</a>
+          E-Mail:{" "}
+          <a href="mailto:lennert.bewernick@gmail.com" className="text-accent-primary hover:underline">
+            lennert.bewernick@gmail.com
+          </a>
         </p>
-        <p>Telefon: +49 40 123456</p>
-        <p>Adresse: Musterstrasse 1, 20354 Hamburg</p>
+        <p>Telefon: 0176 62348657</p>
+        <p>
+          Lennert Bewernick
+          <br />
+          Lindenallee 10
+          <br />
+          23843 Rümpel
+        </p>
       </section>
     </article>
   );
