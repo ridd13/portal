@@ -168,9 +168,52 @@ export function LocationInput({ onLocationChange }: LocationInputProps) {
           >
             {status === "geocoding" ? "Suche…" : "Finden"}
           </button>
-          {geoActive && (
-            <span className="text-xs text-text-muted">Standort wird ermittelt…</span>
-          )}
+          {/* Mein Standort Button */}
+          <button
+            onClick={() => {
+              if (!navigator.geolocation) return;
+              setGeoActive(true);
+              navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                  const loc: UserLocation = {
+                    lat: pos.coords.latitude,
+                    lng: pos.coords.longitude,
+                    label: "Mein Standort",
+                  };
+                  setCurrentLocation(loc);
+                  saveUserLocation(loc);
+                  onLocationChange(loc);
+                  setGeoActive(false);
+                },
+                () => {
+                  setGeoActive(false);
+                },
+                { timeout: 8000, maximumAge: 300000 }
+              );
+            }}
+            disabled={geoActive}
+            className="flex items-center gap-1 rounded-xl border border-border bg-bg-card px-3 py-2 text-sm text-text-secondary transition hover:border-accent-sage hover:text-text-primary disabled:opacity-50"
+            title="Meinen Standort verwenden"
+            aria-label="Meinen Standort verwenden"
+          >
+            <svg
+              className="h-4 w-4"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <polygon points="3 11 22 2 13 21 11 13 3 11" />
+            </svg>
+            {geoActive ? (
+              <span className="text-xs">Wird ermittelt…</span>
+            ) : (
+              <span className="hidden sm:inline">Mein Standort</span>
+            )}
+          </button>
           {status === "error" && (
             <span className="text-xs text-error-text">Ort nicht gefunden</span>
           )}

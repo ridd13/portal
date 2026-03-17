@@ -10,9 +10,6 @@ export function Footer() {
         <Link href="/datenschutz" className="transition hover:text-text-primary">
           Datenschutz
         </Link>
-        <Link href="/kontakt" className="transition hover:text-text-primary">
-          Kontakt
-        </Link>
         <a
           href="https://t.me/dasgrosseportal"
           target="_blank"

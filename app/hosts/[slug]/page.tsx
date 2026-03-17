@@ -69,17 +69,45 @@ export default async function HostPage({ params }: HostPageProps) {
   const profileUrl = `${siteUrl}/hosts/${typedHost.slug}`;
   const initial = typedHost.name.charAt(0).toUpperCase();
 
-  const { data: eventsData, error: eventsError } = await supabase
+  const now = new Date().toISOString();
+
+  // Upcoming events
+  const { data: upcomingData, error: eventsError } = await supabase
     .from("events")
     .select("*, hosts(name, slug)")
     .eq("host_id", typedHost.id)
     .eq("is_public", true)
     .eq("status", "published")
-    .gte("start_at", new Date().toISOString())
+    .gte("start_at", now)
     .order("start_at", { ascending: true })
     .limit(8);
 
-  const events = (eventsData || []) as Event[];
+  // Past events
+  const { data: pastData } = await supabase
+    .from("events")
+    .select("*, hosts(name, slug)")
+    .eq("host_id", typedHost.id)
+    .eq("is_public", true)
+    .eq("status", "published")
+    .lt("start_at", now)
+    .order("start_at", { ascending: false })
+    .limit(6);
+
+  // Dedup helper: same title + start_at → keep newest
+  function dedupEvents(events: Event[]): Event[] {
+    const seen = new Map<string, Event>();
+    for (const event of events) {
+      const key = `${event.title}::${event.start_at}`;
+      const existing = seen.get(key);
+      if (!existing || (event.created_at && existing.created_at && event.created_at > existing.created_at)) {
+        seen.set(key, event);
+      }
+    }
+    return Array.from(seen.values());
+  }
+
+  const upcomingEvents = dedupEvents((upcomingData || []) as Event[]);
+  const pastEvents = dedupEvents((pastData || []) as Event[]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -186,15 +214,15 @@ export default async function HostPage({ params }: HostPageProps) {
         </p>
       </section>
 
-      {/* Events Section */}
+      {/* Upcoming Events */}
       <section>
         <div className="mb-4 flex items-end justify-between gap-4">
           <h2 className="text-2xl font-normal text-text-primary">
-            Events von {typedHost.name}
+            Kommende Events von {typedHost.name}
           </h2>
-          {events[0] ? (
+          {upcomingEvents[0] ? (
             <p className="text-sm text-text-secondary">
-              Nächstes Event: {formatEventDate(events[0].start_at)}
+              Nächstes Event: {formatEventDate(upcomingEvents[0].start_at)}
             </p>
           ) : null}
         </div>
@@ -205,20 +233,34 @@ export default async function HostPage({ params }: HostPageProps) {
           </div>
         ) : null}
 
-        {!eventsError && events.length === 0 ? (
+        {!eventsError && upcomingEvents.length === 0 ? (
           <div className="rounded-2xl border border-border bg-bg-card p-8 text-text-secondary">
             Aktuell sind keine zukünftigen öffentlichen Events hinterlegt.
           </div>
         ) : null}
 
-        {events.length > 0 ? (
+        {upcomingEvents.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {events.map((event) => (
+            {upcomingEvents.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
           </div>
         ) : null}
       </section>
+
+      {/* Past Events */}
+      {pastEvents.length > 0 ? (
+        <section>
+          <h2 className="mb-4 text-2xl font-normal text-text-muted">
+            Vergangene Events
+          </h2>
+          <div className="grid grid-cols-1 gap-6 opacity-75 md:grid-cols-2 xl:grid-cols-3">
+            {pastEvents.map((event) => (
+              <EventCard key={event.id} event={event} />
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

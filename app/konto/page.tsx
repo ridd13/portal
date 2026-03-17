@@ -43,7 +43,17 @@ export default async function KontoPage() {
       .eq("status", "published")
       .order("start_at", { ascending: true })
       .limit(12);
-    events = (eventsData || []) as Event[];
+    // Dedup: same title + start_at → keep newest by created_at
+    const rawEvents = (eventsData || []) as Event[];
+    const seen = new Map<string, Event>();
+    for (const event of rawEvents) {
+      const key = `${event.title}::${event.start_at}`;
+      const existing = seen.get(key);
+      if (!existing || (event.created_at && existing.created_at && event.created_at > existing.created_at)) {
+        seen.set(key, event);
+      }
+    }
+    events = Array.from(seen.values());
   }
 
   // Check for pending claims

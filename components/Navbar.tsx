@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { ACCESS_COOKIE } from "@/lib/auth-cookies";
+import { MobileNav } from "./MobileNav";
 
 function TelegramIcon({ className }: { className?: string }) {
   return (
@@ -23,7 +24,9 @@ export async function Navbar() {
         >
           Das Portal
         </Link>
-        <nav className="flex items-center gap-3 text-sm font-medium text-text-secondary">
+
+        {/* Desktop Nav */}
+        <nav className="hidden items-center gap-3 text-sm font-medium text-text-secondary sm:flex">
           <Link
             href="/events"
             className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
@@ -61,6 +64,9 @@ export async function Navbar() {
             </Link>
           )}
         </nav>
+
+        {/* Mobile Nav */}
+        <MobileNav isLoggedIn={isLoggedIn} />
       </div>
     </header>
   );
