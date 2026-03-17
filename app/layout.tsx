@@ -39,14 +39,14 @@ export const metadata: Metadata = {
     title: "Das Portal | Ganzheitliche Events",
     description:
       "Entdecke Tanz-, Meditations- und Coaching-Events in deiner Nähe.",
-    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Das Portal – Dein Tor zu echter Verbindung" }],
+    images: [{ url: "/logo.png", width: 500, height: 500, alt: "Das Portal – Dein Tor zu echter Verbindung" }],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Das Portal | Ganzheitliche Events",
     description:
       "Entdecke Tanz-, Meditations- und Coaching-Events in deiner Nähe.",
-    images: ["/og-image.png"],
+    images: ["/logo.png"],
   },
   alternates: {
     canonical: "/",
