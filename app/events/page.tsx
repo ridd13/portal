@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { EventFilters } from "@/components/EventFilters";
 import { EventsClientWrapper } from "@/components/EventsClientWrapper";
 import { getCityFromAddress } from "@/lib/event-utils";
@@ -213,6 +214,27 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           Events konnten gerade nicht geladen werden. Bitte Seite neu laden.
         </div>
       ) : null}
+
+      <section className="flex flex-wrap gap-3">
+        <Link
+          href="/hamburg/ganzheitliche-events"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Ganzheitliche Events in Hamburg
+        </Link>
+        <Link
+          href="/hamburg/spirituelle-events"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Spirituelle Events in Hamburg
+        </Link>
+        <Link
+          href="/schleswig-holstein/ganzheitliche-events"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Ganzheitliche Events in Schleswig-Holstein
+        </Link>
+      </section>
 
       <EventsClientWrapper
         events={events}

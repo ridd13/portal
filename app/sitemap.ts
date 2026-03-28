@@ -11,6 +11,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "norderstedt", "elmshorn", "pinneberg", "schleswig", "husum",
   ];
 
+  // City landing pages (erweiterbar — neue Einträge hier hinzufügen)
+  const cityLandingPages = [
+    { city: "hamburg", category: "ganzheitliche-events" },
+    { city: "hamburg", category: "spirituelle-events" },
+    { city: "schleswig-holstein", category: "ganzheitliche-events" },
+  ];
+
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, changeFrequency: "daily", priority: 1.0 },
     { url: `${siteUrl}/events`, changeFrequency: "daily", priority: 0.9 },
@@ -18,6 +25,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/events/${slug}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    })),
+    ...cityLandingPages.map(({ city, category }) => ({
+      url: `${siteUrl}/${city}/${category}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.85,
     })),
     { url: `${siteUrl}/fuer-facilitators`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${siteUrl}/impressum`, changeFrequency: "yearly", priority: 0.2 },
@@ -29,9 +41,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const supabase = getSupabaseServerClient();
     const { data: events } = await supabase
       .from("events")
-      .select("slug, created_at")
+      .select("slug, created_at, start_at")
       .eq("is_public", true)
       .eq("status", "published")
+      .gte("start_at", new Date().toISOString())
       .limit(500);
     const { data: hosts } = await supabase
       .from("hosts")
