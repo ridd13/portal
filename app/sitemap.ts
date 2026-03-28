@@ -11,6 +11,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "norderstedt", "elmshorn", "pinneberg", "schleswig", "husum",
   ];
 
+  // Region overview pages
+  const regionPages = ["hamburg", "schleswig-holstein"];
+
   // City landing pages (erweiterbar — neue Einträge hier hinzufügen)
   const cityLandingPages = [
     { city: "hamburg", category: "ganzheitliche-events" },
@@ -25,6 +28,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/events/${slug}`,
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    })),
+    ...regionPages.map((region) => ({
+      url: `${siteUrl}/${region}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
     })),
     ...cityLandingPages.map(({ city, category }) => ({
       url: `${siteUrl}/${city}/${category}`,
