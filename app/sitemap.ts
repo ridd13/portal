@@ -12,7 +12,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   // Region overview pages
-  const regionPages = ["hamburg", "schleswig-holstein"];
+  const regionPages = ["hamburg", "schleswig-holstein", "kiel", "bremen", "rostock", "mecklenburg-vorpommern", "niedersachsen"];
 
   // City landing pages (erweiterbar — neue Einträge hier hinzufügen)
   const cityLandingPages = [

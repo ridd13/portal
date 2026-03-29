@@ -27,13 +27,12 @@ export default async function LandingPage() {
 
   const upcomingEvents = (data || []) as Event[];
 
-  // Statistiken fuer Social Proof
+  // Statistiken fuer Social Proof (Gesamtanzahl, nicht nur Upcoming)
   const { count: eventCount } = await supabase
     .from("events")
     .select("*", { count: "exact", head: true })
     .eq("is_public", true)
-    .eq("status", "published")
-    .gte("start_at", new Date().toISOString());
+    .eq("status", "published");
 
   const { count: hostCount } = await supabase
     .from("hosts")
@@ -76,7 +75,7 @@ export default async function LandingPage() {
             {eventCount ? (
               <div>
                 <p className="text-3xl font-bold text-accent-primary">{eventCount}+</p>
-                <p className="text-sm text-text-muted">Kommende Events</p>
+                <p className="text-sm text-text-muted">Events</p>
               </div>
             ) : null}
             {hostCount ? (
