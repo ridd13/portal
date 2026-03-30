@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Impressum",
   description: "Impressum von Das Portal – Angaben gemäß § 5 TMG.",
+  robots: { index: false, follow: false },
 };
 
 export default function ImpressumPage() {

@@ -4,6 +4,7 @@ export const metadata: Metadata = {
   title: "Datenschutzerklärung",
   description:
     "Datenschutzerklärung von Das Portal – Informationen zur Verarbeitung personenbezogener Daten.",
+  robots: { index: false, follow: false },
 };
 
 export default function DatenschutzPage() {

@@ -5,34 +5,19 @@ import { getSiteUrl } from "@/lib/site-url";
 const siteUrl = getSiteUrl();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Known city slugs for SEO landing pages
-  const citySlugs = [
-    "hamburg", "kiel", "luebeck", "flensburg", "neumuenster",
-    "norderstedt", "elmshorn", "pinneberg", "schleswig", "husum",
-  ];
+  // Region overview pages — nur Regionen mit echtem Content
+  const regionPages = ["hamburg", "schleswig-holstein"];
 
-  // Region overview pages
-  const regionPages = ["hamburg", "schleswig-holstein", "kiel", "bremen", "rostock", "mecklenburg-vorpommern", "niedersachsen"];
-
-  // City landing pages (erweiterbar — neue Einträge hier hinzufügen)
+  // City landing pages — nur Seiten mit substantiellem Content
   const cityLandingPages = [
     { city: "hamburg", category: "ganzheitliche-events" },
     { city: "hamburg", category: "spirituelle-events" },
-    { city: "hamburg", category: "kakaozeremonie" },
-    { city: "hamburg", category: "yoga" },
-    { city: "hamburg", category: "meditation" },
-    { city: "hamburg", category: "breathwork" },
     { city: "schleswig-holstein", category: "ganzheitliche-events" },
   ];
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, changeFrequency: "daily", priority: 1.0 },
     { url: `${siteUrl}/events`, changeFrequency: "daily", priority: 0.9 },
-    ...citySlugs.map((slug) => ({
-      url: `${siteUrl}/events/${slug}`,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
-    })),
     ...regionPages.map((region) => ({
       url: `${siteUrl}/${region}`,
       changeFrequency: "weekly" as const,
@@ -44,8 +29,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.85,
     })),
     { url: `${siteUrl}/fuer-facilitators`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${siteUrl}/impressum`, changeFrequency: "yearly", priority: 0.2 },
-    { url: `${siteUrl}/datenschutz`, changeFrequency: "yearly", priority: 0.2 },
     { url: `${siteUrl}/kontakt`, changeFrequency: "monthly", priority: 0.3 },
   ];
 
