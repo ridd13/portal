@@ -229,6 +229,30 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
           Spirituelle Events in Hamburg
         </Link>
         <Link
+          href="/hamburg/kakaozeremonie"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Kakaozeremonie Hamburg
+        </Link>
+        <Link
+          href="/hamburg/yoga"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Yoga Hamburg
+        </Link>
+        <Link
+          href="/hamburg/meditation"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Meditation Hamburg
+        </Link>
+        <Link
+          href="/hamburg/breathwork"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Breathwork Hamburg
+        </Link>
+        <Link
           href="/schleswig-holstein/ganzheitliche-events"
           className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
         >

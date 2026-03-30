@@ -18,6 +18,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const cityLandingPages = [
     { city: "hamburg", category: "ganzheitliche-events" },
     { city: "hamburg", category: "spirituelle-events" },
+    { city: "hamburg", category: "kakaozeremonie" },
+    { city: "hamburg", category: "yoga" },
+    { city: "hamburg", category: "meditation" },
+    { city: "hamburg", category: "breathwork" },
     { city: "schleswig-holstein", category: "ganzheitliche-events" },
   ];
 
