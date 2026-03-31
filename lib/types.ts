@@ -62,6 +62,7 @@ export interface Event {
   ticket_link: string | null;
   created_at: string | null;
   hosts: HostPreview | HostPreview[] | null;
+  is_online: boolean | null;
   description_sections: DescriptionSections | null;
   source_type: "manual" | "telegram" | "form" | null;
   source_message_id: string | null;

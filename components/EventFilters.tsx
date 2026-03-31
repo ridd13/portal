@@ -14,6 +14,7 @@ interface EventFiltersProps {
   selectedFromDate?: string;
   selectedToDate?: string;
   selectedFormat?: string;
+  showOnline?: boolean;
 }
 
 /** Return today as YYYY-MM-DD in local time. */
@@ -40,6 +41,7 @@ export function EventFilters({
   selectedFromDate = "",
   selectedToDate = "",
   selectedFormat = "",
+  showOnline = false,
 }: EventFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -50,6 +52,7 @@ export function EventFilters({
   const [fromDate, setFromDate] = useState(selectedFromDate);
   const [toDate, setToDate] = useState(selectedToDate);
   const [format, setFormat] = useState(selectedFormat);
+  const [onlineToggle, setOnlineToggle] = useState(showOnline);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -60,6 +63,7 @@ export function EventFilters({
     from?: string;
     to?: string;
     fmt?: string;
+    online?: boolean;
   }) => {
     const next = new URLSearchParams(searchParams.toString());
 
@@ -85,12 +89,22 @@ export function EventFilters({
     if (fmt) next.set("format", fmt);
     else next.delete("format");
 
+    const ol = overrides?.online ?? onlineToggle;
+    if (ol) next.set("online", "true");
+    else next.delete("online");
+
     // Remove legacy tag param and PLZ
     next.delete("tag");
     next.delete("plz");
 
     const params = next.toString();
     router.push(params ? `/events?${params}` : "/events");
+  };
+
+  const handleOnlineToggle = () => {
+    const next = !onlineToggle;
+    setOnlineToggle(next);
+    applyFilters({ online: next });
   };
 
   const setQuickDate = (from: string, to: string) => {
@@ -169,6 +183,26 @@ export function EventFilters({
             {opt.label}
           </button>
         ))}
+      </div>
+
+      {/* Online Toggle */}
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          role="switch"
+          aria-checked={onlineToggle}
+          onClick={handleOnlineToggle}
+          className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${
+            onlineToggle ? "bg-accent-sage" : "bg-border"
+          }`}
+        >
+          <span
+            className={`pointer-events-none inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+              onlineToggle ? "translate-x-4" : "translate-x-0"
+            }`}
+          />
+        </button>
+        <span className="text-sm text-text-secondary">Auch Online-Events zeigen</span>
       </div>
 
       {/* Row 1: Category, City, Search, Submit */}

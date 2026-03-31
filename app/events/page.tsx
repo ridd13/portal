@@ -16,6 +16,7 @@ interface EventsPageProps {
     from?: string;
     to?: string;
     format?: string;
+    online?: string;
   }>;
 }
 
@@ -66,6 +67,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   const fromDate = params.from?.trim() || "";
   const toDate = params.to?.trim() || "";
   const selectedFormat = (params.format?.trim() || "") as EventFormat | "";
+  const showOnline = params.online === "true";
 
   const startFrom = fromDate
     ? new Date(fromDate + "T00:00:00").toISOString()
@@ -81,6 +83,11 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
   if (toDate) {
     query = query.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
+  }
+
+  // Default: hide online events unless toggle is on
+  if (!showOnline) {
+    query = query.eq("is_online", false);
   }
 
   // Format filter
@@ -144,6 +151,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     if (toDate) {
       tagQuery = tagQuery.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
     }
+    if (!showOnline) tagQuery = tagQuery.eq("is_online", false);
     if (selectedFormat) tagQuery = tagQuery.eq("event_format", selectedFormat);
     if (selectedCity) tagQuery = tagQuery.ilike("address", `%${selectedCity}%`);
 
@@ -244,6 +252,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         selectedFromDate={fromDate}
         selectedToDate={toDate}
         selectedFormat={selectedFormat}
+        showOnline={showOnline}
       />
 
       {error ? (

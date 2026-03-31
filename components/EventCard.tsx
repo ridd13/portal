@@ -89,9 +89,15 @@ export function EventCard({ event }: EventCardProps) {
           )}
         </p>
 
-        <p className="text-sm text-text-muted">
-          {[event.location_name, city].filter(Boolean).join(", ") || "Ort folgt"}
-        </p>
+        {event.is_online ? (
+          <p className="text-sm font-medium text-accent-sage">
+            💻 Online
+          </p>
+        ) : (
+          <p className="text-sm text-text-muted">
+            {[event.location_name, city].filter(Boolean).join(", ") || "Ort folgt"}
+          </p>
+        )}
 
         {event.description ? (
           <p className="line-clamp-3 text-sm leading-relaxed text-text-secondary">

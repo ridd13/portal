@@ -200,30 +200,44 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
 
               {/* Ort */}
               <div className="flex items-start gap-3">
-                <span className="mt-0.5 text-xl" aria-hidden="true">📍</span>
+                <span className="mt-0.5 text-xl" aria-hidden="true">{event.is_online ? "💻" : "📍"}</span>
                 <div>
                   <p className="text-sm font-medium text-text-muted">Wo</p>
-                  <p className="font-medium text-text-primary">
-                    {event.location_name || "Ort wird noch bekanntgegeben"}
-                  </p>
-                  {event.address && event.location_name ? (
-                    <p className="text-sm text-text-secondary">{event.address}</p>
-                  ) : null}
-                  {(event.address || event.location_name) ? (
-                    <a
-                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                        [event.location_name, event.address].filter(Boolean).join(", ")
-                      )}`}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                      className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-accent-secondary hover:underline"
-                    >
-                      In Google Maps öffnen
-                      <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
-                        <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Zm7.5-3a.75.75 0 0 1 .75-.75H17a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0V4.06l-5.97 5.97a.75.75 0 1 1-1.06-1.06L15.19 3h-3.44a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
-                      </svg>
-                    </a>
-                  ) : null}
+                  {event.is_online ? (
+                    <>
+                      <p className="font-medium text-accent-sage">Online-Event</p>
+                      {event.location_name && event.location_name.toLowerCase() !== "online" ? (
+                        <p className="text-sm text-text-secondary">{event.location_name}</p>
+                      ) : null}
+                      <p className="mt-1 text-sm text-text-secondary">
+                        Du erhältst alle Details nach der Anmeldung.
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="font-medium text-text-primary">
+                        {event.location_name || "Ort wird noch bekanntgegeben"}
+                      </p>
+                      {event.address && event.location_name ? (
+                        <p className="text-sm text-text-secondary">{event.address}</p>
+                      ) : null}
+                      {(event.address || event.location_name) ? (
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                            [event.location_name, event.address].filter(Boolean).join(", ")
+                          )}`}
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-accent-secondary hover:underline"
+                        >
+                          In Google Maps öffnen
+                          <svg viewBox="0 0 20 20" fill="currentColor" className="h-3.5 w-3.5" aria-hidden="true">
+                            <path fillRule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Zm7.5-3a.75.75 0 0 1 .75-.75H17a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0V4.06l-5.97 5.97a.75.75 0 1 1-1.06-1.06L15.19 3h-3.44a.75.75 0 0 1-.75-.75Z" clipRule="evenodd" />
+                          </svg>
+                        </a>
+                      ) : null}
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -451,8 +465,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           </div>
         </div>
 
-        {/* Map (single event) */}
-        {event.geo_lat && event.geo_lng ? (
+        {/* Map (single event) — nicht für Online-Events */}
+        {event.geo_lat && event.geo_lng && !event.is_online ? (
           <section className="space-y-3">
             <h2 className="text-lg font-normal text-text-primary">Standort</h2>
             <SingleEventMap event={event} />
