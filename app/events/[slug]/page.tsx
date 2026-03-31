@@ -10,7 +10,8 @@ import { generateICS } from "@/lib/ics";
 import { CalendarDownloadButton } from "@/components/CalendarDownloadButton";
 import { SingleEventMap } from "@/components/SingleEventMap";
 import { SocialLinks } from "@/components/SocialLinks";
-import type { Event, Host } from "@/lib/types";
+import { EventCard } from "@/components/EventCard";
+import type { Event, Host, HostPreview } from "@/lib/types";
 
 interface EventDetailProps {
   params: Promise<{ slug: string }>;
@@ -29,6 +30,52 @@ async function getEvent(slug: string) {
     .maybeSingle();
   if (error || !data) return null;
   return data as EventWithHost;
+}
+
+async function getRelatedEvents(event: EventWithHost, limit = 4) {
+  const supabase = getSupabaseServerClient();
+  const now = new Date().toISOString();
+  const city = getCityFromAddress(event.address);
+
+  // Strategy: same city + same tags, exclude current event, only future
+  let query = supabase
+    .from("events")
+    .select("id, title, slug, start_at, address, location_name, cover_image_url, tags, event_format, price_model, price_amount, host_id, hosts(name, slug)")
+    .eq("is_public", true)
+    .eq("status", "published")
+    .neq("id", event.id)
+    .gte("start_at", now)
+    .order("start_at", { ascending: true })
+    .limit(limit);
+
+  // If same city, prefer those
+  if (city) {
+    query = query.ilike("address", `%${city}%`);
+  }
+
+  const { data: cityEvents } = await query;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const cityResults = (cityEvents || []) as any[];
+
+  // If we got enough, return them
+  if (cityResults.length >= limit) {
+    return cityResults as (Event & { hosts: HostPreview | HostPreview[] | null })[];
+  }
+
+  // Otherwise, fill up with events from anywhere
+  const existingIds = [event.id, ...cityResults.map((e) => e.id)];
+  const { data: moreEvents } = await supabase
+    .from("events")
+    .select("id, title, slug, start_at, address, location_name, cover_image_url, tags, event_format, price_model, price_amount, host_id, hosts(name, slug)")
+    .eq("is_public", true)
+    .eq("status", "published")
+    .not("id", "in", `(${existingIds.join(",")})`)
+    .gte("start_at", now)
+    .order("start_at", { ascending: true })
+    .limit(limit - cityResults.length);
+
+  return [...cityResults, ...(moreEvents || [])] as (Event & { hosts: HostPreview | HostPreview[] | null })[];
 }
 
 export async function generateMetadata({ params }: EventDetailProps): Promise<Metadata> {
@@ -68,6 +115,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
   const { slug } = await params;
   const event = await getEvent(slug);
   if (!event) notFound();
+
+  const relatedEvents = await getRelatedEvents(event);
 
   const hostRaw = event.hosts;
   const host = Array.isArray(hostRaw) ? hostRaw[0] : hostRaw;
@@ -208,6 +257,17 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                   </div>
                 </div>
               ) : null}
+
+              {/* Beginner-friendly Badge */}
+              {event.description_sections?.is_beginner_friendly ? (
+                <div className="flex items-start gap-3">
+                  <span className="mt-0.5 text-xl" aria-hidden="true">🌱</span>
+                  <div>
+                    <p className="text-sm font-medium text-text-muted">Level</p>
+                    <p className="font-medium text-accent-sage">Für Einsteiger:innen geeignet</p>
+                  </div>
+                </div>
+              ) : null}
             </div>
 
             {/* Tags (klickbar) */}
@@ -238,9 +298,86 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               </a>
             ) : null}
 
-            {/* Description */}
+            {/* Structured Description Sections */}
+            {event.description_sections ? (
+              <div className="space-y-6">
+                {event.description_sections.what_to_expect ? (
+                  <section>
+                    <h2 className="mb-2 text-xl font-normal text-text-primary">Was erwartet dich</h2>
+                    <p className="text-sm leading-relaxed text-text-secondary">
+                      {event.description_sections.what_to_expect}
+                    </p>
+                  </section>
+                ) : null}
+
+                {event.description_sections.what_youll_experience?.length ? (
+                  <section>
+                    <h2 className="mb-2 text-xl font-normal text-text-primary">Was du erleben wirst</h2>
+                    <ul className="space-y-1.5 text-sm text-text-secondary">
+                      {event.description_sections.what_youll_experience.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="mt-1 text-accent-sage">&#10022;</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+
+                {event.description_sections.who_is_this_for ? (
+                  <section className="rounded-xl border border-accent-sage/20 bg-accent-sage/5 p-4">
+                    <h2 className="mb-2 text-xl font-normal text-text-primary">Für wen ist das</h2>
+                    <p className="text-sm leading-relaxed text-text-secondary">
+                      {event.description_sections.who_is_this_for}
+                    </p>
+                    {event.description_sections.is_beginner_friendly ? (
+                      <span className="mt-2 inline-block rounded-full bg-accent-sage/15 px-3 py-1 text-xs font-medium text-accent-sage">
+                        Für Einsteiger:innen geeignet
+                      </span>
+                    ) : null}
+                  </section>
+                ) : null}
+
+                {event.description_sections.what_youll_take_away?.length ? (
+                  <section>
+                    <h2 className="mb-2 text-xl font-normal text-text-primary">Was du mitnimmst</h2>
+                    <ul className="space-y-1.5 text-sm text-text-secondary">
+                      {event.description_sections.what_youll_take_away.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <span className="mt-1 text-accent-sage">&#10022;</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                ) : null}
+
+                {event.description_sections.schedule ? (
+                  <section>
+                    <h2 className="mb-2 text-xl font-normal text-text-primary">Ablauf</h2>
+                    <p className="whitespace-pre-line text-sm leading-relaxed text-text-secondary">
+                      {event.description_sections.schedule}
+                    </p>
+                  </section>
+                ) : null}
+
+                {event.description_sections.location_details ? (
+                  <section>
+                    <h2 className="mb-2 text-xl font-normal text-text-primary">Über den Ort</h2>
+                    <p className="text-sm leading-relaxed text-text-secondary">
+                      {event.description_sections.location_details}
+                    </p>
+                  </section>
+                ) : null}
+              </div>
+            ) : null}
+
+            {/* Description (fallback or additional details) */}
             {event.description ? (
               <div className="space-y-3 text-sm leading-relaxed text-text-secondary">
+                {event.description_sections ? (
+                  <h2 className="text-xl font-normal text-text-primary">Weitere Details</h2>
+                ) : null}
                 <ReactMarkdown
                   components={{
                     h2: ({ children }) => (
@@ -342,6 +479,20 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
           <p className="rounded-xl border border-border bg-bg-secondary px-4 py-3 text-xs text-text-muted">
             Dieses Event wurde automatisch aus einer Telegram-Gruppe importiert. Angaben ohne Gewähr.
           </p>
+        ) : null}
+
+        {/* Related Events */}
+        {relatedEvents.length > 0 ? (
+          <section className="space-y-5">
+            <h2 className="text-2xl font-semibold text-text-primary">
+              Das könnte dich auch interessieren
+            </h2>
+            <div className="grid gap-6 sm:grid-cols-2">
+              {relatedEvents.map((relEvent) => (
+                <EventCard key={relEvent.id} event={relEvent} />
+              ))}
+            </div>
+          </section>
         ) : null}
 
         <Link

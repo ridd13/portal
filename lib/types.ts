@@ -30,6 +30,16 @@ export interface Category {
   sort_order: number;
 }
 
+export interface DescriptionSections {
+  what_to_expect?: string;
+  what_youll_experience?: string[];
+  who_is_this_for?: string;
+  what_youll_take_away?: string[];
+  schedule?: string;
+  location_details?: string;
+  is_beginner_friendly?: boolean;
+}
+
 export interface Event {
   id: string;
   title: string;
@@ -52,6 +62,7 @@ export interface Event {
   ticket_link: string | null;
   created_at: string | null;
   hosts: HostPreview | HostPreview[] | null;
+  description_sections: DescriptionSections | null;
   source_type: "manual" | "telegram" | "form" | null;
   source_message_id: string | null;
   event_categories?: { categories: Category }[];
