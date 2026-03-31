@@ -34,6 +34,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const supabase = getSupabaseServerClient();
+
+    // Category landing pages
+    const { data: categories } = await supabase
+      .from("categories")
+      .select("slug")
+      .order("sort_order", { ascending: true });
+
+    const categoryRoutes: MetadataRoute.Sitemap = (categories || []).map(
+      (cat: { slug: string }) => ({
+        url: `${siteUrl}/kategorie/${cat.slug}`,
+        changeFrequency: "weekly" as const,
+        priority: 0.85,
+      })
+    );
+
     const { data: events } = await supabase
       .from("events")
       .select("slug, created_at, start_at")
@@ -65,7 +80,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.6,
       }));
 
-    return [...staticRoutes, ...eventRoutes, ...hostRoutes];
+    return [...staticRoutes, ...categoryRoutes, ...eventRoutes, ...hostRoutes];
   } catch {
     return staticRoutes;
   }

@@ -2,15 +2,18 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { FormEvent, useState } from "react";
+import type { Category, EventFormat } from "@/lib/types";
+import { FORMAT_LABELS } from "@/lib/event-utils";
 
 interface EventFiltersProps {
-  tags: string[];
+  categories: Category[];
   cities: string[];
-  selectedTag?: string;
+  selectedCategory?: string;
   selectedCity?: string;
   searchQuery?: string;
   selectedFromDate?: string;
   selectedToDate?: string;
+  selectedFormat?: string;
 }
 
 /** Return today as YYYY-MM-DD in local time. */
@@ -18,23 +21,35 @@ function todayStr(): string {
   return new Date().toISOString().split("T")[0];
 }
 
+const FORMAT_OPTIONS: { value: string; label: string }[] = [
+  { value: "", label: "Alle Formate" },
+  { value: "event", label: "Events" },
+  { value: "workshop", label: "Workshops" },
+  { value: "retreat", label: "Retreats" },
+  { value: "kurs", label: "Kurse" },
+  { value: "kreis", label: "Kreise" },
+  { value: "festival", label: "Festivals" },
+];
+
 export function EventFilters({
-  tags,
+  categories,
   cities,
-  selectedTag = "",
+  selectedCategory = "",
   selectedCity = "",
   searchQuery = "",
   selectedFromDate = "",
   selectedToDate = "",
+  selectedFormat = "",
 }: EventFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [tag, setTag] = useState(selectedTag);
+  const [category, setCategory] = useState(selectedCategory);
   const [city, setCity] = useState(selectedCity);
   const [query, setQuery] = useState(searchQuery);
   const [fromDate, setFromDate] = useState(selectedFromDate);
   const [toDate, setToDate] = useState(selectedToDate);
+  const [format, setFormat] = useState(selectedFormat);
 
   const onSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,11 +59,12 @@ export function EventFilters({
   const applyFilters = (overrides?: {
     from?: string;
     to?: string;
+    fmt?: string;
   }) => {
     const next = new URLSearchParams(searchParams.toString());
 
-    if (tag) next.set("tag", tag);
-    else next.delete("tag");
+    if (category) next.set("kategorie", category);
+    else next.delete("kategorie");
 
     if (city.trim()) next.set("city", city.trim());
     else next.delete("city");
@@ -65,7 +81,12 @@ export function EventFilters({
     if (t) next.set("to", t);
     else next.delete("to");
 
-    // Remove PLZ param (comes from middleware rewrite, not user-controlled)
+    const fmt = overrides?.fmt ?? format;
+    if (fmt) next.set("format", fmt);
+    else next.delete("format");
+
+    // Remove legacy tag param and PLZ
+    next.delete("tag");
     next.delete("plz");
 
     const params = next.toString();
@@ -75,13 +96,17 @@ export function EventFilters({
   const setQuickDate = (from: string, to: string) => {
     setFromDate(from);
     setToDate(to);
-    // Apply immediately
     applyFilters({ from, to });
+  };
+
+  const handleFormatChange = (newFormat: string) => {
+    setFormat(newFormat);
+    applyFilters({ fmt: newFormat });
   };
 
   const getNextWeekend = () => {
     const today = new Date();
-    const dayOfWeek = today.getDay(); // 0 = Sunday
+    const dayOfWeek = today.getDay();
     const daysUntilSaturday = dayOfWeek === 6 ? 0 : (6 - dayOfWeek);
     const saturday = new Date(today);
     saturday.setDate(today.getDate() + daysUntilSaturday);
@@ -116,23 +141,52 @@ export function EventFilters({
     };
   };
 
+  // Group categories by group_name
+  const grouped = categories.reduce<Record<string, Category[]>>((acc, cat) => {
+    if (!acc[cat.group_name]) acc[cat.group_name] = [];
+    acc[cat.group_name].push(cat);
+    return acc;
+  }, {});
+
   return (
     <form
       onSubmit={onSubmit}
       className="mb-8 space-y-4 rounded-2xl border border-border bg-bg-secondary p-4 shadow-[0_6px_20px_rgba(44,36,24,0.06)]"
     >
-      {/* Row 1: Tag, City, Search, Submit */}
+      {/* Row 0: Format Toggle */}
+      <div className="flex flex-wrap gap-2">
+        {FORMAT_OPTIONS.map((opt) => (
+          <button
+            key={opt.value}
+            type="button"
+            onClick={() => handleFormatChange(opt.value)}
+            className={`rounded-full px-3.5 py-1.5 text-sm font-medium transition ${
+              format === opt.value
+                ? "bg-accent-primary text-white"
+                : "border border-border bg-bg-card text-text-secondary hover:border-accent-primary hover:text-accent-primary"
+            }`}
+          >
+            {opt.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Row 1: Category, City, Search, Submit */}
       <div className="grid gap-3 md:grid-cols-[1fr_1fr_1.5fr_auto]">
         <select
-          value={tag}
-          onChange={(event) => setTag(event.target.value)}
+          value={category}
+          onChange={(event) => setCategory(event.target.value)}
           className="rounded-xl border border-border bg-bg-card px-3 py-2 text-sm text-text-primary outline-none focus:border-accent-sage"
         >
           <option value="">Alle Kategorien</option>
-          {tags.map((availableTag) => (
-            <option key={availableTag} value={availableTag}>
-              {availableTag}
-            </option>
+          {Object.entries(grouped).map(([groupName, cats]) => (
+            <optgroup key={groupName} label={groupName}>
+              {cats.map((cat) => (
+                <option key={cat.slug} value={cat.slug}>
+                  {cat.name_de}
+                </option>
+              ))}
+            </optgroup>
           ))}
         </select>
 

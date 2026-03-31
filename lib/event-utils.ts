@@ -1,8 +1,28 @@
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
-import type { Event, HostPreview } from "@/lib/types";
+import type { Event, EventFormat, HostPreview } from "@/lib/types";
 
 export const PAGE_SIZE = 12;
+
+/** Human-readable labels for event formats */
+export const FORMAT_LABELS: Record<EventFormat, string> = {
+  event: "Event",
+  workshop: "Workshop",
+  retreat: "Retreat",
+  kurs: "Kurs",
+  festival: "Festival",
+  kreis: "Kreis",
+};
+
+/** Format badge color classes */
+export const FORMAT_COLORS: Record<EventFormat, string> = {
+  event: "bg-accent-sage/20 text-accent-sage",
+  workshop: "bg-accent-primary/15 text-accent-primary",
+  retreat: "bg-[#8b6d9b]/15 text-[#8b6d9b]",
+  kurs: "bg-[#5b8a72]/15 text-[#5b8a72]",
+  festival: "bg-[#c4793a]/15 text-[#c4793a]",
+  kreis: "bg-accent-secondary/15 text-accent-secondary",
+};
 
 export const formatEventDate = (isoDate: string) => {
   const date = new Date(isoDate);

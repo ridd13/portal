@@ -4,16 +4,18 @@ import { EventFilters } from "@/components/EventFilters";
 import { EventsClientWrapper } from "@/components/EventsClientWrapper";
 import { getCityFromAddress } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
-import type { Event } from "@/lib/types";
+import type { Category, Event, EventFormat } from "@/lib/types";
 
 interface EventsPageProps {
   searchParams: Promise<{
     tag?: string;
+    kategorie?: string;
     city?: string;
     plz?: string;
     q?: string;
     from?: string;
     to?: string;
+    format?: string;
   }>;
 }
 
@@ -23,11 +25,14 @@ export async function generateMetadata({
   const params = await searchParams;
   const city = params.city?.trim();
   const plz = params.plz?.trim();
+  const fmt = params.format?.trim();
+
+  const formatLabel = fmt === "retreat" ? "Retreats" : fmt === "workshop" ? "Workshops" : null;
 
   if (city) {
     return {
-      title: `Events in ${city}`,
-      description: `Entdecke ganzheitliche Events, Workshops und Retreats in ${city}.`,
+      title: formatLabel ? `${formatLabel} in ${city}` : `Events in ${city}`,
+      description: `Entdecke ganzheitliche ${formatLabel || "Events, Workshops und Retreats"} in ${city}.`,
       alternates: {
         canonical: `/events/${city.toLowerCase().replace(/\s+/g, "-")}`,
       },
@@ -43,7 +48,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: "Events",
+    title: formatLabel || "Events",
     description:
       "Entdecke ganzheitliche und spirituelle Events – Tanz, Meditation, Coaching und mehr in deiner Nähe.",
   };
@@ -52,20 +57,20 @@ export async function generateMetadata({
 export default async function EventsPage({ searchParams }: EventsPageProps) {
   const supabase = getSupabaseServerClient();
   const params = await searchParams;
+  // Support both legacy "tag" and new "kategorie" param
+  const selectedCategory = params.kategorie?.trim() || "";
   const selectedTag = params.tag?.trim() || "";
   const selectedCity = params.city?.trim() || "";
   const selectedPlz = params.plz?.trim() || "";
   const searchQuery = params.q?.trim() || "";
   const fromDate = params.from?.trim() || "";
   const toDate = params.to?.trim() || "";
+  const selectedFormat = (params.format?.trim() || "") as EventFormat | "";
 
-  // Determine the start_at lower bound:
-  // If user set a "from" date, use start of that day; otherwise use "now" (only future events)
   const startFrom = fromDate
     ? new Date(fromDate + "T00:00:00").toISOString()
     : new Date().toISOString();
 
-  // Load ALL matching events (client handles radius filtering + display)
   let query = supabase
     .from("events")
     .select("*, hosts(name, slug)")
@@ -74,12 +79,33 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     .gte("start_at", startFrom)
     .order("start_at", { ascending: true });
 
-  // If user set a "to" date, limit to end of that day
   if (toDate) {
     query = query.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
   }
 
-  if (selectedTag) {
+  // Format filter
+  if (selectedFormat) {
+    query = query.eq("event_format", selectedFormat);
+  }
+
+  // Category filter: find event IDs via event_categories junction
+  if (selectedCategory) {
+    const { data: catEvents } = await supabase
+      .from("event_categories")
+      .select("event_id, categories!inner(slug)")
+      .eq("categories.slug", selectedCategory);
+
+    const eventIds = (catEvents || []).map((row: { event_id: string }) => row.event_id);
+    if (eventIds.length > 0) {
+      query = query.in("id", eventIds);
+    } else {
+      // No events match this category — return empty
+      query = query.eq("id", "00000000-0000-0000-0000-000000000000");
+    }
+  }
+
+  // Legacy tag filter (backwards compatibility)
+  if (selectedTag && !selectedCategory) {
     query = query.contains("tags", [selectedTag]);
   }
 
@@ -96,7 +122,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   const { data, error } = await query;
   let events = (data || []) as Event[];
 
-  // Also find events matching search query by tag (tags are arrays, not searchable via .or())
+  // Also find events matching search query by tag
   if (searchQuery) {
     const tagSearch = searchQuery
       .toLowerCase()
@@ -118,7 +144,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     if (toDate) {
       tagQuery = tagQuery.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
     }
-    if (selectedTag) tagQuery = tagQuery.contains("tags", [selectedTag]);
+    if (selectedFormat) tagQuery = tagQuery.eq("event_format", selectedFormat);
     if (selectedCity) tagQuery = tagQuery.ilike("address", `%${selectedCity}%`);
 
     const { data: tagData } = await tagQuery;
@@ -147,21 +173,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     );
   }
 
-  // Load all distinct tags
-  const { data: allEventsData } = await supabase
-    .from("events")
-    .select("tags")
-    .eq("is_public", true)
-    .eq("status", "published")
-    .gte("start_at", new Date().toISOString());
+  // Load categories from DB
+  const { data: categoriesData } = await supabase
+    .from("categories")
+    .select("*")
+    .order("sort_order", { ascending: true });
 
-  const tags = [
-    ...new Set(
-      (allEventsData || [])
-        .flatMap((event: { tags: string[] | null }) => event.tags || [])
-        .filter(Boolean)
-    ),
-  ].sort((a, b) => a.localeCompare(b, "de"));
+  const categories = (categoriesData || []) as Category[];
 
   // Load all distinct cities
   const { data: allEventsForCities } = await supabase
@@ -181,9 +199,27 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
   // Build the hero heading
   const locationLabel = selectedCity || (selectedPlz ? `PLZ ${selectedPlz}` : "");
-  const heroTitle = locationLabel
-    ? `Events in ${locationLabel}`
-    : "Finde dein nächstes Event in der Community";
+  const formatLabel = selectedFormat
+    ? { event: "Events", workshop: "Workshops", retreat: "Retreats", kurs: "Kurse", festival: "Festivals", kreis: "Kreise" }[selectedFormat]
+    : null;
+  const categoryLabel = selectedCategory
+    ? categories.find((c) => c.slug === selectedCategory)?.name_de
+    : null;
+
+  let heroTitle = "Finde dein nächstes Event in der Community";
+  if (locationLabel && formatLabel) {
+    heroTitle = `${formatLabel} in ${locationLabel}`;
+  } else if (locationLabel && categoryLabel) {
+    heroTitle = `${categoryLabel} in ${locationLabel}`;
+  } else if (locationLabel) {
+    heroTitle = `Events in ${locationLabel}`;
+  } else if (formatLabel && categoryLabel) {
+    heroTitle = `${categoryLabel}-${formatLabel}`;
+  } else if (formatLabel) {
+    heroTitle = formatLabel;
+  } else if (categoryLabel) {
+    heroTitle = categoryLabel;
+  }
 
   return (
     <div className="space-y-8">
@@ -200,13 +236,14 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       </section>
 
       <EventFilters
-        tags={tags}
+        categories={categories}
         cities={cities}
-        selectedTag={selectedTag}
+        selectedCategory={selectedCategory || selectedTag}
         selectedCity={selectedCity}
         searchQuery={searchQuery}
         selectedFromDate={fromDate}
         selectedToDate={toDate}
+        selectedFormat={selectedFormat}
       />
 
       {error ? (
@@ -217,46 +254,46 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
       <section className="flex flex-wrap gap-3">
         <Link
-          href="/hamburg/ganzheitliche-events"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Ganzheitliche Events in Hamburg
-        </Link>
-        <Link
-          href="/hamburg/spirituelle-events"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Spirituelle Events in Hamburg
-        </Link>
-        <Link
-          href="/hamburg/kakaozeremonie"
+          href="/events?kategorie=kakaozeremonie&city=Hamburg"
           className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
         >
           Kakaozeremonie Hamburg
         </Link>
         <Link
-          href="/hamburg/yoga"
+          href="/events?format=retreat"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Retreats
+        </Link>
+        <Link
+          href="/events?kategorie=yoga&city=Hamburg"
           className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
         >
           Yoga Hamburg
         </Link>
         <Link
-          href="/hamburg/meditation"
+          href="/events?kategorie=meditation"
           className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
         >
-          Meditation Hamburg
+          Meditation
         </Link>
         <Link
-          href="/hamburg/breathwork"
+          href="/events?kategorie=tantra"
           className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
         >
-          Breathwork Hamburg
+          Tantra
         </Link>
         <Link
-          href="/schleswig-holstein/ganzheitliche-events"
+          href="/events?kategorie=tanz"
           className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
         >
-          Ganzheitliche Events in Schleswig-Holstein
+          Tanz
+        </Link>
+        <Link
+          href="/events?format=workshop"
+          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+        >
+          Workshops
         </Link>
       </section>
 

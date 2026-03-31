@@ -17,6 +17,19 @@ export interface HostPreview {
   slug: string | null;
 }
 
+export type EventFormat = "event" | "workshop" | "retreat" | "kurs" | "festival" | "kreis";
+
+export interface Category {
+  id: number;
+  slug: string;
+  name_de: string;
+  name_en: string;
+  group_name: string;
+  description_de: string | null;
+  icon: string | null;
+  sort_order: number;
+}
+
 export interface Event {
   id: string;
   title: string;
@@ -33,6 +46,7 @@ export interface Event {
   is_public: boolean | null;
   status: string | null;
   tags: string[] | null;
+  event_format: EventFormat | null;
   price_model: string | null;
   price_amount: string | null;
   ticket_link: string | null;
@@ -40,4 +54,5 @@ export interface Event {
   hosts: HostPreview | HostPreview[] | null;
   source_type: "manual" | "telegram" | "form" | null;
   source_message_id: string | null;
+  event_categories?: { categories: Category }[];
 }

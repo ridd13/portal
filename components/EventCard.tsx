@@ -1,11 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { Event } from "@/lib/types";
+import type { Event, EventFormat } from "@/lib/types";
 import {
   formatEventDate,
   formatPrice,
   getCityFromAddress,
   getHostPreview,
+  FORMAT_LABELS,
+  FORMAT_COLORS,
 } from "@/lib/event-utils";
 
 interface EventCardProps {
@@ -41,7 +43,14 @@ export function EventCard({ event }: EventCardProps) {
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex flex-wrap gap-1.5">
-          {event.tags?.slice(0, 2).map((tag) => (
+          {event.event_format && event.event_format !== "event" ? (
+            <span
+              className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${FORMAT_COLORS[event.event_format]}`}
+            >
+              {FORMAT_LABELS[event.event_format]}
+            </span>
+          ) : null}
+          {event.tags?.slice(0, event.event_format && event.event_format !== "event" ? 1 : 2).map((tag) => (
             <span
               key={tag}
               className="rounded-full bg-tag-bg px-2.5 py-0.5 text-xs font-medium text-text-secondary"
@@ -49,9 +58,9 @@ export function EventCard({ event }: EventCardProps) {
               {tag}
             </span>
           ))}
-          {event.tags && event.tags.length > 2 ? (
+          {event.tags && event.tags.length > (event.event_format && event.event_format !== "event" ? 1 : 2) ? (
             <span className="rounded-full bg-tag-bg px-2.5 py-0.5 text-xs font-medium text-text-muted">
-              +{event.tags.length - 2}
+              +{event.tags.length - (event.event_format && event.event_format !== "event" ? 1 : 2)}
             </span>
           ) : null}
         </div>
