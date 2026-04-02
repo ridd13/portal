@@ -271,6 +271,7 @@ export async function POST(request: NextRequest) {
       price_model: body.price_model || null,
       price_amount: body.price_amount || null,
       ticket_link: body.ticket_link || null,
+      description_sections: body.description_sections || null,
       source_type: "telegram",
       source_message_id: body.source_message_id || null,
     })
