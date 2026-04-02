@@ -75,6 +75,37 @@ async function uploadPhotoToStorage(
   }
 }
 
+const VALID_PRICE_MODELS = new Set(["free", "paid", "donation", "sliding"]);
+
+function normalizePriceModel(value: unknown): string | null {
+  if (value == null || value === "") return null;
+  const s = String(value).trim().toLowerCase();
+  if (VALID_PRICE_MODELS.has(s)) return s;
+  if (s === "fixed") return "paid";
+  if (s === "sliding scale" || s === "sliding_scale") return "sliding";
+  return null;
+}
+
+function normalizePriceAmount(value: unknown): string | null {
+  if (value == null || value === "") return null;
+  if (typeof value === "number") return String(value);
+  const s = String(value).trim();
+  // Extract the lowest number from a range like "35-75€" or "35–75 €"
+  const rangeMatch = s.match(/(\d[\d.,]*)\s*[-–]\s*\d/);
+  const raw = rangeMatch ? rangeMatch[1] : s;
+  // Remove thousand separators (1.111 or 1,111) and currency symbols
+  const cleaned = raw.replace(/[€$£\s]/g, "").replace(/[.,](?=\d{3}(?:[^\d]|$))/g, "");
+  const num = parseFloat(cleaned.replace(",", "."));
+  return isNaN(num) ? null : String(num % 1 === 0 ? Math.floor(num) : num);
+}
+
+function normalizeTags(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter((t) => t != null && t !== "")
+    .map((t) => String(t).toLowerCase().trim());
+}
+
 function validateApiKey(request: NextRequest): boolean {
   const authHeader = request.headers.get("authorization");
   const apiKey = authHeader?.replace("Bearer ", "");
@@ -242,11 +273,15 @@ export async function POST(request: NextRequest) {
     }
   }
 
+  // Normalisierung
+  const normalizedPriceModel = normalizePriceModel(body.price_model);
+  const normalizedPriceAmount = normalizePriceAmount(body.price_amount);
+  const normalizedTags = normalizeTags(body.tags);
+
   if (!coverUrl) {
     // Default-Cover basierend auf erstem Tag
-    const firstTag = body.tags?.[0]?.toLowerCase();
     coverUrl =
-      (firstTag && DEFAULT_COVERS[firstTag]) ||
+      (normalizedTags[0] && DEFAULT_COVERS[normalizedTags[0]]) ||
       "/images/defaults/event-default.svg";
   }
 
@@ -267,9 +302,9 @@ export async function POST(request: NextRequest) {
       host_id: host.id,
       is_public: true,
       status: body.auto_publish ? "published" : "draft",
-      tags: body.tags || [],
-      price_model: body.price_model || null,
-      price_amount: body.price_amount || null,
+      tags: normalizedTags,
+      price_model: normalizedPriceModel,
+      price_amount: normalizedPriceAmount,
       ticket_link: body.ticket_link || null,
       description_sections: body.description_sections || null,
       source_type: "telegram",
