@@ -273,7 +273,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               ) : null}
 
               {/* Beginner-friendly Badge */}
-              {event.description_sections?.is_beginner_friendly ? (
+              {event.description_sections?.is_beginner_friendly === true ? (
                 <div className="flex items-start gap-3">
                   <span className="mt-0.5 text-xl" aria-hidden="true">🌱</span>
                   <div>
@@ -324,7 +324,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                   </section>
                 ) : null}
 
-                {event.description_sections.what_youll_experience?.length ? (
+                {Array.isArray(event.description_sections.what_youll_experience) && event.description_sections.what_youll_experience.length ? (
                   <section>
                     <h2 className="mb-2 text-xl font-normal text-text-primary">Was du erleben wirst</h2>
                     <ul className="space-y-1.5 text-sm text-text-secondary">
@@ -344,7 +344,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                     <p className="text-sm leading-relaxed text-text-secondary">
                       {event.description_sections.who_is_this_for}
                     </p>
-                    {event.description_sections.is_beginner_friendly ? (
+                    {event.description_sections.is_beginner_friendly === true ? (
                       <span className="mt-2 inline-block rounded-full bg-accent-sage/15 px-3 py-1 text-xs font-medium text-accent-sage">
                         Für Einsteiger:innen geeignet
                       </span>
@@ -352,7 +352,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                   </section>
                 ) : null}
 
-                {event.description_sections.what_youll_take_away?.length ? (
+                {Array.isArray(event.description_sections.what_youll_take_away) && event.description_sections.what_youll_take_away.length ? (
                   <section>
                     <h2 className="mb-2 text-xl font-normal text-text-primary">Was du mitnimmst</h2>
                     <ul className="space-y-1.5 text-sm text-text-secondary">
