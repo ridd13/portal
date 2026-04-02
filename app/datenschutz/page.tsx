@@ -190,10 +190,44 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 8. Cookies & Local Storage */}
+        {/* 8. Analyse & Performance */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            8. Cookies & Local Storage
+            8. Analyse & Performance
+          </h2>
+          <p>
+            Wir nutzen <strong className="text-text-primary">Vercel Analytics</strong> und{" "}
+            <strong className="text-text-primary">Vercel Speed Insights</strong> zur Analyse
+            der Seitennutzung und zur Messung von Performance-Metriken (Core Web Vitals).
+          </p>
+          <p className="mt-2">
+            Beide Dienste arbeiten <strong className="text-text-primary">cookiefrei</strong> —
+            es werden keine Cookies gesetzt und keine persistenten Nutzer-IDs angelegt. Erfasst
+            werden anonymisierte Seitenaufrufe und technische Performance-Daten (Ladezeiten,
+            Gerätekategorie).
+          </p>
+          <p className="mt-1">
+            <strong className="text-text-primary">Rechtsgrundlage:</strong>{" "}
+            Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an der Verbesserung der
+            Website-Performance). Ein Cookie-Consent ist nicht erforderlich.
+          </p>
+          <p className="mt-1">
+            Datenschutzerklärung Vercel:{" "}
+            <a
+              href="https://vercel.com/legal/privacy-policy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-accent-primary underline"
+            >
+              vercel.com/legal/privacy-policy
+            </a>
+          </p>
+        </div>
+
+        {/* 9. Cookies & Local Storage */}
+        <div>
+          <h2 className="font-serif text-lg font-normal text-text-primary">
+            9. Cookies & Local Storage
           </h2>
           <p>
             Diese Website setzt keine Tracking-Cookies ein. Wir verwenden
@@ -206,10 +240,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 9. Automatische Event-Erfassung */}
+        {/* 10. Automatische Event-Erfassung */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            9. Automatische Event-Erfassung
+            10. Automatische Event-Erfassung
           </h2>
           <p>
             Events werden teilweise automatisiert aus öffentlichen
@@ -246,10 +280,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 10. Profil-Beanspruchung */}
+        {/* 11. Profil-Beanspruchung */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            10. Profil-Beanspruchung
+            11. Profil-Beanspruchung
           </h2>
           <p>
             Anbieter:innen können ihr automatisch erstelltes Profil
@@ -267,10 +301,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 11. Telegram */}
+        {/* 12. Telegram */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            11. Telegram-Kanal
+            12. Telegram-Kanal
           </h2>
           <p>
             Auf der Website verlinken wir unseren Telegram-Kanal
@@ -280,10 +314,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 12. Betroffenenrechte */}
+        {/* 13. Betroffenenrechte */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            12. Deine Rechte
+            13. Deine Rechte
           </h2>
           <p>Du hast jederzeit das Recht auf:</p>
           <ul className="mt-2 list-inside list-disc space-y-1">
