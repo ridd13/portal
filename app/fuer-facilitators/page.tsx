@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { getSupabaseServerClient } from "@/lib/supabase";
+import { getCityFromAddress } from "@/lib/event-utils";
 import { ProviderSignupForm } from "@/components/ProviderSignupForm";
 
 export const metadata: Metadata = {
@@ -7,7 +9,32 @@ export const metadata: Metadata = {
     "Werde sichtbar als Coach, Heiler:in oder Facilitator. Registriere dich auf Das Portal und erreiche die Menschen, die dich suchen.",
 };
 
-export default function FacilitatorsPage() {
+export default async function FacilitatorsPage() {
+  const supabase = getSupabaseServerClient();
+
+  const { count: eventCount } = await supabase
+    .from("events")
+    .select("*", { count: "exact", head: true })
+    .eq("is_public", true)
+    .eq("status", "published");
+
+  const { count: hostCount } = await supabase
+    .from("hosts")
+    .select("*", { count: "exact", head: true });
+
+  const { data: cityData } = await supabase
+    .from("events")
+    .select("address")
+    .eq("is_public", true)
+    .eq("status", "published")
+    .gte("start_at", new Date().toISOString());
+
+  const cityCount = new Set(
+    (cityData || [])
+      .map((e: { address: string | null }) => getCityFromAddress(e.address))
+      .filter(Boolean)
+  ).size;
+
   return (
     <div className="mx-auto max-w-4xl space-y-16 pb-8">
       {/* Hero */}
@@ -24,6 +51,29 @@ export default function FacilitatorsPage() {
           Das Portal ist die Plattform für Coaches, Heiler:innen und Facilitators, die ihre Events
           und Angebote den richtigen Menschen zeigen wollen — ohne Marketing-Stress.
         </p>
+        {/* Social Proof */}
+        {(eventCount || hostCount) ? (
+          <div className="mt-8 flex gap-8">
+            {hostCount ? (
+              <div>
+                <p className="text-3xl font-bold text-accent-primary">{hostCount}+</p>
+                <p className="text-sm text-text-muted">Anbieter:innen</p>
+              </div>
+            ) : null}
+            {eventCount ? (
+              <div>
+                <p className="text-3xl font-bold text-accent-primary">{eventCount}+</p>
+                <p className="text-sm text-text-muted">Events</p>
+              </div>
+            ) : null}
+            {cityCount > 0 ? (
+              <div>
+                <p className="text-3xl font-bold text-accent-primary">{cityCount}+</p>
+                <p className="text-sm text-text-muted">Städte</p>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </section>
 
       {/* Problem → Lösung */}
@@ -142,8 +192,7 @@ export default function FacilitatorsPage() {
           ))}
         </div>
         <p className="mt-6 text-center text-text-secondary">
-          Wenn du ganzheitlich arbeitest und in Schleswig-Holstein oder Hamburg aktiv bist,
-          ist Das Portal für dich gemacht.
+          Wenn du ganzheitlich arbeitest, ist Das Portal für dich gemacht — egal wo in Deutschland.
         </p>
       </section>
 
@@ -181,6 +230,111 @@ export default function FacilitatorsPage() {
               Empfehlungen.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Vergleichstabelle */}
+      <section className="space-y-6">
+        <h2 className="text-center text-3xl font-normal text-text-primary sm:text-4xl">
+          Wie Das Portal sich unterscheidet
+        </h2>
+
+        {/* Desktop: Tabelle */}
+        <div className="hidden overflow-hidden rounded-2xl border border-border sm:block">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-border bg-bg-secondary">
+                <th className="px-4 py-3 font-medium text-text-muted" />
+                <th className="px-4 py-3 font-semibold text-accent-primary">Das Portal</th>
+                <th className="px-4 py-3 font-medium text-text-secondary">Eventbrite</th>
+                <th className="px-4 py-3 font-medium text-text-secondary">Meetup</th>
+                <th className="px-4 py-3 font-medium text-text-secondary">Lumaya</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border">
+              <tr>
+                <td className="px-4 py-3 font-medium text-text-primary">Kosten</td>
+                <td className="px-4 py-3 font-semibold text-accent-sage">Kostenlos</td>
+                <td className="px-4 py-3 text-text-secondary">Commission</td>
+                <td className="px-4 py-3 text-text-secondary">Ab 168 €/Jahr</td>
+                <td className="px-4 py-3 text-text-secondary">Unklar</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3 font-medium text-text-primary">Eigenes Profil</td>
+                <td className="px-4 py-3 font-semibold text-accent-sage">Ja</td>
+                <td className="px-4 py-3 text-text-secondary">Nein</td>
+                <td className="px-4 py-3 text-text-secondary">Gruppen-Seite</td>
+                <td className="px-4 py-3 text-text-secondary">Nein</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3 font-medium text-text-primary">Zielgruppe</td>
+                <td className="px-4 py-3 font-semibold text-accent-sage">Bewusste Events</td>
+                <td className="px-4 py-3 text-text-secondary">Alles</td>
+                <td className="px-4 py-3 text-text-secondary">Hobbys</td>
+                <td className="px-4 py-3 text-text-secondary">Retreats</td>
+              </tr>
+              <tr>
+                <td className="px-4 py-3 font-medium text-text-primary">SEO-Profil</td>
+                <td className="px-4 py-3 font-semibold text-accent-sage">Ja</td>
+                <td className="px-4 py-3 text-text-secondary">—</td>
+                <td className="px-4 py-3 text-text-secondary">—</td>
+                <td className="px-4 py-3 text-text-secondary">Nein</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile: Cards */}
+        <div className="grid gap-4 sm:hidden">
+          {[
+            { label: "Kosten", portal: "Kostenlos", rest: "Eventbrite: Commission | Meetup: Ab 168 €/Jahr" },
+            { label: "Eigenes Profil", portal: "Ja", rest: "Eventbrite: Nein | Meetup: Gruppen-Seite" },
+            { label: "Zielgruppe", portal: "Bewusste Events", rest: "Eventbrite: Alles | Meetup: Hobbys" },
+            { label: "SEO-Profil", portal: "Ja", rest: "Eventbrite: — | Meetup: —" },
+          ].map((row) => (
+            <div key={row.label} className="rounded-xl border border-border bg-bg-card p-4">
+              <p className="text-xs font-medium text-text-muted">{row.label}</p>
+              <p className="mt-1 text-base font-semibold text-accent-sage">Das Portal: {row.portal}</p>
+              <p className="mt-1 text-xs text-text-secondary">{row.rest}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="space-y-6">
+        <h2 className="text-center text-3xl font-normal text-text-primary sm:text-4xl">
+          Häufige Fragen
+        </h2>
+        <div className="mx-auto max-w-2xl divide-y divide-border rounded-2xl border border-border bg-bg-card">
+          {[
+            {
+              q: "Kostet Das Portal etwas?",
+              a: "Nein, Das Portal ist komplett kostenlos — für Anbieter:innen und Besucher:innen. Kein Abo, keine Provision.",
+            },
+            {
+              q: "Wie werden Events importiert?",
+              a: "Events werden automatisch aus Community-Gruppen importiert. Du kannst dein Profil beanspruchen und die Events erscheinen auf deiner Profilseite.",
+            },
+            {
+              q: "Kann ich mein Profil bearbeiten?",
+              a: "Ja, nach der Registrierung kannst du dein Profil über dein Dashboard ergänzen — Beschreibung, Website, Social Links und mehr.",
+            },
+            {
+              q: "Muss ich in einer bestimmten Region sein?",
+              a: "Nein, Das Portal ist deutschlandweit offen. Egal ob du in Hamburg, Berlin, München oder auf dem Land arbeitest.",
+            },
+          ].map((faq) => (
+            <details key={faq.q} className="group">
+              <summary className="flex cursor-pointer items-center justify-between px-5 py-4 text-text-primary hover:bg-bg-secondary/50">
+                <span className="font-medium">{faq.q}</span>
+                <span className="ml-2 text-text-muted transition group-open:rotate-45">+</span>
+              </summary>
+              <p className="px-5 pb-4 text-sm leading-relaxed text-text-secondary">
+                {faq.a}
+              </p>
+            </details>
+          ))}
         </div>
       </section>
 

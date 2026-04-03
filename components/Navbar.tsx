@@ -34,6 +34,12 @@ export async function Navbar() {
             Events
           </Link>
           <Link
+            href="/anbieter"
+            className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
+          >
+            Anbieter:innen
+          </Link>
+          <Link
             href="/fuer-facilitators"
             className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
           >

@@ -51,6 +51,13 @@ export function MobileNav({ isLoggedIn }: MobileNavProps) {
               Events
             </Link>
             <Link
+              href="/anbieter"
+              onClick={() => setOpen(false)}
+              className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary"
+            >
+              Anbieter:innen
+            </Link>
+            <Link
               href="/fuer-facilitators"
               onClick={() => setOpen(false)}
               className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary"

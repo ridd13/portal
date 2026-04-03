@@ -233,13 +233,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     <div className="space-y-8">
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] p-6 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:p-8">
         <p className="mb-2 text-sm uppercase tracking-[0.18em] text-text-secondary">
-          Ganzheitliche Event-Plattform
+          Bewusste Events entdecken
         </p>
         <h1 className="text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
           {heroTitle}
         </h1>
         <p className="mt-3 max-w-2xl text-text-secondary">
-          Tanz, Meditation, Coaching und spirituelle Formate in deiner Nähe.
+          Bewusste Events, Workshops und Retreats — finde dein nächstes transformatives Erlebnis.
         </p>
       </section>
 
@@ -262,48 +262,23 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
       ) : null}
 
       <section className="flex flex-wrap gap-3">
-        <Link
-          href="/events?kategorie=kakaozeremonie&city=Hamburg"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Kakaozeremonie Hamburg
-        </Link>
-        <Link
-          href="/events?format=retreat"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Retreats
-        </Link>
-        <Link
-          href="/events?kategorie=yoga&city=Hamburg"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Yoga Hamburg
-        </Link>
-        <Link
-          href="/events?kategorie=meditation"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Meditation
-        </Link>
-        <Link
-          href="/events?kategorie=tantra"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Tantra
-        </Link>
-        <Link
-          href="/events?kategorie=tanz"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Tanz
-        </Link>
-        <Link
-          href="/events?format=workshop"
-          className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
-        >
-          Workshops
-        </Link>
+        {[
+          { label: "Retreats", href: "/events?format=retreat" },
+          { label: "Workshops", href: "/events?format=workshop" },
+          { label: "Yoga", href: "/events?tag=yoga" },
+          { label: "Meditation", href: "/events?tag=meditation" },
+          { label: "Breathwork", href: "/events?tag=breathwork" },
+          { label: "Tanz", href: "/events?tag=tanz" },
+          { label: "Sound Healing", href: "/events?tag=sound+healing" },
+        ].map(({ label, href }) => (
+          <Link
+            key={label}
+            href={href}
+            className="rounded-full border border-border bg-bg-secondary px-4 py-2 text-sm text-text-secondary transition hover:border-accent-primary hover:text-accent-primary"
+          >
+            {label}
+          </Link>
+        ))}
       </section>
 
       <EventsClientWrapper
