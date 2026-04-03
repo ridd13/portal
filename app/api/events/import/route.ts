@@ -204,7 +204,7 @@ export async function POST(request: NextRequest) {
     host = newHost;
   }
 
-  // Deduplizierung: Prüfen ob source_message_id schon existiert
+  // Deduplizierung: source_message_id (schneller Exact-Match)
   if (body.source_message_id) {
     const { data: existing } = await supabase
       .from("events")
@@ -215,6 +215,35 @@ export async function POST(request: NextRequest) {
     if (existing) {
       return NextResponse.json(
         { error: "Event already imported", event_id: existing.id },
+        { status: 409 }
+      );
+    }
+  }
+
+  // Deduplizierung: Host + Uhrzeit (±30 Min) + Location
+  {
+    const startAt = new Date(body.start_at);
+    const windowStart = new Date(startAt.getTime() - 30 * 60_000).toISOString();
+    const windowEnd = new Date(startAt.getTime() + 30 * 60_000).toISOString();
+
+    let dupQuery = supabase
+      .from("events")
+      .select("id, title")
+      .eq("host_id", host.id)
+      .gte("start_at", windowStart)
+      .lte("start_at", windowEnd);
+
+    if (body.location_name) {
+      // Ersten 15 Zeichen für fuzzy-toleranten Vergleich
+      const locPrefix = String(body.location_name).slice(0, 15).replace(/[%_]/g, "\\$&");
+      dupQuery = dupQuery.ilike("location_name", `${locPrefix}%`);
+    }
+
+    const { data: dupEvent } = await dupQuery.limit(1).single();
+
+    if (dupEvent) {
+      return NextResponse.json(
+        { error: "Event already imported", event_id: dupEvent.id, matched_title: dupEvent.title },
         { status: 409 }
       );
     }
