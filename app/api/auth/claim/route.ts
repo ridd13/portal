@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { ACCESS_COOKIE } from "@/lib/auth-cookies";
 import { getUserFromAccessToken } from "@/lib/auth-server";
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
+import { notifyAdmin } from "@/lib/telegram-notify";
 
 export async function POST(request: NextRequest) {
   // Verify authentication
@@ -88,6 +89,16 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     );
   }
+
+  // Lennert per Telegram benachrichtigen (fire & forget — kein await-Fehler blockiert Response)
+  notifyAdmin(
+    `🙋 <b>Neues Profil-Claim</b>\n\n` +
+    `Anbieter:in: <b>${host.name}</b>\n` +
+    `E-Mail: <code>${user.email ?? "unbekannt"}</code>\n` +
+    `Profil: <a href="https://www.das-portal.online/hosts/${hostSlug}">das-portal.online/hosts/${hostSlug}</a>\n\n` +
+    `Um zu bestätigen, setze in Supabase:\n` +
+    `<code>UPDATE hosts SET owner_id = '${user.id}' WHERE slug = '${hostSlug}';</code>`
+  ).catch(() => {/* silent */});
 
   return NextResponse.json({ ok: true, hostName: host.name });
 }

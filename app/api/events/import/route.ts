@@ -213,23 +213,8 @@ export async function POST(request: NextRequest) {
     host = newHost;
   }
 
-  // Deduplizierung: source_message_id (schneller Exact-Match)
-  if (body.source_message_id) {
-    const { data: existing } = await supabase
-      .from("events")
-      .select("id")
-      .eq("source_message_id", body.source_message_id)
-      .single();
-
-    if (existing) {
-      return NextResponse.json(
-        { error: "Event already imported", event_id: existing.id },
-        { status: 409 }
-      );
-    }
-  }
-
   // Deduplizierung: Host + Uhrzeit (±30 Min) + Location
+  // (source_message_id wird nur noch als Audit-Trail gespeichert, nicht für Dedup genutzt)
   {
     const startAt = new Date(body.start_at);
     const windowStart = new Date(startAt.getTime() - 30 * 60_000).toISOString();
