@@ -14,9 +14,13 @@ interface EventCardProps {
   event: Event;
 }
 
+// Tags that duplicate the event_format badge — hide in card
+const FORMAT_TAG_NAMES = new Set(["retreat", "workshop", "festival", "kurs", "kreis"]);
+
 export function EventCard({ event }: EventCardProps) {
   const host = getHostPreview(event);
   const city = getCityFromAddress(event.address);
+  const displayTags = (event.tags ?? []).filter((t) => !FORMAT_TAG_NAMES.has(t.toLowerCase()));
 
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-card shadow-[0_8px_24px_rgba(44,36,24,0.08)] transition-shadow duration-200 hover:shadow-[0_12px_32px_rgba(44,36,24,0.14)]">
@@ -50,7 +54,7 @@ export function EventCard({ event }: EventCardProps) {
               {FORMAT_LABELS[event.event_format]}
             </span>
           ) : null}
-          {event.tags?.slice(0, event.event_format && event.event_format !== "event" ? 1 : 2).map((tag) => (
+          {displayTags.slice(0, 2).map((tag) => (
             <span
               key={tag}
               className="rounded-full bg-tag-bg px-2.5 py-0.5 text-xs font-medium text-text-secondary"
@@ -58,9 +62,9 @@ export function EventCard({ event }: EventCardProps) {
               {tag}
             </span>
           ))}
-          {event.tags && event.tags.length > (event.event_format && event.event_format !== "event" ? 1 : 2) ? (
+          {displayTags.length > 2 ? (
             <span className="rounded-full bg-tag-bg px-2.5 py-0.5 text-xs font-medium text-text-muted">
-              +{event.tags.length - (event.event_format && event.event_format !== "event" ? 1 : 2)}
+              +{displayTags.length - 2}
             </span>
           ) : null}
         </div>

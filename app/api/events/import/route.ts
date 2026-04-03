@@ -88,13 +88,22 @@ function normalizePriceModel(value: unknown): string | null {
 
 function normalizePriceAmount(value: unknown): string | null {
   if (value == null || value === "") return null;
-  if (typeof value === "number") return String(value);
+  if (typeof value === "number") return String(Math.floor(value) === value ? Math.floor(value) : value);
   const s = String(value).trim();
-  // Extract the lowest number from a range like "35-75€" or "35–75 €"
-  const rangeMatch = s.match(/(\d[\d.,]*)\s*[-–]\s*\d/);
-  const raw = rangeMatch ? rangeMatch[1] : s;
-  // Remove thousand separators (1.111 or 1,111) and currency symbols
-  const cleaned = raw.replace(/[€$£\s]/g, "").replace(/[.,](?=\d{3}(?:[^\d]|$))/g, "");
+  // Range like "35-75€", "35–75 €", "35 bis 75" → "35-75"
+  const rangeMatch = s.match(/(\d[\d.,]*)\s*(?:[-–]|bis)\s*(\d[\d.,]*)/);
+  if (rangeMatch) {
+    const stripNum = (n: string) => {
+      const cleaned = n.replace(/[€$£\s]/g, "").replace(/[.,](?=\d{3}(?:\D|$))/g, "");
+      const num = parseFloat(cleaned.replace(",", "."));
+      return isNaN(num) ? null : String(num % 1 === 0 ? Math.floor(num) : num);
+    };
+    const lo = stripNum(rangeMatch[1]);
+    const hi = stripNum(rangeMatch[2]);
+    if (lo && hi) return `${lo}-${hi}`;
+  }
+  // Single value — remove thousand separators and currency symbols
+  const cleaned = s.replace(/[€$£\s]/g, "").replace(/[.,](?=\d{3}(?:\D|$))/g, "");
   const num = parseFloat(cleaned.replace(",", "."));
   return isNaN(num) ? null : String(num % 1 === 0 ? Math.floor(num) : num);
 }

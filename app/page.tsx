@@ -7,7 +7,7 @@ import type { Event } from "@/lib/types";
 export const metadata: Metadata = {
   title: "Das Portal | Ganzheitliche Events in deiner Nähe",
   description:
-    "Entdecke Breathwork, Yoga, Sound Healing, Kakao-Zeremonien und mehr in Hamburg & Schleswig-Holstein.",
+    "Entdecke Breathwork, Yoga, Sound Healing, Kakao-Zeremonien und mehr — ganzheitliche Events in ganz Deutschland.",
 };
 
 export const revalidate = 300; // ISR: alle 5 Minuten neue Event-Daten
@@ -15,12 +15,13 @@ export const revalidate = 300; // ISR: alle 5 Minuten neue Event-Daten
 export default async function LandingPage() {
   const supabase = getSupabaseServerClient();
 
-  // Nächste 4 Events als Preview laden
+  // Nächste 4 Events als Preview laden (keine Online-Events)
   const { data } = await supabase
     .from("events")
     .select("*, hosts(name, slug)")
     .eq("is_public", true)
     .eq("status", "published")
+    .eq("is_online", false)
     .gte("start_at", new Date().toISOString())
     .order("start_at", { ascending: true })
     .limit(4);
@@ -42,9 +43,6 @@ export default async function LandingPage() {
     <div className="space-y-16 pb-8">
       {/* Hero — Besucher-fokussiert */}
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-12 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-16">
-        <p className="mb-3 text-sm font-medium uppercase tracking-[0.18em] text-accent-sage">
-          Hamburg & Schleswig-Holstein
-        </p>
         <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-text-primary sm:text-5xl lg:text-6xl">
           Entdecke ganzheitliche
           <br />
@@ -52,7 +50,7 @@ export default async function LandingPage() {
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-text-secondary sm:text-xl">
           Breathwork, Yoga, Sound Healing, Kakao-Zeremonien und mehr — finde dein nächstes
-          transformatives Erlebnis.
+          transformatives Erlebnis in ganz Deutschland.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
@@ -117,21 +115,23 @@ export default async function LandingPage() {
         </h2>
         <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3">
           {[
-            "Breathwork",
-            "Yoga",
-            "Sound Healing",
-            "Kakao-Zeremonie",
-            "Meditation",
-            "Tantra",
-            "Workshop",
-            "Community",
-          ].map((category) => (
+            { label: "Breathwork", tag: "breathwork" },
+            { label: "Yoga", tag: "yoga" },
+            { label: "Meditation", tag: "meditation" },
+            { label: "Tanz & Bewegung", tag: "tanz" },
+            { label: "Kakao-Zeremonie", tag: "kakao-zeremonie" },
+            { label: "Tantra", tag: "tantra" },
+            { label: "Sound Healing", tag: "sound healing" },
+            { label: "Schamanismus", tag: "schamanismus" },
+            { label: "Heilarbeit", tag: "heilarbeit" },
+            { label: "Natur", tag: "natur" },
+          ].map(({ label, tag }) => (
             <Link
-              key={category}
-              href={`/events?tag=${encodeURIComponent(category.toLowerCase())}`}
+              key={tag}
+              href={`/events?tag=${encodeURIComponent(tag)}`}
               className="rounded-full border border-border bg-bg-card px-5 py-2.5 text-sm font-medium text-text-primary transition hover:bg-bg-secondary hover:text-accent-primary"
             >
-              {category}
+              {label}
             </Link>
           ))}
         </div>

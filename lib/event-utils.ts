@@ -76,17 +76,25 @@ export function buildGoogleCalendarUrl(event: {
 
 /**
  * Format the price for display.
- * Shows price_amount if available, otherwise a readable label from price_model.
+ * Shows price_amount (with € sign) if available, otherwise a label from price_model.
  */
 export function formatPrice(priceModel: string | null, priceAmount: string | null): string {
-  if (priceAmount) return priceAmount;
+  if (priceAmount) {
+    // Range like "15-25" or "15–25" → "15 – 25 €"
+    const rangeMatch = priceAmount.match(/^(\d+(?:[.,]\d+)?)\s*[-–]\s*(\d+(?:[.,]\d+)?)$/);
+    if (rangeMatch) return `${rangeMatch[1]} – ${rangeMatch[2]} €`;
+    // Already has currency symbol
+    if (/[€$£]/.test(priceAmount)) return priceAmount;
+    return `${priceAmount} €`;
+  }
   switch (priceModel) {
     case "free":
       return "Kostenlos";
     case "donation":
       return "Auf Spendenbasis";
+    case "sliding":
+      return "Sliding Scale";
     case "paid":
-      return "Kostenpflichtig";
     default:
       return "Preis auf Anfrage";
   }
