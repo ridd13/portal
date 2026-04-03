@@ -248,7 +248,6 @@ export default async function FacilitatorsPage() {
                 <th className="px-4 py-3 font-semibold text-accent-primary">Das Portal</th>
                 <th className="px-4 py-3 font-medium text-text-secondary">Eventbrite</th>
                 <th className="px-4 py-3 font-medium text-text-secondary">Meetup</th>
-                <th className="px-4 py-3 font-medium text-text-secondary">Lumaya</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -257,28 +256,24 @@ export default async function FacilitatorsPage() {
                 <td className="px-4 py-3 font-semibold text-accent-sage">Kostenlos</td>
                 <td className="px-4 py-3 text-text-secondary">Commission</td>
                 <td className="px-4 py-3 text-text-secondary">Ab 168 €/Jahr</td>
-                <td className="px-4 py-3 text-text-secondary">Unklar</td>
               </tr>
               <tr>
                 <td className="px-4 py-3 font-medium text-text-primary">Eigenes Profil</td>
                 <td className="px-4 py-3 font-semibold text-accent-sage">Ja</td>
                 <td className="px-4 py-3 text-text-secondary">Nein</td>
                 <td className="px-4 py-3 text-text-secondary">Gruppen-Seite</td>
-                <td className="px-4 py-3 text-text-secondary">Nein</td>
               </tr>
               <tr>
                 <td className="px-4 py-3 font-medium text-text-primary">Zielgruppe</td>
                 <td className="px-4 py-3 font-semibold text-accent-sage">Bewusste Events</td>
                 <td className="px-4 py-3 text-text-secondary">Alles</td>
                 <td className="px-4 py-3 text-text-secondary">Hobbys</td>
-                <td className="px-4 py-3 text-text-secondary">Retreats</td>
               </tr>
               <tr>
                 <td className="px-4 py-3 font-medium text-text-primary">SEO-Profil</td>
                 <td className="px-4 py-3 font-semibold text-accent-sage">Ja</td>
                 <td className="px-4 py-3 text-text-secondary">—</td>
                 <td className="px-4 py-3 text-text-secondary">—</td>
-                <td className="px-4 py-3 text-text-secondary">Nein</td>
               </tr>
             </tbody>
           </table>
@@ -287,10 +282,10 @@ export default async function FacilitatorsPage() {
         {/* Mobile: Cards */}
         <div className="grid gap-4 sm:hidden">
           {[
-            { label: "Kosten", portal: "Kostenlos", rest: "Eventbrite: Commission | Meetup: Ab 168 €/Jahr" },
-            { label: "Eigenes Profil", portal: "Ja", rest: "Eventbrite: Nein | Meetup: Gruppen-Seite" },
-            { label: "Zielgruppe", portal: "Bewusste Events", rest: "Eventbrite: Alles | Meetup: Hobbys" },
-            { label: "SEO-Profil", portal: "Ja", rest: "Eventbrite: — | Meetup: —" },
+            { label: "Kosten", portal: "Kostenlos", rest: "Eventbrite: Commission · Meetup: Ab 168 €/Jahr" },
+            { label: "Eigenes Profil", portal: "Ja", rest: "Eventbrite: Nein · Meetup: Gruppen-Seite" },
+            { label: "Zielgruppe", portal: "Bewusste Events", rest: "Eventbrite: Alles · Meetup: Hobbys" },
+            { label: "SEO-Profil", portal: "Ja", rest: "Eventbrite: — · Meetup: —" },
           ].map((row) => (
             <div key={row.label} className="rounded-xl border border-border bg-bg-card p-4">
               <p className="text-xs font-medium text-text-muted">{row.label}</p>

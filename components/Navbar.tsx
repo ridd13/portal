@@ -37,7 +37,7 @@ export async function Navbar() {
             href="/anbieter"
             className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
           >
-            Anbieter:innen
+            Raumhalter:innen
           </Link>
           <Link
             href="/fuer-facilitators"
