@@ -116,7 +116,7 @@ export default async function LandingPage() {
             href="/anbieter"
             className="inline-flex items-center rounded-xl border border-border bg-bg-card px-6 py-3 text-base font-medium text-text-primary transition hover:bg-bg-secondary"
           >
-            Anbieter:innen finden
+            Raumhalter:innen entdecken
           </Link>
         </div>
 
@@ -131,7 +131,7 @@ export default async function LandingPage() {
           {hostCount ? (
             <div>
               <p className="text-3xl font-bold text-accent-primary">{hostCount}+</p>
-              <p className="text-sm text-text-muted">Anbieter:innen</p>
+              <p className="text-sm text-text-muted">Raumhalter:innen</p>
             </div>
           ) : null}
           {cityCount > 0 ? (
@@ -155,7 +155,7 @@ export default async function LandingPage() {
             </div>
             <h3 className="mb-2 text-lg font-normal text-text-primary">Stöbere</h3>
             <p className="text-text-secondary">
-              Finde Events und Anbieter:innen nach Ort, Kategorie oder Datum.
+              Finde Events und Raumhalter:innen nach Ort, Kategorie oder Datum.
             </p>
           </div>
           <div className="text-center">
@@ -164,7 +164,7 @@ export default async function LandingPage() {
             </div>
             <h3 className="mb-2 text-lg font-normal text-text-primary">Entdecke</h3>
             <p className="text-text-secondary">
-              Lerne Facilitators kennen — ihre Arbeit, ihr Hintergrund, ihre Angebote.
+              Lerne Raumhalter:innen kennen — ihre Arbeit, ihr Hintergrund, ihre Angebote.
             </p>
           </div>
           <div className="text-center">
@@ -203,7 +203,7 @@ export default async function LandingPage() {
               href="/anbieter"
               className="text-sm text-accent-secondary hover:underline"
             >
-              Oder entdecke Anbieter:innen in deiner Nähe &rarr;
+              Oder entdecke Raumhalter:innen in deiner Nähe &rarr;
             </Link>
           </p>
         </section>
@@ -259,7 +259,7 @@ export default async function LandingPage() {
         <section className="space-y-6">
           <div className="text-center">
             <h2 className="text-2xl font-normal text-text-primary sm:text-3xl">
-              Lerne unsere Anbieter:innen kennen
+              Lerne unsere Raumhalter:innen kennen
             </h2>
             <p className="mt-2 text-text-secondary">
               Coaches, Heiler:innen und Facilitators — mit eigenen Profilen auf Das Portal.
@@ -300,7 +300,7 @@ export default async function LandingPage() {
               href="/anbieter"
               className="text-sm font-semibold text-accent-secondary hover:underline"
             >
-              Alle Anbieter:innen entdecken &rarr;
+              Alle Raumhalter:innen entdecken &rarr;
             </Link>
           </p>
         </section>
@@ -317,7 +317,7 @@ export default async function LandingPage() {
               💚
             </div>
             <h3 className="mb-2 text-lg font-normal text-text-primary">
-              Kostenlos für Anbieter:innen
+              Kostenlos für Raumhalter:innen
             </h3>
             <p className="text-sm text-text-secondary">
               Kein Abo, keine Provision — jede:r kann Events und ein Profil kostenlos einstellen.
@@ -367,6 +367,47 @@ export default async function LandingPage() {
           </svg>
           Telegram-Kanal beitreten
         </a>
+      </section>
+      {/* 1.8 Beliebte Regionen Footer (SEO) */}
+      <section className="space-y-3 text-center text-sm">
+        <div>
+          <span className="text-text-muted">Beliebte Regionen: </span>
+          {["Hamburg", "Berlin", "Köln", "München", "Kiel", "Flensburg", "Lübeck", "Hannover"].map(
+            (city, i) => (
+              <span key={city}>
+                {i > 0 ? <span className="text-text-muted"> | </span> : null}
+                <Link
+                  href={`/events?city=${encodeURIComponent(city)}`}
+                  className="text-text-secondary transition hover:text-accent-primary"
+                >
+                  {city}
+                </Link>
+              </span>
+            )
+          )}
+        </div>
+        <div>
+          <span className="text-text-muted">Beliebte Kategorien: </span>
+          {[
+            { label: "Yoga", tag: "yoga" },
+            { label: "Meditation", tag: "meditation" },
+            { label: "Breathwork", tag: "breathwork" },
+            { label: "Tanz", tag: "tanz" },
+            { label: "Sound Healing", tag: "sound+healing" },
+            { label: "Kakao-Zeremonie", tag: "kakao-zeremonie" },
+            { label: "Schamanismus", tag: "schamanismus" },
+          ].map(({ label, tag }, i) => (
+            <span key={tag}>
+              {i > 0 ? <span className="text-text-muted"> | </span> : null}
+              <Link
+                href={`/events?tag=${tag}`}
+                className="text-text-secondary transition hover:text-accent-primary"
+              >
+                {label}
+              </Link>
+            </span>
+          ))}
+        </div>
       </section>
     </div>
   );
