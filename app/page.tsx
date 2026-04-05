@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { EventCard } from "@/components/EventCard";
-import { getCityFromAddress } from "@/lib/event-utils";
+import { matchCity } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -40,17 +40,15 @@ export default async function LandingPage() {
     .from("hosts")
     .select("*", { count: "exact", head: true });
 
-  // Städte-Count (distinct cities from future events)
+  // Städte-Count (from ALL events for broader coverage)
   const { data: cityData } = await supabase
     .from("events")
     .select("address")
-    .eq("is_public", true)
-    .eq("status", "published")
-    .gte("start_at", new Date().toISOString());
+    .not("address", "is", null);
 
   const uniqueCities = new Set(
     (cityData || [])
-      .map((e: { address: string | null }) => getCityFromAddress(e.address))
+      .map((e: { address: string | null }) => matchCity(e.address))
       .filter(Boolean)
   );
   const cityCount = uniqueCities.size;

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { getSupabaseServerClient } from "@/lib/supabase";
-import { getCityFromAddress } from "@/lib/event-utils";
+import { matchCity } from "@/lib/event-utils";
 import { HostCard } from "@/components/HostCard";
 import { HostFilters } from "@/components/HostFilters";
 import { AnbieterMapWrapper } from "@/components/AnbieterMapWrapper";
@@ -73,7 +73,7 @@ export default async function AnbieterPage({ searchParams }: AnbieterPageProps) 
     for (const t of e.tags || []) {
       meta.tags.set(t, (meta.tags.get(t) || 0) + 1);
     }
-    const city = getCityFromAddress(e.address);
+    const city = matchCity(e.address);
     if (city) meta.cities.set(city, (meta.cities.get(city) || 0) + 1);
     // Keep the most frequent event location as host pin
     if (e.geo_lat && e.geo_lng && !meta.lat) {

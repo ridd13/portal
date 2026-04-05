@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EventFilters } from "@/components/EventFilters";
 import { EventsClientWrapper } from "@/components/EventsClientWrapper";
-import { getCityFromAddress } from "@/lib/event-utils";
+import { getCityFromAddress, matchCity } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import type { Category, Event, EventFormat } from "@/lib/types";
 
@@ -189,18 +189,16 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
   const categories = (categoriesData || []) as Category[];
 
-  // Load all distinct cities
+  // Load all distinct cities (from ALL events, not just published — for broader city coverage)
   const { data: allEventsForCities } = await supabase
     .from("events")
     .select("address")
-    .eq("is_public", true)
-    .eq("status", "published")
-    .gte("start_at", new Date().toISOString());
+    .not("address", "is", null);
 
   const cities = [
     ...new Set(
       (allEventsForCities || [])
-        .map((e: { address: string | null }) => getCityFromAddress(e.address))
+        .map((e: { address: string | null }) => matchCity(e.address))
         .filter(Boolean)
     ),
   ].sort((a, b) => a!.localeCompare(b!, "de")) as string[];

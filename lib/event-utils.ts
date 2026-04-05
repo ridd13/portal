@@ -100,6 +100,39 @@ export function formatPrice(priceModel: string | null, priceAmount: string | nul
   }
 }
 
+/**
+ * Kuratierte Liste deutscher Städte für Filter-Dropdowns.
+ * Wird gegen event.address gematcht (case-insensitive, Wortgrenzen).
+ * Bei neuen Städten mit Events: hier ergänzen.
+ */
+export const KNOWN_CITIES = [
+  "Hamburg", "Berlin", "München", "Köln", "Freiburg", "Stuttgart",
+  "Düsseldorf", "Dortmund", "Essen", "Bonn", "Frankfurt",
+  "Kiel", "Lübeck", "Flensburg", "Rostock", "Hannover",
+  "Bremen", "Leipzig", "Dresden", "Nürnberg", "Tübingen",
+  "Dachau", "Kirchzarten", "Emmendingen", "Chemnitz",
+  "Karlsruhe", "Augsburg", "Heidelberg", "Kassel", "Göttingen",
+] as const;
+
+/** Match an address against known cities. Returns the city name or null. */
+export function matchCity(address: string | null): string | null {
+  if (!address) return null;
+  const lower = address.toLowerCase();
+  for (const city of KNOWN_CITIES) {
+    // Match "München" in "Brunhamstraße 19 A, 81249 München" or "München, Bayern, Deutschland"
+    if (lower.includes(city.toLowerCase())) return city;
+  }
+  // Also match common transliterations
+  if (lower.includes("muenchen")) return "München";
+  if (lower.includes("koeln")) return "Köln";
+  if (lower.includes("nuernberg")) return "Nürnberg";
+  if (lower.includes("goettingen")) return "Göttingen";
+  if (lower.includes("tuebingen")) return "Tübingen";
+  if (lower.includes("luebeck")) return "Lübeck";
+  if (lower.includes("duesseldorf")) return "Düsseldorf";
+  return null;
+}
+
 const BUNDESLAENDER = new Set([
   "baden-württemberg", "bayern", "berlin", "brandenburg", "bremen",
   "hamburg", "hessen", "mecklenburg-vorpommern", "niedersachsen",
