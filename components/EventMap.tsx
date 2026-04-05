@@ -42,12 +42,25 @@ const userIcon = new L.DivIcon({
   iconAnchor: [10, 10],
 });
 
-/** Re-centers map when the target location changes. */
-function MapRecenter({ lat, lng }: { lat: number; lng: number }) {
+/** Fits map bounds to show all events. Only re-fits when event IDs change. */
+function MapFitBounds({ events, userLat, userLng }: { events: Event[]; userLat?: number | null; userLng?: number | null }) {
   const map = useMap();
+  const key = events.map((e) => e.id).sort().join(",");
   useEffect(() => {
-    map.setView([lat, lng], map.getZoom(), { animate: true });
-  }, [lat, lng, map]);
+    const points: [number, number][] = events
+      .filter((e) => e.geo_lat != null && e.geo_lng != null)
+      .map((e) => [e.geo_lat!, e.geo_lng!]);
+    if (userLat != null && userLng != null) {
+      points.push([userLat, userLng]);
+    }
+    if (points.length === 0) return;
+    if (points.length === 1) {
+      map.setView(points[0], 11, { animate: true });
+      return;
+    }
+    const bounds = L.latLngBounds(points);
+    map.fitBounds(bounds, { padding: [40, 40], animate: true, maxZoom: 13 });
+  }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
   return null;
 }
 
@@ -94,8 +107,8 @@ export function EventMap({ events, userLat, userLng, radiusKm = 25 }: EventMapPr
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
-      {/* Re-center when user location or events change */}
-      <MapRecenter lat={centerLat} lng={centerLng} />
+      {/* Fit bounds to visible events — re-fits when event set changes */}
+      <MapFitBounds events={mappableEvents} userLat={userLat} userLng={userLng} />
 
       {/* User location marker */}
       {hasUser && (
