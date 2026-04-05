@@ -100,8 +100,71 @@ export function formatPrice(priceModel: string | null, priceAmount: string | nul
   }
 }
 
+const BUNDESLAENDER = new Set([
+  "baden-württemberg", "bayern", "berlin", "brandenburg", "bremen",
+  "hamburg", "hessen", "mecklenburg-vorpommern", "niedersachsen",
+  "nordrhein-westfalen", "rheinland-pfalz", "saarland", "sachsen",
+  "sachsen-anhalt", "schleswig-holstein", "thüringen",
+]);
+
+const COUNTRY_SUFFIXES = /,?\s*(deutschland|germany|schweiz\/.*|österreich|austria|portugal|españa|spain|indonesia|australia|colombia|united states|france)\s*$/i;
+
+const CITY_ALIASES: Record<string, string> = {
+  "muenchen": "München",
+  "koeln": "Köln",
+  "nuernberg": "Nürnberg",
+  "freiburg im breisgau": "Freiburg",
+  "berlin kreuzberg": "Berlin",
+  "düsseldorf-pempelfort": "Düsseldorf",
+  "essen-rüttenscheid": "Essen",
+};
+
+function normalizeCity(raw: string): string | null {
+  const s = raw.trim();
+  if (!s || s.length < 2) return null;
+  // Skip pure numbers, PLZ codes, coordinates
+  if (/^\d+$/.test(s)) return null;
+  // Skip junk
+  if (/^(adresse|anschrift|genaue|online|\d+\s*minuten|bei\s|nach\s)/i.test(s)) return null;
+  if (/\.(com|de|org|online|net)/.test(s)) return null;
+  const lower = s.toLowerCase();
+  return CITY_ALIASES[lower] || s;
+}
+
 export const getCityFromAddress = (address: string | null): string | null => {
   if (!address) return null;
-  const parts = address.split(",").map((part) => part.trim()).filter(Boolean);
-  return parts.at(-1) ?? null;
+  const s = address.trim();
+
+  // Junk filter
+  if (/^(adresse|anschrift|genaue|online|\d+\s*min|bei\s)/i.test(s)) return null;
+  if (/\.(com|de|org|online)/.test(s)) return null;
+
+  // Pattern: "PLZ City" anywhere → extract City after 5-digit PLZ
+  const plzMatch = s.match(/\b(\d{5})\s+([A-ZÄÖÜa-zäöüß][\w\s/äöüÄÖÜß-]+)/);
+  if (plzMatch) {
+    // Take only the city name, not trailing comma-parts
+    const cityPart = plzMatch[2].split(",")[0].trim();
+    return normalizeCity(cityPart);
+  }
+
+  // Nominatim or comma-separated: strip country, bundesland, PLZ from end
+  let cleaned = s.replace(COUNTRY_SUFFIXES, "").trim();
+  const parts = cleaned.split(",").map((p) => p.trim()).filter(Boolean);
+
+  // Walk backwards to find the city
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const part = parts[i];
+    const lower = part.toLowerCase();
+    // Skip Bundesland
+    if (BUNDESLAENDER.has(lower)) continue;
+    // Skip PLZ
+    if (/^\d{4,5}$/.test(part)) continue;
+    // Skip "Ortsbeirat", "VVG der Stadt", "Landkreis" — Nominatim admin labels
+    if (/^(ortsbeirat|vvg|landkreis|bezirk|region)/i.test(part)) continue;
+    // Found a candidate
+    const city = normalizeCity(part);
+    if (city) return city;
+  }
+
+  return null;
 };
