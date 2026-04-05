@@ -107,7 +107,7 @@ const BUNDESLAENDER = new Set([
   "sachsen-anhalt", "schleswig-holstein", "thüringen",
 ]);
 
-const COUNTRY_SUFFIXES = /,?\s*(deutschland|germany|schweiz\/.*|österreich|austria|portugal|españa|spain|indonesia|australia|colombia|united states|france)\s*$/i;
+const COUNTRY_SUFFIXES = /,?\s*(deutschland|germany|schweiz\/.*|österreich|austria|portugal|españa|spain|indonesia|australia|colombia|united states|france|belgien|belgium|belgique|belgi[eë])\s*$/i;
 
 const CITY_ALIASES: Record<string, string> = {
   "muenchen": "München",
@@ -119,50 +119,79 @@ const CITY_ALIASES: Record<string, string> = {
   "essen-rüttenscheid": "Essen",
 };
 
-function normalizeCity(raw: string): string | null {
+/** Returns null for anything that doesn't look like an actual German city name */
+function validateCity(raw: string): string | null {
   const s = raw.trim();
-  if (!s || s.length < 2) return null;
-  // Skip pure numbers, PLZ codes, coordinates
-  if (/^\d+$/.test(s)) return null;
-  // Skip junk
-  if (/^(adresse|anschrift|genaue|online|\d+\s*minuten|bei\s|nach\s)/i.test(s)) return null;
-  if (/\.(com|de|org|online|net)/.test(s)) return null;
+  if (!s || s.length < 3 || s.length > 30) return null;
+
   const lower = s.toLowerCase();
-  return CITY_ALIASES[lower] || s;
+
+  // Check alias first
+  if (CITY_ALIASES[lower]) return CITY_ALIASES[lower];
+
+  // Reject pure numbers, PLZ (DE 5-digit, AT 4-digit, foreign with dash)
+  if (/^\d/.test(s)) return null;
+
+  // Reject street addresses: "Str.", "straße", "weg ", "platz ", "gasse", "allee"
+  if (/\b(str\.|straße|strasse|weg\b|platz\b|gasse|allee\b|ring\b|damm\b|ufer\b|chaussee)/i.test(s)) return null;
+
+  // Reject if ends with a house number pattern ("250", "15", "1", "19 A", "47 A")
+  if (/\d+\s*[a-zA-Z]?\s*$/.test(s)) return null;
+
+  // Reject location descriptions, directions, vague text
+  if (/^(adresse|anschrift|genaue|online|bei\s|nach\s|am\s|an\s|im\s|auf\s|vor\s|\d+\s*min|wird noch)/i.test(s)) return null;
+
+  // Reject URLs
+  if (/\.(com|de|org|online|net|io)/.test(s)) return null;
+
+  // Reject slashes (foreign multi-language names like "België / Belgique / Belgien")
+  if (s.includes("/")) return null;
+
+  // Reject Landkreise, regions, cantons, admin divisions
+  if (/\b(landkreis|kreis|bodenseekreis|bezirk|region|kanton|comunidad|oberland|chiemgau|allgäu|allgau|schwarzwald|pfalz|eifel|vulkaneifel|hinterland)\b/i.test(s)) return null;
+
+  // Reject foreign regions/areas
+  if (/^(andaluc|alentejo|algarve|berner|tirol|engiadina|jawa)/i.test(s)) return null;
+
+  // Reject "Hinterhof", "Werbelinsee" and similar non-city descriptors
+  if (/\b(hinterhof|see\b|wald\b|berg\b|tal\b|hof\b|mühle|wiese|garten|insel)/i.test(s)) return null;
+
+  // Reject entries with "Stadt" prefix from Nominatim
+  if (/^(stadt|basel-stadt)/i.test(s)) return null;
+
+  return s;
 }
 
 export const getCityFromAddress = (address: string | null): string | null => {
   if (!address) return null;
   const s = address.trim();
+  if (s.length < 3) return null;
 
-  // Junk filter
+  // Quick junk reject
   if (/^(adresse|anschrift|genaue|online|\d+\s*min|bei\s)/i.test(s)) return null;
   if (/\.(com|de|org|online)/.test(s)) return null;
 
-  // Pattern: "PLZ City" anywhere → extract City after 5-digit PLZ
-  const plzMatch = s.match(/\b(\d{5})\s+([A-ZÄÖÜa-zäöüß][\w\s/äöüÄÖÜß-]+)/);
+  // Pattern: "PLZ City" anywhere → extract City after 5-digit German PLZ
+  const plzMatch = s.match(/\b(\d{5})\s+([A-ZÄÖÜa-zäöüß][A-Za-zÄÖÜäöüß\s-]+)/);
   if (plzMatch) {
-    // Take only the city name, not trailing comma-parts
-    const cityPart = plzMatch[2].split(",")[0].trim();
-    return normalizeCity(cityPart);
+    const cityPart = plzMatch[2].split(",")[0].split("(")[0].trim();
+    return validateCity(cityPart);
   }
 
   // Nominatim or comma-separated: strip country, bundesland, PLZ from end
-  let cleaned = s.replace(COUNTRY_SUFFIXES, "").trim();
+  const cleaned = s.replace(COUNTRY_SUFFIXES, "").trim();
   const parts = cleaned.split(",").map((p) => p.trim()).filter(Boolean);
 
   // Walk backwards to find the city
   for (let i = parts.length - 1; i >= 0; i--) {
     const part = parts[i];
     const lower = part.toLowerCase();
-    // Skip Bundesland
     if (BUNDESLAENDER.has(lower)) continue;
-    // Skip PLZ
-    if (/^\d{4,5}$/.test(part)) continue;
-    // Skip "Ortsbeirat", "VVG der Stadt", "Landkreis" — Nominatim admin labels
-    if (/^(ortsbeirat|vvg|landkreis|bezirk|region)/i.test(part)) continue;
-    // Found a candidate
-    const city = normalizeCity(part);
+    // Skip PLZ (5-digit DE, 4-digit AT, foreign with dash)
+    if (/^\d{4,5}(-\d+)?$/.test(part)) continue;
+    // Skip Nominatim admin labels
+    if (/^(ortsbeirat|vvg|landkreis|bezirk|region|gem\b|vgem)/i.test(part)) continue;
+    const city = validateCity(part);
     if (city) return city;
   }
 
