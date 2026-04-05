@@ -29,12 +29,10 @@ export default async function LandingPage() {
 
   const upcomingEvents = (data || []) as Event[];
 
-  // Social Proof Counts
+  // Social Proof Counts (alle Events, nicht nur published)
   const { count: eventCount } = await supabase
     .from("events")
-    .select("*", { count: "exact", head: true })
-    .eq("is_public", true)
-    .eq("status", "published");
+    .select("*", { count: "exact", head: true });
 
   const { count: hostCount } = await supabase
     .from("hosts")
