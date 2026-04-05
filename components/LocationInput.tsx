@@ -72,7 +72,7 @@ export function LocationInput({ onLocationChange }: LocationInputProps) {
         if (controller.signal.aborted) return;
         setGeoActive(false);
       },
-      { timeout: 8000, maximumAge: 300000 }
+      { timeout: 15000, maximumAge: 600000, enableHighAccuracy: false }
     );
 
     return () => {
@@ -188,7 +188,7 @@ export function LocationInput({ onLocationChange }: LocationInputProps) {
                 () => {
                   setGeoActive(false);
                 },
-                { timeout: 8000, maximumAge: 300000 }
+                { timeout: 15000, maximumAge: 600000, enableHighAccuracy: false }
               );
             }}
             disabled={geoActive}
