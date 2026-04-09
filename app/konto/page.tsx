@@ -100,7 +100,7 @@ export default async function KontoPage() {
       {typedHost ? (
         <section className="rounded-3xl border border-border bg-bg-card p-6 shadow-[0_8px_24px_rgba(44,36,24,0.07)] sm:p-8">
           <h2 className="font-serif text-2xl font-normal text-text-primary">
-            Mein Anbieter:in-Profil
+            Mein Anbieter-Profil
           </h2>
           <p className="mt-1 text-sm text-text-secondary">
             Bearbeite dein öffentliches Profil auf Das Portal.
@@ -111,10 +111,10 @@ export default async function KontoPage() {
         </section>
       ) : (
         <section className="rounded-2xl border border-border bg-bg-secondary p-5">
-          <h2 className="text-lg font-normal text-text-primary">Anbieter:in-Profil</h2>
+          <h2 className="text-lg font-normal text-text-primary">Anbieter-Profil</h2>
           <p className="mt-2 text-sm text-text-secondary">
-            Du hast noch kein Anbieter:innen-Profil. Wenn du auf Das Portal als
-            Anbieter:in gelistet bist, kannst du dein Profil auf deiner Profilseite
+            Du hast noch kein Anbieter-Profil. Wenn du auf Das Portal als
+            Anbieter gelistet bist, kannst du dein Profil auf deiner Profilseite
             beanspruchen.
           </p>
           <Link

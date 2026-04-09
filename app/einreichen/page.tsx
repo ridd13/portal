@@ -20,7 +20,7 @@ const cards = [
   },
   {
     title: "Profil erstellen",
-    description: "Zeig dich als Facilitator, Coach oder Heiler:in auf Das Portal.",
+    description: "Zeig dich als Facilitator, Coach oder Heiler auf Das Portal.",
     href: "/einreichen/host",
     icon: (
       <svg className="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>

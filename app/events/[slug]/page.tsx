@@ -23,7 +23,7 @@ async function getEvent(slug: string) {
   const supabase = getSupabaseServerClient();
   const { data, error } = await supabase
     .from("events")
-    .select("*, hosts(name, slug, description, website_url, social_links), locations(name, slug, type, city)")
+    .select("*, hosts(name, slug, description, website_url, social_links, telegram_username), locations(name, slug, type, city)")
     .eq("slug", slug)
     .eq("is_public", true)
     .eq("status", "published")
@@ -258,12 +258,12 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 </div>
               </div>
 
-              {/* Anbieter:in */}
+              {/* Anbieter */}
               {hostPreview ? (
                 <div className="flex items-start gap-3">
                   <span className="mt-0.5 text-xl" aria-hidden="true">🙋</span>
                   <div>
-                    <p className="text-sm font-medium text-text-muted">Anbieter:in</p>
+                    <p className="text-sm font-medium text-text-muted">Anbieter</p>
                     {hostPreview.slug ? (
                       <Link
                         href={`/hosts/${hostPreview.slug}`}
@@ -284,7 +284,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                   <span className="mt-0.5 text-xl" aria-hidden="true">🌱</span>
                   <div>
                     <p className="text-sm font-medium text-text-muted">Level</p>
-                    <p className="font-medium text-accent-sage">Für Einsteiger:innen geeignet</p>
+                    <p className="font-medium text-accent-sage">Für Einsteiger geeignet</p>
                   </div>
                 </div>
               ) : null}
@@ -306,17 +306,54 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             ) : null}
 
             {/* CTA Button */}
-            {event.ticket_link ? (
-              <a
-                href={event.ticket_link}
-                target="_blank"
-                rel="noreferrer noopener"
-                className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-3 text-lg font-semibold text-white transition hover:brightness-95"
-              >
-                Jetzt anmelden
-                <span aria-hidden="true">&rarr;</span>
-              </a>
-            ) : null}
+            {event.ticket_link ? (() => {
+              const raw = event.ticket_link!.trim();
+              const isMailto = raw.startsWith("mailto:");
+              const isEmail = isMailto || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(raw);
+              const isTel = raw.startsWith("tel:");
+              const isPhone = isTel || /^\+?[\d\s\-/()]{6,20}$/.test(raw);
+              const isUrl = /^https?:\/\//.test(raw);
+              const looksLikeDomain = /^[\w-]+\.[\w./-]+/.test(raw);
+
+              if (isEmail) {
+                const href = isMailto ? raw : `mailto:${raw}`;
+                return (
+                  <a href={href} className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-3 text-lg font-semibold text-white transition hover:brightness-95">
+                    Kontakt per E-Mail <span aria-hidden="true">&rarr;</span>
+                  </a>
+                );
+              }
+              if (isPhone) {
+                const href = isTel ? raw : `tel:${raw.replace(/[\s\-/()]/g, "")}`;
+                return (
+                  <a href={href} className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-3 text-lg font-semibold text-white transition hover:brightness-95">
+                    Telefonisch anfragen <span aria-hidden="true">&rarr;</span>
+                  </a>
+                );
+              }
+              if (isUrl || looksLikeDomain) {
+                const href = isUrl ? raw : `https://${raw}`;
+                return (
+                  <a href={href} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-3 text-lg font-semibold text-white transition hover:brightness-95">
+                    Jetzt anmelden <span aria-hidden="true">&rarr;</span>
+                  </a>
+                );
+              }
+              // Freetext like "Anmeldung via DM" – link to host Telegram if available
+              const tgUser = host && "telegram_username" in host ? (host as unknown as Record<string, unknown>).telegram_username as string | null : null;
+              if (tgUser) {
+                return (
+                  <a href={`https://t.me/${tgUser}`} target="_blank" rel="noreferrer noopener" className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-3 text-lg font-semibold text-white transition hover:brightness-95">
+                    Per Telegram anmelden <span aria-hidden="true">&rarr;</span>
+                  </a>
+                );
+              }
+              return (
+                <p className="rounded-xl bg-bg-secondary px-6 py-3 text-sm text-text-secondary">
+                  <span className="font-medium text-text-primary">Anmeldung:</span> {raw}
+                </p>
+              );
+            })() : null}
 
             {/* Structured Description Sections */}
             {event.description_sections ? (
@@ -352,7 +389,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                     </p>
                     {event.description_sections.is_beginner_friendly === true ? (
                       <span className="mt-2 inline-block rounded-full bg-accent-sage/15 px-3 py-1 text-xs font-medium text-accent-sage">
-                        Für Einsteiger:innen geeignet
+                        Für Einsteiger geeignet
                       </span>
                     ) : null}
                   </section>
@@ -424,7 +461,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
             {/* Facilitator / Host Box */}
             {host ? (
               <section className="rounded-2xl border border-border bg-bg-secondary p-4">
-                <h2 className="mb-3 text-xl font-normal text-text-primary">Anbieter:in</h2>
+                <h2 className="mb-3 text-xl font-normal text-text-primary">Anbieter</h2>
                 {hostPreview?.slug ? (
                   <Link
                     href={`/hosts/${hostPreview.slug}`}
@@ -458,7 +495,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               <section className="rounded-2xl border border-dashed border-accent-secondary bg-bg-secondary p-4">
                 <p className="font-medium text-text-primary">Ist das dein Event?</p>
                 <p className="mt-1 text-sm text-text-secondary">
-                  Registriere dich als Anbieter:in und verwalte dein Listing.
+                  Registriere dich als Anbieter und verwalte dein Listing.
                 </p>
                 <Link
                   href="/fuer-facilitators"

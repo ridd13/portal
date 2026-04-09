@@ -21,12 +21,12 @@ export async function generateMetadata({ searchParams }: AnbieterPageProps): Pro
   const params = await searchParams;
   const city = params.city?.trim();
   const title = city
-    ? `Raumhalter:innen in ${city} | Das Portal`
-    : "Raumhalter:innen | Das Portal";
+    ? `Anbieter in ${city} | Das Portal`
+    : "Anbieter | Das Portal";
   return {
     title,
     description:
-      "Finde Coaches, Heiler:innen und Facilitators in deiner Nähe. Entdecke Profile, Angebote und bewusste Events auf Das Portal.",
+      "Finde Coaches, Heiler und Facilitators in deiner Nähe. Entdecke Profile, Angebote und bewusste Events auf Das Portal.",
     alternates: { canonical: "/anbieter" },
   };
 }
@@ -157,10 +157,10 @@ export default async function AnbieterPage({ searchParams }: AnbieterPageProps) 
       {/* Hero */}
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] p-6 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:p-8">
         <h1 className="text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
-          Finde Raumhalter:innen in deiner Nähe
+          Finde Anbieter in deiner Nähe
         </h1>
         <p className="mt-3 max-w-2xl text-text-secondary">
-          Coaches, Heiler:innen, Yogalehrer:innen und Facilitators —
+          Coaches, Heiler, Yogalehrer und Facilitators —
           entdecke, wer in deiner Region bewusste Erlebnisse anbietet.
         </p>
       </section>
@@ -192,7 +192,7 @@ export default async function AnbieterPage({ searchParams }: AnbieterPageProps) 
         ) : (
           <div className="rounded-2xl border border-border bg-bg-secondary p-8 text-center">
             <p className="text-lg text-text-primary">
-              Noch keine Raumhalter:innen{cityFilter ? ` in ${cityFilter}` : ""} gefunden?
+              Noch keine Anbieter{cityFilter ? ` in ${cityFilter}` : ""} gefunden?
             </p>
             <p className="mt-2 text-text-secondary">Werde die Erste / der Erste!</p>
             <Link

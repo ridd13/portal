@@ -165,6 +165,16 @@ Wenn SQL manuell im Supabase SQL Editor eingegeben wird, ersetzt die Autocomplet
 ### Supabase Service-Role Client
 `createClient()` auf Modul-Ebene crasht den Build wenn `SUPABASE_SERVICE_ROLE_KEY` zur Build-Zeit nicht gesetzt ist. Lösung: Lazy initialization in einer Helper-Funktion (`lib/supabase-admin.ts` → `getSupabaseAdminClient()`). Client wird erst beim ersten API-Call erstellt.
 
+### ⛔ KRITISCH: Niemals DELETE/DROP ohne explizite Bestätigung
+Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes `DELETE FROM events WHERE source_type = 'telegram'` gelöscht. Free Plan hat keine Backups. Daten unwiederbringlich verloren.
+
+**REGEL: Destruktive DB-Operationen (DELETE, DROP, TRUNCATE, UPDATE auf >10 Zeilen) NIEMALS ausführen ohne:**
+1. Explizite Bestätigung vom User mit konkreter Nennung was gelöscht wird ("Soll ich jetzt 656 Events löschen? Ja/Nein")
+2. Vorher ein Backup/Export der betroffenen Daten erstellen
+3. Bei Unsicherheit: NICHT ausführen, nachfragen
+
+"Ja aber..." ist KEINE Bestätigung. Nur ein klares "Ja, lösch das" oder "Ja, mach den Rollback" zählt.
+
 ---
 
 ## Kontext-Dateien

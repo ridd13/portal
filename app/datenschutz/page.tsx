@@ -252,8 +252,8 @@ export default function DatenschutzPage() {
             Beschreibung.
           </p>
           <p className="mt-2">
-            Der Name des Absenders wird als Anbieter:in-Profil auf Das Portal
-            angelegt. Anbieter:innen können jederzeit die Löschung ihres
+            Der Name des Absenders wird als Anbieter-Profil auf Das Portal
+            angelegt. Anbieter können jederzeit die Löschung ihres
             Profils und ihrer Events per Telegram an{" "}
             <a
               href="https://t.me/lbewernick"
@@ -286,7 +286,7 @@ export default function DatenschutzPage() {
             11. Profil-Beanspruchung
           </h2>
           <p>
-            Anbieter:innen können ihr automatisch erstelltes Profil
+            Anbieter können ihr automatisch erstelltes Profil
             beanspruchen. Dafür wird die E-Mail-Adresse verarbeitet, die bei
             der Kontaktaufnahme angegeben wird.
           </p>

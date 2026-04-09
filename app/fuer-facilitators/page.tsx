@@ -4,9 +4,9 @@ import { getCityFromAddress } from "@/lib/event-utils";
 import { ProviderSignupForm } from "@/components/ProviderSignupForm";
 
 export const metadata: Metadata = {
-  title: "Für Anbieter:innen | Das Portal",
+  title: "Für Anbieter | Das Portal",
   description:
-    "Werde sichtbar als Coach, Heiler:in oder Facilitator. Registriere dich auf Das Portal und erreiche die Menschen, die dich suchen.",
+    "Werde sichtbar als Coach, Heiler oder Facilitator. Registriere dich auf Das Portal und erreiche die Menschen, die dich suchen.",
 };
 
 export default async function FacilitatorsPage() {
@@ -40,7 +40,7 @@ export default async function FacilitatorsPage() {
       {/* Hero */}
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-12 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-16">
         <p className="mb-3 text-sm font-medium uppercase tracking-[0.18em] text-accent-sage">
-          Für Anbieter:innen
+          Für Anbieter
         </p>
         <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
           Deine Arbeit verdient
@@ -48,7 +48,7 @@ export default async function FacilitatorsPage() {
           Sichtbarkeit.
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-text-secondary sm:text-xl">
-          Das Portal ist die Plattform für Coaches, Heiler:innen und Facilitators, die ihre Events
+          Das Portal ist die Plattform für Coaches, Heiler und Facilitators, die ihre Events
           und Angebote den richtigen Menschen zeigen wollen — ohne Marketing-Stress.
         </p>
         {/* Social Proof */}
@@ -57,7 +57,7 @@ export default async function FacilitatorsPage() {
             {hostCount ? (
               <div>
                 <p className="text-3xl font-bold text-accent-primary">{hostCount}+</p>
-                <p className="text-sm text-text-muted">Anbieter:innen</p>
+                <p className="text-sm text-text-muted">Anbieter</p>
               </div>
             ) : null}
             {eventCount ? (
@@ -173,15 +173,15 @@ export default async function FacilitatorsPage() {
         <div className="mx-auto flex max-w-3xl flex-wrap justify-center gap-3">
           {[
             "Coaches",
-            "Heiler:innen",
+            "Heiler",
             "Schamanen",
-            "Therapeut:innen",
-            "Yogalehrer:innen",
-            "Meditationslehrer:innen",
+            "Therapeuten",
+            "Yogalehrer",
+            "Meditationslehrer",
             "Facilitators",
-            "Workshop-Leiter:innen",
+            "Workshop-Leiter",
             "Breathwork-Guides",
-            "Klangheiler:innen",
+            "Klangheiler",
           ].map((role) => (
             <span
               key={role}
@@ -305,7 +305,7 @@ export default async function FacilitatorsPage() {
           {[
             {
               q: "Kostet Das Portal etwas?",
-              a: "Nein, Das Portal ist komplett kostenlos — für Anbieter:innen und Besucher:innen. Kein Abo, keine Provision.",
+              a: "Nein, Das Portal ist komplett kostenlos — für Anbieter und Besucher. Kein Abo, keine Provision.",
             },
             {
               q: "Wie werden Events importiert?",

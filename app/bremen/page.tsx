@@ -196,7 +196,7 @@ export default async function BremenPage() {
         {/* CTA */}
         <section className="mt-16 rounded-3xl bg-linear-to-br from-[#f5ece1] to-[#e8ddd4] p-8 text-center sm:p-12">
           <h2 className="text-2xl font-semibold text-text-primary">
-            Du bist Anbieter:in in Bremen?
+            Du bist Anbieter in Bremen?
           </h2>
           <p className="mt-3 text-text-secondary">
             Mach deine Events sichtbar — kostenlos, ohne Haken.

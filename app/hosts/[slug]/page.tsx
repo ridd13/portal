@@ -21,14 +21,14 @@ export async function generateMetadata({ params }: HostPageProps): Promise<Metad
     .eq("slug", slug)
     .maybeSingle();
 
-  if (!host) return { title: "Anbieter:in nicht gefunden" };
+  if (!host) return { title: "Anbieter nicht gefunden" };
 
   const siteUrl = getSiteUrl();
   const typedHost = host as { name: string; slug: string; description: string | null };
   const description = typedHost.description?.slice(0, 155) || `Events von ${typedHost.name} auf Das Portal`;
 
   return {
-    title: `${typedHost.name} | Anbieter:in auf Das Portal`,
+    title: `${typedHost.name} | Anbieter auf Das Portal`,
     description,
     openGraph: {
       type: "profile",
@@ -55,7 +55,7 @@ export default async function HostPage({ params }: HostPageProps) {
   if (hostError) {
     return (
       <section className="mx-auto max-w-4xl rounded-2xl border border-error-border bg-error-bg p-6 text-error-text">
-        Anbieter:in-Profil konnte nicht geladen werden. Bitte spaeter erneut versuchen.
+        Anbieter-Profil konnte nicht geladen werden. Bitte spaeter erneut versuchen.
       </section>
     );
   }
@@ -113,7 +113,7 @@ export default async function HostPage({ params }: HostPageProps) {
       {/* Header Section */}
       <section className="rounded-3xl border border-border bg-bg-card p-6 shadow-[0_8px_24px_rgba(44,36,24,0.07)] sm:p-8">
         <p className="mb-4 text-sm uppercase tracking-[0.14em] text-text-secondary">
-          Anbieter:in-Profil
+          Anbieter-Profil
         </p>
 
         {/* Avatar + Name */}
@@ -232,7 +232,7 @@ export default async function HostPage({ params }: HostPageProps) {
         ) : (
           <div className="mt-6 rounded-2xl border border-border bg-bg-secondary p-5">
             <p className="text-sm leading-relaxed text-text-secondary">
-              {typedHost.name} ist auf Das Portal als Anbieter:in gelistet.
+              {typedHost.name} ist auf Das Portal als Anbieter gelistet.
               Dieses Profil wurde noch nicht persönlich beansprucht — sobald{" "}
               {typedHost.name} das Profil übernimmt, findest du hier mehr
               Informationen über Angebote, Hintergrund und Spezialisierungen.

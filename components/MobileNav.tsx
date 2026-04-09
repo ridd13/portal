@@ -62,14 +62,14 @@ export function MobileNav({ isLoggedIn }: MobileNavProps) {
               onClick={() => setOpen(false)}
               className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary"
             >
-              Raumhalter:innen
+              Anbieter
             </Link>
             <Link
               href="/fuer-facilitators"
               onClick={() => setOpen(false)}
               className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary"
             >
-              Für Anbieter:innen
+              Für Anbieter
             </Link>
             <Link
               href="/einreichen"

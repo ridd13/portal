@@ -129,7 +129,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         </h2>
         <p>
           Auf Das Portal findest du {category.name_de}-Angebote von erfahrenen
-          Anbieter:innen aus Schleswig-Holstein und Hamburg. Ob Einsteiger:in oder
+          Anbietern aus Schleswig-Holstein und Hamburg. Ob Anfänger oder
           erfahren – stöbere durch unsere Auswahl an Events, Workshops und Retreats
           und finde das passende Angebot für dich.
         </p>

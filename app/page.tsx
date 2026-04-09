@@ -93,13 +93,13 @@ export default async function LandingPage() {
       {/* 1.1 Hero */}
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-12 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-16">
         <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-text-primary sm:text-5xl lg:text-6xl">
-          Entdecke bewusste Events
+          Finde deinen Raum.
           <br />
-          in deiner Nähe
+          Finde deine Menschen.
         </h1>
         <p className="mt-4 max-w-2xl text-lg text-text-secondary sm:text-xl">
           Breathwork, Yoga, Sound Healing, Kakao-Zeremonien und mehr —
-          finde Facilitators und Erlebnisse, denen du vertrauen kannst.
+          bewusste Events und Anbieter in deiner Nähe.
         </p>
         <div className="mt-6 flex flex-wrap gap-3">
           <Link
@@ -112,7 +112,7 @@ export default async function LandingPage() {
             href="/anbieter"
             className="inline-flex items-center rounded-xl border border-border bg-bg-card px-6 py-3 text-base font-medium text-text-primary transition hover:bg-bg-secondary"
           >
-            Raumhalter:innen entdecken
+            Anbieter entdecken
           </Link>
         </div>
 
@@ -127,7 +127,7 @@ export default async function LandingPage() {
           {hostCount ? (
             <div>
               <p className="text-3xl font-bold text-accent-primary">{hostCount}+</p>
-              <p className="text-sm text-text-muted">Raumhalter:innen</p>
+              <p className="text-sm text-text-muted">Anbieter</p>
             </div>
           ) : null}
           {cityCount > 0 ? (
@@ -149,27 +149,27 @@ export default async function LandingPage() {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-sage text-xl font-bold text-white">
               1
             </div>
-            <h3 className="mb-2 text-lg font-normal text-text-primary">Stöbere</h3>
+            <h3 className="mb-2 text-lg font-normal text-text-primary">Komm an</h3>
             <p className="text-text-secondary">
-              Finde Events und Raumhalter:innen nach Ort, Kategorie oder Datum.
+              Finde Events und Anbieter nach Ort, Kategorie oder Datum — alles an einem Platz.
             </p>
           </div>
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-primary text-xl font-bold text-white">
               2
             </div>
-            <h3 className="mb-2 text-lg font-normal text-text-primary">Entdecke</h3>
+            <h3 className="mb-2 text-lg font-normal text-text-primary">Vertrau</h3>
             <p className="text-text-secondary">
-              Lerne Raumhalter:innen kennen — ihre Arbeit, ihr Hintergrund, ihre Angebote.
+              Lerne die Menschen hinter den Events kennen — mit echten Profilen und Hintergrund.
             </p>
           </div>
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-secondary text-xl font-bold text-white">
               3
             </div>
-            <h3 className="mb-2 text-lg font-normal text-text-primary">Erlebe</h3>
+            <h3 className="mb-2 text-lg font-normal text-text-primary">Geh rein</h3>
             <p className="text-text-secondary">
-              Nimm teil an transformativen Erfahrungen in deiner Nähe.
+              Nimm teil. Lass dich ein. Finde deine Community vor Ort.
             </p>
           </div>
         </div>
@@ -199,7 +199,7 @@ export default async function LandingPage() {
               href="/anbieter"
               className="text-sm text-accent-secondary hover:underline"
             >
-              Oder entdecke Raumhalter:innen in deiner Nähe &rarr;
+              Oder entdecke Anbieter in deiner Nähe &rarr;
             </Link>
           </p>
         </section>
@@ -255,10 +255,10 @@ export default async function LandingPage() {
         <section className="space-y-6">
           <div className="text-center">
             <h2 className="text-2xl font-normal text-text-primary sm:text-3xl">
-              Lerne unsere Raumhalter:innen kennen
+              Lerne unsere Anbieter kennen
             </h2>
             <p className="mt-2 text-text-secondary">
-              Coaches, Heiler:innen und Facilitators — mit eigenen Profilen auf Das Portal.
+              Coaches, Heiler und Facilitators — mit eigenen Profilen auf Das Portal.
             </p>
           </div>
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-4">
@@ -296,7 +296,7 @@ export default async function LandingPage() {
               href="/anbieter"
               className="text-sm font-semibold text-accent-secondary hover:underline"
             >
-              Alle Raumhalter:innen entdecken &rarr;
+              Alle Anbieter entdecken &rarr;
             </Link>
           </p>
         </section>
@@ -313,10 +313,10 @@ export default async function LandingPage() {
               💚
             </div>
             <h3 className="mb-2 text-lg font-normal text-text-primary">
-              Kostenlos für Raumhalter:innen
+              Komplett kostenlos
             </h3>
             <p className="text-sm text-text-secondary">
-              Kein Abo, keine Provision — jede:r kann Events und ein Profil kostenlos einstellen.
+              Kein Abo, keine Provision, keine versteckten Kosten — für alle. Events einstellen, Profile anlegen, Events finden.
             </p>
           </div>
           <div className="text-center">
@@ -344,26 +344,21 @@ export default async function LandingPage() {
         </div>
       </section>
 
-      {/* 1.7 Telegram CTA */}
-      <section className="rounded-3xl bg-bg-secondary px-6 py-10 text-center sm:px-10">
-        <h2 className="text-2xl font-normal text-text-primary sm:text-3xl">
-          Bleib verbunden
-        </h2>
-        <p className="mx-auto mt-3 max-w-xl text-text-secondary">
-          Erhalte Event-Highlights direkt auf dein Handy — in unserem Telegram-Kanal.
-        </p>
+      {/* 1.7 Telegram CTA – dezent */}
+      <div className="flex items-center justify-center gap-3 text-sm text-text-secondary">
+        <span>Auch auf Telegram:</span>
         <a
           href="https://t.me/dasgrosseportal"
           target="_blank"
           rel="noreferrer noopener"
-          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-accent-primary px-6 py-3 text-base font-semibold text-white shadow-md transition hover:brightness-95"
+          className="inline-flex items-center gap-1.5 font-medium text-accent-primary transition hover:underline"
         >
-          <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
             <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
           </svg>
-          Telegram-Kanal beitreten
+          @dasgrosseportal
         </a>
-      </section>
+      </div>
       {/* 1.8 Beliebte Regionen Footer (SEO) */}
       <section className="space-y-3 text-center text-sm">
         <div>

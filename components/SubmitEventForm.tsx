@@ -40,7 +40,7 @@ export function SubmitEventForm() {
         </div>
         <div>
           <label htmlFor="description" className={labelClass}>Beschreibung</label>
-          <textarea id="description" name="description" rows={4} maxLength={2000} placeholder="Was erwartet die Teilnehmer:innen?" className={inputClass} />
+          <textarea id="description" name="description" rows={4} maxLength={2000} placeholder="Was erwartet die Teilnehmer?" className={inputClass} />
         </div>
       </fieldset>
 

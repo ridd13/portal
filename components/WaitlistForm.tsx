@@ -8,13 +8,13 @@ const initialState: WaitlistResult = { success: false, message: "" };
 const roles = [
   { value: "", label: "Was beschreibt dich am besten?" },
   { value: "coach", label: "Coach" },
-  { value: "heiler", label: "Heiler:in" },
-  { value: "therapeut", label: "Therapeut:in" },
+  { value: "heiler", label: "Heiler" },
+  { value: "therapeut", label: "Therapeut" },
   { value: "schamane", label: "Schamane / Schamanin" },
-  { value: "facilitator", label: "Facilitator / Workshop-Leiter:in" },
-  { value: "yogalehrer", label: "Yogalehrer:in" },
-  { value: "meditationslehrer", label: "Meditationslehrer:in" },
-  { value: "teilnehmer", label: "Nur als Teilnehmer:in interessiert" },
+  { value: "facilitator", label: "Facilitator / Workshop-Leiter" },
+  { value: "yogalehrer", label: "Yogalehrer" },
+  { value: "meditationslehrer", label: "Meditationslehrer" },
+  { value: "teilnehmer", label: "Nur als Teilnehmer interessiert" },
   { value: "sonstige", label: "Sonstiges" },
 ];
 
