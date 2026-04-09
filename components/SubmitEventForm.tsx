@@ -89,13 +89,22 @@ export function SubmitEventForm() {
             </select>
           </div>
           <div className="flex-1">
-            <label htmlFor="tags" className={labelClass}>Tags</label>
-            <input id="tags" type="text" name="tags" placeholder="z.B. Yoga, Meditation, Breathwork" className={inputClass} />
+            <label htmlFor="price_amount" className={labelClass}>Preis</label>
+            <input id="price_amount" type="text" name="price_amount" placeholder="z.B. 25€, 40-60€, ab 15€" className={inputClass} />
           </div>
+        </div>
+        <div>
+          <label htmlFor="tags" className={labelClass}>Tags</label>
+          <input id="tags" type="text" name="tags" placeholder="z.B. Yoga, Meditation, Breathwork" className={inputClass} />
         </div>
         <div>
           <label htmlFor="ticket_link" className={labelClass}>Link zur Anmeldung</label>
           <input id="ticket_link" type="url" name="ticket_link" placeholder="https://..." className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="photo" className={labelClass}>Foto / Titelbild</label>
+          <input id="photo" type="file" name="photo" accept="image/jpeg,image/png,image/webp" className="w-full text-sm text-text-secondary file:mr-3 file:rounded-lg file:border-0 file:bg-bg-secondary file:px-4 file:py-2 file:text-sm file:font-medium file:text-text-primary hover:file:bg-border" />
+          <p className="mt-1 text-xs text-text-muted">JPG, PNG oder WebP, max. 5 MB</p>
         </div>
       </fieldset>
 

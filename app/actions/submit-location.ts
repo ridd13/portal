@@ -1,6 +1,7 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { uploadImage } from "@/lib/upload-image";
 import type { SubmitResult } from "./submit-event";
 
 function slugify(text: string): string {
@@ -52,6 +53,13 @@ export async function submitLocation(
 
   const slug = slugify(name) + "-" + Date.now().toString(36);
 
+  // Photo upload
+  const photoFile = formData.get("photo") as File | null;
+  let coverImageUrl: string | null = null;
+  if (photoFile && photoFile.size > 0) {
+    coverImageUrl = await uploadImage(photoFile, "locations", slug);
+  }
+
   const supabase = getSupabaseServerClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +78,7 @@ export async function submitLocation(
     amenities,
     overnight_possible: overnightPossible,
     wheelchair_accessible: wheelchairAccessible,
+    cover_image_url: coverImageUrl,
   });
 
   if (error) {

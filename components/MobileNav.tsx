@@ -56,7 +56,7 @@ export function MobileNav() {
             <Link
               href="/einreichen"
               onClick={() => setOpen(false)}
-              className="rounded-xl bg-accent-sage/15 px-3 py-2.5 text-center text-sm font-medium text-accent-sage transition hover:bg-accent-sage/25 hover:text-text-primary"
+              className="rounded-xl bg-accent-primary px-3 py-2.5 text-center text-sm font-medium text-white transition hover:brightness-110"
             >
               Eintragen
             </Link>

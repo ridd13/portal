@@ -99,9 +99,8 @@ export default async function AnbieterPage({ searchParams }: AnbieterPageProps) 
           .slice(0, 3)
           .map(([tag]) => tag)
       : [];
-    const primaryCity = meta
-      ? [...meta.cities.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null
-      : null;
+    const primaryCity = h.city
+      || (meta ? [...meta.cities.entries()].sort((a, b) => b[1] - a[1])[0]?.[0] ?? null : null);
     return {
       ...h,
       upcomingCount: meta?.count || 0,

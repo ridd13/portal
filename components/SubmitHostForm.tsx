@@ -39,9 +39,24 @@ export function SubmitHostForm() {
           <label htmlFor="name" className={labelClass}>Name *</label>
           <input id="name" type="text" name="name" required minLength={2} maxLength={100} placeholder="Dein Name oder der deiner Praxis" className={inputClass} />
         </div>
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex-1">
+            <label htmlFor="city" className={labelClass}>Stadt / Ort</label>
+            <input id="city" type="text" name="city" maxLength={100} placeholder="z.B. Hamburg, Kiel, Freiburg..." className={inputClass} />
+          </div>
+          <div className="flex-1">
+            <label htmlFor="region" className={labelClass}>Region / Bundesland</label>
+            <input id="region" type="text" name="region" maxLength={100} placeholder="z.B. Schleswig-Holstein" className={inputClass} />
+          </div>
+        </div>
         <div>
           <label htmlFor="description" className={labelClass}>Beschreibung</label>
           <textarea id="description" name="description" rows={4} maxLength={1000} placeholder="Erzähl kurz über dich und dein Angebot..." className={inputClass} />
+        </div>
+        <div>
+          <label htmlFor="photo" className={labelClass}>Profilbild</label>
+          <input id="photo" type="file" name="photo" accept="image/jpeg,image/png,image/webp" className="w-full text-sm text-text-secondary file:mr-3 file:rounded-lg file:border-0 file:bg-bg-secondary file:px-4 file:py-2 file:text-sm file:font-medium file:text-text-primary hover:file:bg-border" />
+          <p className="mt-1 text-xs text-text-muted">JPG, PNG oder WebP, max. 5 MB</p>
         </div>
       </fieldset>
 

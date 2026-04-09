@@ -1,6 +1,7 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { uploadImage } from "@/lib/upload-image";
 
 export type SubmitResult = {
   success: boolean;
@@ -33,6 +34,7 @@ export async function submitEvent(
   const address = formData.get("address")?.toString().trim() || null;
   const tagsRaw = formData.get("tags")?.toString().trim() || "";
   const priceModel = formData.get("price_model")?.toString().trim() || null;
+  const priceAmount = formData.get("price_amount")?.toString().trim() || null;
   const ticketLink = formData.get("ticket_link")?.toString().trim() || null;
   const contactEmail = formData.get("contact_email")?.toString().trim().toLowerCase();
 
@@ -56,6 +58,13 @@ export async function submitEvent(
 
   const slug = slugify(title) + "-" + Date.now().toString(36);
 
+  // Photo upload
+  const photoFile = formData.get("photo") as File | null;
+  let coverImageUrl: string | null = null;
+  if (photoFile && photoFile.size > 0) {
+    coverImageUrl = await uploadImage(photoFile, "events", slug);
+  }
+
   const supabase = getSupabaseServerClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +78,9 @@ export async function submitEvent(
     address,
     tags,
     price_model: priceModel,
+    price_amount: priceAmount,
     ticket_link: ticketLink,
+    cover_image_url: coverImageUrl,
     source_type: "form",
     is_public: true,
   });

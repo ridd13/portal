@@ -34,7 +34,7 @@ export async function Navbar() {
           </Link>
           <Link
             href="/einreichen"
-            className="rounded-full bg-accent-sage/15 px-3 py-2 text-accent-sage transition hover:bg-accent-sage/25 hover:text-text-primary"
+            className="rounded-full bg-accent-primary px-4 py-2 text-white transition hover:brightness-110"
           >
             Eintragen
           </Link>

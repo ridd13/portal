@@ -1,6 +1,7 @@
 "use server";
 
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { uploadImage } from "@/lib/upload-image";
 import type { SubmitResult } from "./submit-event";
 
 function slugify(text: string): string {
@@ -22,6 +23,8 @@ export async function submitHost(
   }
 
   const name = formData.get("name")?.toString().trim();
+  const city = formData.get("city")?.toString().trim() || null;
+  const region = formData.get("region")?.toString().trim() || null;
   const description = formData.get("description")?.toString().trim() || null;
   const email = formData.get("email")?.toString().trim().toLowerCase();
   const websiteUrl = formData.get("website_url")?.toString().trim() || null;
@@ -44,17 +47,27 @@ export async function submitHost(
 
   const slug = slugify(name) + "-" + Date.now().toString(36);
 
+  // Photo upload
+  const photoFile = formData.get("photo") as File | null;
+  let avatarUrl: string | null = null;
+  if (photoFile && photoFile.size > 0) {
+    avatarUrl = await uploadImage(photoFile, "hosts", slug);
+  }
+
   const supabase = getSupabaseServerClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { error } = await (supabase.from("hosts") as any).insert({
     name,
     slug,
+    city,
+    region,
     description,
     email,
     website_url: websiteUrl,
     telegram_username: telegramUsername,
     social_links: Object.keys(socialLinks).length > 0 ? socialLinks : null,
+    avatar_url: avatarUrl,
   });
 
   if (error) {

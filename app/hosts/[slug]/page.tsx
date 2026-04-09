@@ -155,7 +155,20 @@ export default async function HostPage({ params }: HostPageProps) {
     facebook: "M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z",
     linkedin: "M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.32 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.79M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z",
     youtube: "M10 15l5.19-3L10 9v6m11.56-7.83c.13.47.22 1.1.28 1.9.07.8.1 1.49.1 2.09L22 12c0 2.19-.16 3.8-.44 4.83-.25.9-.83 1.48-1.73 1.73-.47.13-1.33.22-2.65.28-1.3.07-2.49.1-3.59.1L12 19c-4.19 0-6.8-.16-7.83-.44-.9-.25-1.48-.83-1.73-1.73-.13-.47-.22-1.1-.28-1.9-.07-.8-.1-1.49-.1-2.09L2 12c0-2.19.16-3.8.44-4.83.25-.9.83-1.48 1.73-1.73.47-.13 1.33-.22 2.65-.28 1.3-.07 2.49-.1 3.59-.1L12 5c4.19 0 6.8.16 7.83.44.9.25 1.48.83 1.73 1.73z",
+    telegram: "M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z",
   };
+
+  // Parse 1:1 offers from description (lines starting with • or -)
+  const offers: string[] = [];
+  if (typedHost.description) {
+    const lines = typedHost.description.split("\n");
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if ((trimmed.startsWith("\u2022") || trimmed.startsWith("-")) && trimmed.length > 5) {
+        offers.push(trimmed.replace(/^[•\-]\s*/, ""));
+      }
+    }
+  }
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -185,6 +198,11 @@ export default async function HostPage({ params }: HostPageProps) {
           <h1 className="font-serif text-3xl font-semibold text-text-primary sm:text-4xl">
             {typedHost.name}
           </h1>
+          {typedHost.city ? (
+            <p className="mt-1 text-sm text-text-muted">
+              {[typedHost.city, typedHost.region].filter(Boolean).join(", ")}
+            </p>
+          ) : null}
 
           {/* Format badges */}
           {formats.length > 0 ? (
@@ -397,10 +415,52 @@ export default async function HostPage({ params }: HostPageProps) {
             </div>
           ) : null}
 
+          {/* Angebote (parsed from description bullet points) */}
+          {offers.length > 0 ? (
+            <div className="rounded-2xl border border-accent-primary/20 bg-linear-to-br from-[#faf6f1] to-[#f5ece1] p-5">
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-accent-primary">Angebote</h3>
+              <ul className="space-y-3">
+                {offers.map((offer, i) => (
+                  <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed text-text-primary">
+                    <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-primary/15 text-xs text-accent-primary">
+                      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    </span>
+                    {offer}
+                  </li>
+                ))}
+              </ul>
+              {typedHost.website_url ? (
+                <a
+                  href={typedHost.website_url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="mt-4 block rounded-xl bg-accent-primary px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  Termin anfragen
+                </a>
+              ) : typedHost.email ? (
+                <a
+                  href={`mailto:${typedHost.email}`}
+                  className="mt-4 block rounded-xl bg-accent-primary px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  Kontakt aufnehmen
+                </a>
+              ) : null}
+            </div>
+          ) : null}
+
           {/* Quick Facts */}
           <div className="rounded-2xl border border-border bg-bg-card p-5">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-text-muted">Auf einen Blick</h3>
             <dl className="space-y-3 text-sm">
+              {typedHost.city ? (
+                <div className="flex justify-between">
+                  <dt className="text-text-muted">Standort</dt>
+                  <dd className="font-medium text-text-primary">{typedHost.city}</dd>
+                </div>
+              ) : null}
               <div className="flex justify-between">
                 <dt className="text-text-muted">Veranstaltungen</dt>
                 <dd className="font-medium text-text-primary">{allEvents.length}</dd>

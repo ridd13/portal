@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 import { getSupabaseServerClient } from "@/lib/supabase";
-import { getSiteUrl } from "@/lib/site-url";
 
-const siteUrl = getSiteUrl();
+const siteUrl = "https://das-portal.online";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Region overview pages
@@ -22,6 +21,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, changeFrequency: "daily", priority: 1.0 },
     { url: `${siteUrl}/events`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${siteUrl}/locations`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/anbieter`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${siteUrl}/einreichen`, changeFrequency: "monthly", priority: 0.6 },
     { url: `${siteUrl}/fuer-facilitators`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${siteUrl}/kontakt`, changeFrequency: "monthly", priority: 0.3 },
     ...regionPages.map((region) => ({
@@ -53,23 +55,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       })
     );
 
-    // Aktuelle Events (nur zukünftige)
+    // Alle published Events (auch vergangene — haben SEO-Wert)
     const { data: events } = await supabase
       .from("events")
-      .select("slug, created_at")
+      .select("slug, created_at, start_at")
       .eq("is_public", true)
       .eq("status", "published")
-      .gte("start_at", new Date().toISOString())
-      .limit(500);
+      .order("start_at", { ascending: false })
+      .limit(1000);
 
+    const now = new Date();
     const eventRoutes: MetadataRoute.Sitemap = (events || [])
       .filter((e: { slug: string | null }) => e.slug)
-      .map((e: { slug: string; created_at: string | null }) => ({
-        url: `${siteUrl}/events/${e.slug}`,
-        lastModified: e.created_at || new Date().toISOString(),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-      }));
+      .map((e: { slug: string; created_at: string | null; start_at: string }) => {
+        const isFuture = new Date(e.start_at) > now;
+        return {
+          url: `${siteUrl}/events/${e.slug}`,
+          lastModified: e.created_at || now.toISOString(),
+          changeFrequency: isFuture ? "weekly" as const : "monthly" as const,
+          priority: isFuture ? 0.8 : 0.5,
+        };
+      });
 
     // Hosts (nur wenn Events vorhanden — ohne Events keine Hosts indexieren)
     const hostRoutes: MetadataRoute.Sitemap = eventRoutes.length > 0
@@ -90,7 +96,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })()
       : [];
 
-    return [...staticRoutes, ...categoryRoutes, ...eventRoutes, ...hostRoutes];
+    // Locations
+    const { data: locations } = await supabase
+      .from("locations")
+      .select("slug, created_at")
+      .not("slug", "is", null)
+      .limit(500);
+    const locationRoutes: MetadataRoute.Sitemap = (locations || [])
+      .filter((l: { slug: string | null }) => l.slug)
+      .map((l: { slug: string; created_at: string | null }) => ({
+        url: `${siteUrl}/locations/${l.slug}`,
+        lastModified: l.created_at || now.toISOString(),
+        changeFrequency: "monthly" as const,
+        priority: 0.7,
+      }));
+
+    return [...staticRoutes, ...categoryRoutes, ...eventRoutes, ...hostRoutes, ...locationRoutes];
   } catch {
     return staticRoutes;
   }

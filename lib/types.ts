@@ -10,6 +10,8 @@ export interface Host {
   telegram_username: string | null;
   email: string | null;
   avatar_url: string | null;
+  city: string | null;
+  region: string | null;
 }
 
 export interface HostPreview {

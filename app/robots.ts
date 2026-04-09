@@ -1,7 +1,4 @@
 import type { MetadataRoute } from "next";
-import { getSiteUrl } from "@/lib/site-url";
-
-const siteUrl = getSiteUrl();
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -10,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/api/", "/konto", "/auth/"],
     },
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: "https://das-portal.online/sitemap.xml",
   };
 }
