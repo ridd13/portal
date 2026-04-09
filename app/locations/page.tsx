@@ -53,7 +53,7 @@ export default async function LocationsPage({ searchParams }: LocationsPageProps
     .not("region", "is", null)
     .order("region");
 
-  const regions = [...new Set((regionData || []).map((r) => r.region as string))];
+  const regions = [...new Set((regionData || []).map((r: { region: string }) => r.region))];
 
   return (
     <div className="mx-auto max-w-7xl space-y-8">
