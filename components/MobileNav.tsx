@@ -71,6 +71,13 @@ export function MobileNav({ isLoggedIn }: MobileNavProps) {
             >
               Für Anbieter:innen
             </Link>
+            <Link
+              href="/einreichen"
+              onClick={() => setOpen(false)}
+              className="rounded-xl bg-accent-sage/15 px-3 py-2.5 text-sm font-medium text-accent-sage transition hover:bg-accent-sage/25 hover:text-text-primary"
+            >
+              Eintragen
+            </Link>
             <a
               href="https://t.me/dasgrosseportal"
               target="_blank"
