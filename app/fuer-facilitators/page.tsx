@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getCityFromAddress } from "@/lib/event-utils";
-import { ProviderSignupForm } from "@/components/ProviderSignupForm";
 
 export const metadata: Metadata = {
   title: "Für Anbieter | Das Portal",
@@ -149,17 +149,17 @@ export default async function FacilitatorsPage() {
               🌱 Wachse mit der Community
             </h3>
             <p className="text-text-secondary">
-              Vernetze dich mit anderen Anbieter:innen in deiner Region. Empfehlungen und echtes
+              Vernetze dich mit anderen Anbietern in deiner Region. Empfehlungen und echtes
               Miteinander statt Einzelkampf.
             </p>
           </div>
           <div className="rounded-2xl border border-border bg-bg-card p-6">
             <h3 className="mb-2 text-lg font-normal text-text-primary">
-              ✏️ Ergänze dein Profil
+              ✏️ Trage dich ein
             </h3>
             <p className="text-text-secondary">
-              Beschreibe deine Arbeit, verlinke deine Website und zeig, was dich ausmacht —
-              alles über dein persönliches Dashboard.
+              Erstelle dein Profil, beschreibe deine Arbeit und verlinke deine Website —
+              ganz einfach über unser Einreichungsformular.
             </p>
           </div>
         </div>
@@ -206,18 +206,18 @@ export default async function FacilitatorsPage() {
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-sage text-xl font-bold text-white">
               1
             </div>
-            <h3 className="mb-2 text-lg font-normal text-text-primary">Registriere dich</h3>
+            <h3 className="mb-2 text-lg font-normal text-text-primary">Trage dich ein</h3>
             <p className="text-text-secondary">
-              Gib deine E-Mail ein und bestätige sie per Magic Link. In wenigen Sekunden bist du dabei.
+              Fülle das kurze Einreichungsformular aus — dein Profil, deine Events oder deinen Raum. Dauert keine 5 Minuten.
             </p>
           </div>
           <div className="text-center">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-accent-primary text-xl font-bold text-white">
               2
             </div>
-            <h3 className="mb-2 text-lg font-normal text-text-primary">Beanspruche dein Profil</h3>
+            <h3 className="mb-2 text-lg font-normal text-text-primary">Wir prüfen und veröffentlichen</h3>
             <p className="text-text-secondary">
-              Wenn deine Events bereits importiert wurden, kannst du dein Profil beanspruchen und ergänzen.
+              Dein Eintrag wird kurz geprüft und dann auf Das Portal veröffentlicht — mit eigenem Profil und SEO-Sichtbarkeit.
             </p>
           </div>
           <div className="text-center">
@@ -309,11 +309,11 @@ export default async function FacilitatorsPage() {
             },
             {
               q: "Wie werden Events importiert?",
-              a: "Events werden automatisch aus Community-Gruppen importiert. Du kannst dein Profil beanspruchen und die Events erscheinen auf deiner Profilseite.",
+              a: "Events werden automatisch aus Community-Gruppen importiert. Zusätzlich kannst du eigene Events über das Einreichungsformular eintragen.",
             },
             {
               q: "Kann ich mein Profil bearbeiten?",
-              a: "Ja, nach der Registrierung kannst du dein Profil über dein Dashboard ergänzen — Beschreibung, Website, Social Links und mehr.",
+              a: "Im Moment kannst du dein Profil über das Einreichungsformular anlegen. Ein eigenes Dashboard mit Bearbeitungsfunktion kommt bald.",
             },
             {
               q: "Muss ich in einer bestimmten Region sein?",
@@ -333,21 +333,25 @@ export default async function FacilitatorsPage() {
         </div>
       </section>
 
-      {/* Registration CTA */}
+      {/* CTA */}
       <section
-        id="registrierung"
+        id="eintragen"
         className="scroll-mt-24 rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] px-6 py-10 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:px-10 sm:py-14"
       >
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="text-3xl font-normal text-text-primary sm:text-4xl">
-            Jetzt registrieren
+            Bereit? Trag dich ein.
           </h2>
           <p className="mt-3 text-text-secondary">
-            Registriere dich und werde Teil der Community. Dein Profil wartet auf dich.
+            Erstelle dein Profil, reiche deine Events ein oder trage deinen Raum ein — komplett kostenlos.
           </p>
-        </div>
-        <div className="mx-auto mt-8 max-w-xl">
-          <ProviderSignupForm />
+          <Link
+            href="/einreichen"
+            className="mt-8 inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-3 text-lg font-semibold text-white transition hover:brightness-95"
+          >
+            Jetzt eintragen
+            <span aria-hidden="true">&rarr;</span>
+          </Link>
         </div>
       </section>
     </div>

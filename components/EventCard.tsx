@@ -33,7 +33,7 @@ export function EventCard({ event }: EventCardProps) {
         {formatEventDate(event.start_at)}
       </div>
 
-      {event.cover_image_url && !event.cover_image_url.startsWith("/images/defaults/") ? (
+      {event.cover_image_url ? (
         <Image
           src={event.cover_image_url}
           alt={event.title}
