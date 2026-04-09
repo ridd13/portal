@@ -6,7 +6,6 @@ import { EventCard } from "@/components/EventCard";
 import { formatEventDate } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
-import { SocialLinks } from "@/components/SocialLinks";
 import type { Event, Host } from "@/lib/types";
 
 interface HostPageProps {
@@ -181,16 +180,55 @@ export default async function HostPage({ params }: HostPageProps) {
         </div>
 
         {typedHost.social_links ? (
-          <div className="mt-4">
-            <SocialLinks links={typedHost.social_links as Record<string, string>} />
+          <div className="mt-3 flex flex-wrap gap-2">
+            {Object.entries(typedHost.social_links as Record<string, string>).map(
+              ([platform, url]) => (
+                <a
+                  key={platform}
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="rounded-full border border-border px-4 py-2 text-sm font-semibold text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary"
+                >
+                  {platform.charAt(0).toUpperCase() + platform.slice(1)}
+                </a>
+              )
+            )}
           </div>
         ) : null}
 
         {/* Description or Unclaimed Placeholder */}
         {typedHost.description ? (
-          <p className="mt-6 max-w-3xl leading-relaxed text-text-secondary">
-            {typedHost.description}
-          </p>
+          <div className="mt-6 max-w-3xl space-y-4">
+            {typedHost.description.split("\n\n").map((paragraph, i) => {
+              const lines = paragraph.split("\n");
+              const isList = lines.every(
+                (l) => l.startsWith("•") || l.startsWith("-") || l.trim() === ""
+              );
+              if (isList) {
+                return (
+                  <ul key={i} className="space-y-1.5 pl-1">
+                    {lines
+                      .filter((l) => l.trim())
+                      .map((line, j) => (
+                        <li
+                          key={j}
+                          className="flex items-start gap-2 leading-relaxed text-text-secondary"
+                        >
+                          <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent-primary" />
+                          {line.replace(/^[•\-]\s*/, "")}
+                        </li>
+                      ))}
+                  </ul>
+                );
+              }
+              return (
+                <p key={i} className="leading-relaxed text-text-secondary">
+                  {paragraph}
+                </p>
+              );
+            })}
+          </div>
         ) : (
           <div className="mt-6 rounded-2xl border border-border bg-bg-secondary p-5">
             <p className="text-sm leading-relaxed text-text-secondary">
@@ -207,11 +245,6 @@ export default async function HostPage({ params }: HostPageProps) {
             </Link>
           </div>
         )}
-
-        {/* Coming soon hint */}
-        <p className="mt-4 text-xs text-text-muted">
-          Bald können Anbieter:innen hier ihr Profil mit Bildern, Spezialisierungen und mehr ergänzen.
-        </p>
       </section>
 
       {/* Upcoming Events */}

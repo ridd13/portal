@@ -34,6 +34,12 @@ export async function Navbar() {
             Events
           </Link>
           <Link
+            href="/locations"
+            className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
+          >
+            Orte
+          </Link>
+          <Link
             href="/anbieter"
             className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
           >

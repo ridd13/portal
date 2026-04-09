@@ -23,7 +23,7 @@ async function getEvent(slug: string) {
   const supabase = getSupabaseServerClient();
   const { data, error } = await supabase
     .from("events")
-    .select("*, hosts(name, slug, description, website_url, social_links)")
+    .select("*, hosts(name, slug, description, website_url, social_links), locations(name, slug, type, city)")
     .eq("slug", slug)
     .eq("is_public", true)
     .eq("status", "published")
@@ -216,7 +216,13 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                   ) : (
                     <>
                       <p className="font-medium text-text-primary">
-                        {event.location_name || "Ort wird noch bekanntgegeben"}
+                        {(event as any).locations?.slug ? (
+                          <Link href={`/locations/${(event as any).locations.slug}`} className="hover:text-accent-primary transition-colors">
+                            {event.location_name || (event as any).locations.name || "Ort wird noch bekanntgegeben"}
+                          </Link>
+                        ) : (
+                          event.location_name || "Ort wird noch bekanntgegeben"
+                        )}
                       </p>
                       {event.address && event.location_name ? (
                         <p className="text-sm text-text-secondary">{event.address}</p>

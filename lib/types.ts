@@ -19,6 +19,46 @@ export interface HostPreview {
 
 export type EventFormat = "event" | "workshop" | "retreat" | "kurs" | "festival" | "kreis";
 
+export type LocationType = "venue" | "retreat_center" | "outdoor" | "coworking" | "online" | "private" | "other";
+
+export interface Location {
+  id: string;
+  name: string;
+  slug: string;
+  type: LocationType;
+  description: string | null;
+  address: string | null;
+  city: string | null;
+  postal_code: string | null;
+  region: string | null;
+  country: string | null;
+  geo_lat: number | null;
+  geo_lng: number | null;
+  cover_image_url: string | null;
+  gallery_urls: string[] | null;
+  website_url: string | null;
+  contact_email: string | null;
+  phone: string | null;
+  social_links: Record<string, string> | null;
+  capacity: number | null;
+  amenities: string[] | null;
+  opening_hours: Record<string, string> | null;
+  overnight_possible: boolean | null;
+  wheelchair_accessible: boolean | null;
+  tags: string[] | null;
+  host_id: string | null;
+  is_claimed: boolean;
+  event_count: number;
+  created_at: string | null;
+}
+
+export interface LocationPreview {
+  name: string;
+  slug: string;
+  type: LocationType;
+  city: string | null;
+}
+
 export interface Category {
   id: number;
   slug: string;
@@ -66,5 +106,7 @@ export interface Event {
   description_sections: DescriptionSections | null;
   source_type: "manual" | "telegram" | "form" | null;
   source_message_id: string | null;
+  location_id: string | null;
+  locations: LocationPreview | null;
   event_categories?: { categories: Category }[];
 }
