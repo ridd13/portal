@@ -3,7 +3,7 @@ import { ACCESS_COOKIE } from "@/lib/auth-cookies";
 import { getUserFromAccessToken } from "@/lib/auth-server";
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 
-const ALLOWED_FIELDS = ["name", "description", "website_url", "social_links"];
+const ALLOWED_FIELDS = ["name", "description", "website_url", "social_links", "email", "telegram_username", "city", "region", "avatar_url"];
 
 export async function POST(request: NextRequest) {
   // Verify authentication

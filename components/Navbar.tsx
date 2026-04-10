@@ -1,7 +1,12 @@
 import Link from "next/link";
+import { cookies } from "next/headers";
+import { ACCESS_COOKIE } from "@/lib/auth-cookies";
 import { MobileNav } from "./MobileNav";
 
 export async function Navbar() {
+  const cookieStore = await cookies();
+  const isLoggedIn = !!cookieStore.get(ACCESS_COOKIE)?.value;
+
   return (
     <header className="sticky top-0 z-20 border-b border-border bg-bg-primary/95 backdrop-blur">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -27,7 +32,7 @@ export async function Navbar() {
             Räume
           </Link>
           <Link
-            href="/anbieter"
+            href="/hosts"
             className="rounded-full px-3 py-2 transition hover:bg-bg-secondary hover:text-text-primary"
           >
             Raumhalter
@@ -38,10 +43,25 @@ export async function Navbar() {
           >
             Eintragen
           </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/konto"
+              className="px-2 py-2 text-text-secondary transition hover:text-text-primary"
+            >
+              Mein Bereich
+            </Link>
+          ) : (
+            <Link
+              href="/auth"
+              className="px-2 py-2 text-text-secondary transition hover:text-text-primary"
+            >
+              Anmelden
+            </Link>
+          )}
         </nav>
 
         {/* Mobile Nav */}
-        <MobileNav />
+        <MobileNav isLoggedIn={isLoggedIn} />
       </div>
     </header>
   );

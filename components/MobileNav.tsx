@@ -3,7 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 
-export function MobileNav() {
+interface MobileNavProps {
+  isLoggedIn: boolean;
+}
+
+export function MobileNav({ isLoggedIn }: MobileNavProps) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -31,35 +35,28 @@ export function MobileNav() {
       {open && (
         <div className="absolute left-0 right-0 top-full border-b border-border bg-bg-primary/98 backdrop-blur">
           <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
-            <Link
-              href="/events"
-              onClick={() => setOpen(false)}
-              className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary"
-            >
+            <Link href="/events" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary">
               Veranstaltungen
             </Link>
-            <Link
-              href="/locations"
-              onClick={() => setOpen(false)}
-              className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary"
-            >
+            <Link href="/locations" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary">
               Räume
             </Link>
-            <Link
-              href="/anbieter"
-              onClick={() => setOpen(false)}
-              className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary"
-            >
+            <Link href="/hosts" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary">
               Raumhalter
             </Link>
             <div className="my-1 border-t border-border" />
-            <Link
-              href="/einreichen"
-              onClick={() => setOpen(false)}
-              className="rounded-xl bg-accent-primary px-3 py-2.5 text-center text-sm font-medium text-white transition hover:brightness-110"
-            >
+            <Link href="/einreichen" onClick={() => setOpen(false)} className="rounded-xl bg-accent-primary px-3 py-2.5 text-center text-sm font-medium text-white transition hover:brightness-110">
               Eintragen
             </Link>
+            {isLoggedIn ? (
+              <Link href="/konto" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-center text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary">
+                Mein Bereich
+              </Link>
+            ) : (
+              <Link href="/auth" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-center text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary">
+                Anmelden
+              </Link>
+            )}
           </nav>
         </div>
       )}
