@@ -15,8 +15,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { city: "hamburg", category: "yoga" },
     { city: "hamburg", category: "meditation" },
     { city: "hamburg", category: "breathwork" },
+    { city: "hamburg", category: "ecstatic-dance" },
+    { city: "hamburg", category: "retreat" },
+    { city: "hamburg", category: "soundhealing" },
     { city: "schleswig-holstein", category: "ganzheitliche-events" },
+    { city: "kiel", category: "breathwork" },
   ];
+
+  // Additional city/region overview pages
+  const cityPages = ["bremen", "kiel", "rostock", "niedersachsen", "mecklenburg-vorpommern"];
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${siteUrl}/`, changeFrequency: "daily", priority: 1.0 },
@@ -30,6 +37,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${siteUrl}/${region}`,
       changeFrequency: "weekly" as const,
       priority: 0.8,
+    })),
+    ...cityPages.map((city) => ({
+      url: `${siteUrl}/${city}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
     })),
     ...cityLandingPages.map(({ city, category }) => ({
       url: `${siteUrl}/${city}/${category}`,
