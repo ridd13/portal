@@ -11,6 +11,8 @@ import { CalendarDownloadButton } from "@/components/CalendarDownloadButton";
 import { SingleEventMap } from "@/components/SingleEventMap";
 import { SocialLinks } from "@/components/SocialLinks";
 import { EventCard } from "@/components/EventCard";
+import { EventRegistrationForm } from "@/components/EventRegistrationForm";
+import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 import type { Event, Host, HostPreview } from "@/lib/types";
 
 interface EventDetailProps {
@@ -23,7 +25,7 @@ async function getEvent(slug: string) {
   const supabase = getSupabaseServerClient();
   const { data, error } = await supabase
     .from("events")
-    .select("*, hosts(name, slug, description, website_url, social_links, telegram_username), locations(name, slug, type, city)")
+    .select("*, hosts(name, slug, description, website_url, social_links, telegram_username, email), locations(name, slug, type, city)")
     .eq("slug", slug)
     .eq("is_public", true)
     .eq("status", "published")
@@ -127,6 +129,18 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
 
   const siteUrl = getSiteUrl();
   const googleCalUrl = buildGoogleCalendarUrl(event);
+
+  // Load registration count for capacity display
+  let confirmedCount = 0;
+  if (event.registration_enabled !== false) {
+    const adminClient = getSupabaseAdminClient();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { count } = await (adminClient.from("event_registrations") as any)
+      .select("id", { count: "exact", head: true })
+      .eq("event_id", event.id)
+      .eq("status", "confirmed");
+    confirmedCount = count || 0;
+  }
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -354,6 +368,20 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 </p>
               );
             })() : null}
+
+            {/* Event Registration Form */}
+            {event.registration_enabled !== false && (
+              <EventRegistrationForm
+                eventId={event.id}
+                eventTitle={event.title}
+                capacity={(event as unknown as Record<string, unknown>).capacity as number | null}
+                confirmedCount={confirmedCount}
+                waitlistEnabled={(event as unknown as Record<string, unknown>).waitlist_enabled as boolean ?? false}
+                registrationEnabled={true}
+                priceModel={event.price_model}
+                priceAmount={event.price_amount}
+              />
+            )}
 
             {/* Structured Description Sections */}
             {event.description_sections ? (

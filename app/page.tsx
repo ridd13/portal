@@ -109,7 +109,7 @@ export default async function LandingPage() {
             Events entdecken
           </Link>
           <Link
-            href="/anbieter"
+            href="/hosts"
             className="inline-flex items-center rounded-xl border border-border bg-bg-card px-6 py-3 text-base font-medium text-text-primary transition hover:bg-bg-secondary"
           >
             Anbieter entdecken
@@ -196,7 +196,7 @@ export default async function LandingPage() {
           </div>
           <p className="text-center">
             <Link
-              href="/anbieter"
+              href="/hosts"
               className="text-sm text-accent-secondary hover:underline"
             >
               Oder entdecke Anbieter in deiner Nähe &rarr;
@@ -293,7 +293,7 @@ export default async function LandingPage() {
           </div>
           <p className="text-center">
             <Link
-              href="/anbieter"
+              href="/hosts"
               className="text-sm font-semibold text-accent-secondary hover:underline"
             >
               Alle Anbieter entdecken &rarr;

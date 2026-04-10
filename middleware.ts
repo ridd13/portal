@@ -70,6 +70,13 @@ export function middleware(request: NextRequest) {
     }
   }
 
+  // --- Redirect old /anbieter URL to /hosts ---
+  if (pathname === "/anbieter") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/hosts";
+    return NextResponse.redirect(url, 308);
+  }
+
   // --- Auth guard for /konto ---
   if (pathname.startsWith("/konto")) {
     const accessToken = request.cookies.get(ACCESS_COOKIE)?.value;
@@ -84,5 +91,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/konto/:path*", "/events/:path*"],
+  matcher: ["/konto/:path*", "/events/:path*", "/anbieter"],
 };

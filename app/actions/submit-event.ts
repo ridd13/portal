@@ -33,6 +33,8 @@ export async function submitEvent(
   const locationName = formData.get("location_name")?.toString().trim() || null;
   const address = formData.get("address")?.toString().trim() || null;
   const tagsRaw = formData.get("tags")?.toString().trim() || "";
+  const capacityRaw = formData.get("capacity")?.toString().trim();
+  const capacity = capacityRaw ? parseInt(capacityRaw, 10) : null;
   const priceModel = formData.get("price_model")?.toString().trim() || null;
   const priceAmount = formData.get("price_amount")?.toString().trim() || null;
   const ticketLink = formData.get("ticket_link")?.toString().trim() || null;
@@ -81,6 +83,9 @@ export async function submitEvent(
     price_amount: priceAmount,
     ticket_link: ticketLink,
     cover_image_url: coverImageUrl,
+    capacity,
+    waitlist_enabled: capacity !== null,
+    registration_enabled: true,
     source_type: "form",
     is_public: true,
   });

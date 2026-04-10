@@ -133,7 +133,9 @@ lib/
 ### Auth
 - Auth ist aktuell **deaktiviert**. Keine Links zu /auth/* oder /konto in der UI.
 - Auth-Code nicht löschen — wird später überarbeitet und wieder aktiviert
-- Navbar zeigt: Logo | Events | Telegram | "Auf die Warteliste"-Button
+- Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange CTA)
+- URL-Struktur ist Englisch: /events, /locations, /hosts, /einreichen
+- /anbieter redirected 308 auf /hosts (Legacy-URL)
 
 ### SEO
 - Jede Seite braucht `export const metadata: Metadata`
@@ -174,6 +176,12 @@ Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes 
 3. Bei Unsicherheit: NICHT ausführen, nachfragen
 
 "Ja aber..." ist KEINE Bestätigung. Nur ein klares "Ja, lösch das" oder "Ja, mach den Rollback" zählt.
+
+### Robots.txt / Sitemap: Keine dynamischen URLs auf Modul-Ebene
+`getSiteUrl()` auf Modul-Ebene in robots.ts/sitemap.ts kann fehlschlagen wenn Env-Vars zur Runtime nicht verfügbar sind. Lösung: URL hardcoden auf `https://das-portal.online`. Außerdem: Domain-Redirect muss korrekt konfiguriert sein (das-portal.online = Primary, www → 308 Redirect). Ein 307 Redirect auf der Root-Domain führt dazu, dass Google robots.txt als "nicht erreichbar" meldet und die Seite nicht indexiert.
+
+### Navbar-Beschreibung aktuell
+Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist deaktiviert.
 
 ---
 

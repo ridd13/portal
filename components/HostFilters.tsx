@@ -28,7 +28,7 @@ export function HostFilters({ cities }: HostFiltersProps) {
           params.delete(key);
         }
       }
-      router.push(`/anbieter?${params.toString()}`);
+      router.push(`/hosts?${params.toString()}`);
     },
     [router, searchParams]
   );

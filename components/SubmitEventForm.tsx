@@ -93,9 +93,15 @@ export function SubmitEventForm() {
             <input id="price_amount" type="text" name="price_amount" placeholder="z.B. 25€, 40-60€, ab 15€" className={inputClass} />
           </div>
         </div>
-        <div>
-          <label htmlFor="tags" className={labelClass}>Tags</label>
-          <input id="tags" type="text" name="tags" placeholder="z.B. Yoga, Meditation, Breathwork" className={inputClass} />
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="flex-1">
+            <label htmlFor="tags" className={labelClass}>Tags</label>
+            <input id="tags" type="text" name="tags" placeholder="z.B. Yoga, Meditation, Breathwork" className={inputClass} />
+          </div>
+          <div className="w-32">
+            <label htmlFor="capacity" className={labelClass}>Max. Teilnehmer</label>
+            <input id="capacity" type="number" name="capacity" min={1} placeholder="z.B. 20" className={inputClass} />
+          </div>
         </div>
         <div>
           <label htmlFor="ticket_link" className={labelClass}>Link zur Anmeldung</label>

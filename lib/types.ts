@@ -111,4 +111,26 @@ export interface Event {
   location_id: string | null;
   locations: LocationPreview | null;
   event_categories?: { categories: Category }[];
+  capacity: number | null;
+  waitlist_enabled: boolean;
+  registration_enabled: boolean;
+}
+
+export type RegistrationStatus = "confirmed" | "waitlisted" | "cancelled" | "declined";
+export type PaymentStatus = "not_required" | "pending" | "paid" | "refunded";
+
+export interface EventRegistration {
+  id: string;
+  event_id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone: string | null;
+  message: string | null;
+  status: RegistrationStatus;
+  payment_status: PaymentStatus;
+  payment_amount_cents: number | null;
+  confirmation_token: string;
+  confirmed_at: string | null;
+  created_at: string;
 }
