@@ -18,8 +18,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { city: "hamburg", category: "ecstatic-dance" },
     { city: "hamburg", category: "retreat" },
     { city: "hamburg", category: "soundhealing" },
+    { city: "hamburg", category: "frauenkreis" },
+    { city: "hamburg", category: "tantra" },
     { city: "schleswig-holstein", category: "ganzheitliche-events" },
     { city: "kiel", category: "breathwork" },
+    { city: "kiel", category: "ganzheitliche-events" },
   ];
 
   // Additional city/region overview pages
