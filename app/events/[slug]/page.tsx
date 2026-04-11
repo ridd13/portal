@@ -150,26 +150,46 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
     startDate: event.start_at,
     endDate: event.end_at || undefined,
     eventStatus: "https://schema.org/EventScheduled",
-    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    eventAttendanceMode: event.is_online
+      ? "https://schema.org/OnlineEventAttendanceMode"
+      : "https://schema.org/OfflineEventAttendanceMode",
     url: `${siteUrl}/events/${event.slug}`,
     image: event.cover_image_url || undefined,
     location: (event.location_name || event.address) ? {
       "@type": "Place",
-      name: event.location_name || undefined,
-      address: event.address || undefined,
-    } : undefined,
+      name: event.location_name || event.address || "Ort folgt",
+      address: event.address ? {
+        "@type": "PostalAddress",
+        streetAddress: event.address,
+        addressLocality: getCityFromAddress(event.address) || undefined,
+        addressCountry: "DE",
+      } : undefined,
+    } : {
+      "@type": "Place",
+      name: "Ort wird noch bekannt gegeben",
+    },
     organizer: hostPreview ? {
       "@type": "Organization",
       name: hostPreview.name,
       url: hostPreview.slug ? `${siteUrl}/hosts/${hostPreview.slug}` : undefined,
     } : undefined,
-    offers: (event.price_model || event.price_amount) ? {
+    performer: hostPreview ? {
+      "@type": "Person",
+      name: hostPreview.name,
+      url: hostPreview.slug ? `${siteUrl}/hosts/${hostPreview.slug}` : undefined,
+    } : undefined,
+    offers: {
       "@type": "Offer",
-      price: event.price_model === "free" ? "0" : undefined,
+      price: event.price_model === "free"
+        ? "0"
+        : event.price_amount
+          ? String(event.price_amount)
+          : undefined,
       priceCurrency: "EUR",
       url: event.ticket_link || `${siteUrl}/events/${event.slug}`,
       availability: "https://schema.org/InStock",
-    } : undefined,
+      validFrom: event.created_at || undefined,
+    },
   };
 
   return (

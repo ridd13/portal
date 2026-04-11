@@ -15,7 +15,7 @@
 
 ## Projekt
 
-**Das Portal** — Plattform für ganzheitliche Anbieter (Coaches, Heiler:innen, Facilitators) in Schleswig-Holstein & Hamburg. Aktuell: Pre-Launch mit Landing Page + Warteliste + Event-Listing.
+**Das Portal** — Plattform für ganzheitliche Anbieter (Coaches, Heiler:innen, Facilitators) im DACH-Raum. Ursprung in Schleswig-Holstein & Hamburg, jetzt überregional. Aktuell: Pre-Launch mit Landing Page + Warteliste + Event-Listing.
 
 - **Domain:** das-portal.online (www.das-portal.online)
 - **Repo:** lennertbewernick/portal
@@ -119,7 +119,7 @@ lib/
 ### Allgemein
 - **Sprache:** Alle UI-Texte auf **Deutsch**
 - **Branding:** Immer "Das Portal" (nicht "Portal", nicht "das Portal")
-- **Region:** Schleswig-Holstein & Hamburg — bei Default-Werten und Beispielen immer diese Region nutzen
+- **Region:** DACH-weit (Ursprung SH & Hamburg). SEO City Pages werden für alle Städte mit genug Events gebaut.
 - **Keine Emojis in Code** — nur in UI-Texten wo sie bewusst eingesetzt werden
 
 ### Code-Stil
