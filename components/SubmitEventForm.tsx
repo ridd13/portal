@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { submitEvent, type SubmitResult } from "@/app/actions/submit-event";
+import { OwnershipField } from "./OwnershipField";
 
 const initialState: SubmitResult = { success: false, message: "" };
 
@@ -122,6 +123,8 @@ export function SubmitEventForm() {
           <input id="contact_email" type="email" name="contact_email" required placeholder="Damit wir dich erreichen können" className={inputClass} />
         </div>
       </fieldset>
+
+      <OwnershipField entityLabel="Event" />
 
       {state.message && !state.success && (
         <p className="text-sm text-red-600">{state.message}</p>

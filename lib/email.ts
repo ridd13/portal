@@ -157,6 +157,163 @@ export async function sendRegistrationConfirmation(data: RegistrationEmailData) 
   }
 }
 
+// ─── Claim Flow ──────────────────────────────────────────────────────
+
+export type ClaimEntityType = "event" | "host" | "location";
+
+const CLAIM_LABELS: Record<ClaimEntityType, { noun: string; verb: string }> = {
+  event: { noun: "Event", verb: "das Event" },
+  host: { noun: "Profil", verb: "ein Anbieter-Profil" },
+  location: { noun: "Raum", verb: "den Raum" },
+};
+
+/** Invite the real owner to claim an entry submitted by a third party */
+export async function sendClaimInvitation({
+  email,
+  entityType,
+  entityTitle,
+  claimToken,
+}: {
+  email: string;
+  entityType: ClaimEntityType;
+  entityTitle: string;
+  claimToken: string;
+}) {
+  if (!process.env.RESEND_API_KEY) {
+    console.log("[EMAIL SKIP] RESEND_API_KEY not set — skipping claim invitation");
+    return;
+  }
+
+  const { noun, verb } = CLAIM_LABELS[entityType];
+  const claimUrl = `${SITE_URL}/claim/${claimToken}`;
+  const subject = `${noun} auf Das Portal für dich eingetragen`;
+
+  const html = portalEmailLayout(`
+    <h1 style="color: #2c2418; font-size: 24px;">${noun} für dich eingetragen</h1>
+    <p style="color: #6b5b4e; font-size: 16px; line-height: 1.6;">
+      Hey,<br><br>
+      jemand hat ${verb} <strong>${entityTitle}</strong> auf Das Portal eingetragen —
+      wir würden den Eintrag gerne dir übergeben, damit du ihn selbst verwalten kannst.
+    </p>
+    <a href="${claimUrl}"
+       style="display: inline-block; background-color: #b5651d; color: white; padding: 14px 28px;
+              border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 16px; margin: 20px 0;">
+      Eintrag übernehmen
+    </a>
+    <p style="color: #9a8b7a; font-size: 14px; line-height: 1.5; margin-top: 30px;">
+      Der Link läuft nach 30 Tagen ab. Falls du keinen Eintrag haben möchtest,
+      kannst du diese E-Mail ignorieren oder uns antworten.
+    </p>
+  `);
+
+  try {
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: email,
+      subject,
+      html,
+    });
+  } catch (error) {
+    console.error("[EMAIL ERROR] Claim invitation failed:", error);
+  }
+}
+
+/** Notify admin (Lennert) about a new claim request for manual review */
+export async function sendClaimRequestNotification({
+  entityType,
+  entityTitle,
+  entityId,
+  claimerEmail,
+  claimerName,
+  message,
+}: {
+  entityType: ClaimEntityType;
+  entityTitle: string;
+  entityId: string;
+  claimerEmail: string;
+  claimerName: string;
+  message: string | null;
+}) {
+  if (!process.env.RESEND_API_KEY) {
+    console.log("[EMAIL SKIP] RESEND_API_KEY not set — skipping claim request notification");
+    return;
+  }
+
+  const { noun } = CLAIM_LABELS[entityType];
+  const subject = `Neuer Claim-Request: ${entityTitle} (${noun})`;
+
+  const messageBlock = message
+    ? `<p style="color: #6b5b4e; font-size: 15px;"><strong>Nachricht:</strong><br><em style="color: #9a8b7a;">"${message}"</em></p>`
+    : "";
+
+  const html = portalEmailLayout(`
+    <h1 style="color: #2c2418; font-size: 24px;">Neuer Claim-Request</h1>
+    <div style="background-color: #ffffff; border: 1px solid #e5ddd3; border-radius: 12px; padding: 20px; margin: 20px 0;">
+      <p style="color: #6b5b4e; font-size: 15px; margin: 4px 0;"><strong>Typ:</strong> ${noun}</p>
+      <p style="color: #6b5b4e; font-size: 15px; margin: 4px 0;"><strong>Eintrag:</strong> ${entityTitle}</p>
+      <p style="color: #6b5b4e; font-size: 15px; margin: 4px 0;"><strong>ID:</strong> ${entityId}</p>
+      <p style="color: #6b5b4e; font-size: 15px; margin: 4px 0;"><strong>Name:</strong> ${claimerName}</p>
+      <p style="color: #6b5b4e; font-size: 15px; margin: 4px 0;"><strong>E-Mail:</strong> ${claimerEmail}</p>
+      ${messageBlock}
+    </div>
+    <p style="color: #9a8b7a; font-size: 14px; line-height: 1.5;">
+      Zum Approven: <code>UPDATE ${entityType === "host" ? "hosts" : entityType === "location" ? "locations" : "events"} SET claim_status='approved', claimed_at=now() WHERE id='${entityId}';</code>
+    </p>
+  `);
+
+  try {
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: "lb@justclose.de",
+      subject,
+      html,
+    });
+  } catch (error) {
+    console.error("[EMAIL ERROR] Claim request notification failed:", error);
+  }
+}
+
+/** Confirm to claimer that their request was received */
+export async function sendClaimRequestConfirmation({
+  email,
+  entityType,
+  entityTitle,
+}: {
+  email: string;
+  entityType: ClaimEntityType;
+  entityTitle: string;
+}) {
+  if (!process.env.RESEND_API_KEY) {
+    console.log("[EMAIL SKIP] RESEND_API_KEY not set — skipping claim request confirmation");
+    return;
+  }
+
+  const { noun } = CLAIM_LABELS[entityType];
+  const subject = `Wir prüfen deine Anfrage – Das Portal`;
+
+  const html = portalEmailLayout(`
+    <h1 style="color: #2c2418; font-size: 24px;">Danke für deine Anfrage</h1>
+    <p style="color: #6b5b4e; font-size: 16px; line-height: 1.6;">
+      Wir haben deine Anfrage zur Übernahme von ${noun === "Profil" ? "deinem Profil" : `${noun === "Event" ? "dem Event" : "dem Raum"}`}
+      <strong>${entityTitle}</strong> erhalten.
+    </p>
+    <p style="color: #6b5b4e; font-size: 16px; line-height: 1.6;">
+      Wir prüfen deine Anfrage manuell und melden uns innerhalb von 48 Stunden bei dir.
+    </p>
+  `);
+
+  try {
+    await resend.emails.send({
+      from: FROM_ADDRESS,
+      to: email,
+      subject,
+      html,
+    });
+  } catch (error) {
+    console.error("[EMAIL ERROR] Claim request confirmation failed:", error);
+  }
+}
+
 // ─── Event Registration: Notification to Host ────────────────────────
 
 export type HostNotificationData = {

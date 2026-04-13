@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { submitLocation } from "@/app/actions/submit-location";
 import type { SubmitResult } from "@/app/actions/submit-event";
+import { OwnershipField } from "./OwnershipField";
 
 const initialState: SubmitResult = { success: false, message: "" };
 
@@ -133,6 +134,8 @@ export function SubmitLocationForm() {
           <input id="website_url" type="url" name="website_url" placeholder="https://..." className={inputClass} />
         </div>
       </fieldset>
+
+      <OwnershipField entityLabel="Raum" />
 
       {state.message && !state.success && (
         <p className="text-sm text-red-600">{state.message}</p>

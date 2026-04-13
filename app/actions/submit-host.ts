@@ -1,7 +1,9 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { uploadImage } from "@/lib/upload-image";
+import { sendClaimInvitation } from "@/lib/email";
 import type { SubmitResult } from "./submit-event";
 
 function slugify(text: string): string {
@@ -32,12 +34,20 @@ export async function submitHost(
   const instagram = formData.get("instagram")?.toString().trim().replace(/^@/, "") || null;
   const facebook = formData.get("facebook")?.toString().trim() || null;
   const linkedin = formData.get("linkedin")?.toString().trim() || null;
+  const isOwnEntry = formData.get("is_own_entry") === "yes";
+  const isThirdParty = formData.get("is_own_entry") === "no";
+  const claimEmailRaw = formData.get("claim_email")?.toString().trim().toLowerCase() || "";
+  const claimEmail = isThirdParty && claimEmailRaw.includes("@") ? claimEmailRaw : null;
+  const claimToken = claimEmail ? randomUUID() : null;
 
   if (!name || name.length < 2) {
     return { success: false, message: "Bitte gib deinen Namen ein (mind. 2 Zeichen)." };
   }
   if (!email || !email.includes("@")) {
     return { success: false, message: "Bitte gib eine gültige E-Mail-Adresse an." };
+  }
+  if (!isOwnEntry && !isThirdParty) {
+    return { success: false, message: "Bitte wähle aus, ob das dein eigenes Profil ist." };
   }
 
   const socialLinks: Record<string, string> = {};
@@ -68,11 +78,29 @@ export async function submitHost(
     telegram_username: telegramUsername,
     social_links: Object.keys(socialLinks).length > 0 ? socialLinks : null,
     avatar_url: avatarUrl,
+    submitted_by_third_party: isThirdParty,
+    claim_email: claimEmail,
+    claim_token: claimToken,
+    claim_status: claimToken ? "invited" : "none",
+    claim_sent_at: claimToken ? new Date().toISOString() : null,
   });
 
   if (error) {
     console.error("Host submit error:", error);
     return { success: false, message: "Etwas ist schiefgelaufen. Bitte versuche es erneut." };
+  }
+
+  if (claimToken && claimEmail) {
+    try {
+      await sendClaimInvitation({
+        email: claimEmail,
+        entityType: "host",
+        entityTitle: name,
+        claimToken,
+      });
+    } catch (err) {
+      console.error("Claim invitation email failed:", err);
+    }
   }
 
   return {

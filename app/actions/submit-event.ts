@@ -1,7 +1,9 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { uploadImage } from "@/lib/upload-image";
+import { sendClaimInvitation } from "@/lib/email";
 
 export type SubmitResult = {
   success: boolean;
@@ -39,6 +41,11 @@ export async function submitEvent(
   const priceAmount = formData.get("price_amount")?.toString().trim() || null;
   const ticketLink = formData.get("ticket_link")?.toString().trim() || null;
   const contactEmail = formData.get("contact_email")?.toString().trim().toLowerCase();
+  const isOwnEntry = formData.get("is_own_entry") === "yes";
+  const isThirdParty = formData.get("is_own_entry") === "no";
+  const claimEmailRaw = formData.get("claim_email")?.toString().trim().toLowerCase() || "";
+  const claimEmail = isThirdParty && claimEmailRaw.includes("@") ? claimEmailRaw : null;
+  const claimToken = claimEmail ? randomUUID() : null;
 
   // Validation
   if (!title || title.length < 3) {
@@ -49,6 +56,9 @@ export async function submitEvent(
   }
   if (!contactEmail || !contactEmail.includes("@")) {
     return { success: false, message: "Bitte gib eine gültige E-Mail-Adresse an." };
+  }
+  if (!isOwnEntry && !isThirdParty) {
+    return { success: false, message: "Bitte wähle aus, ob das dein eigenes Event ist." };
   }
   if (endAt && new Date(endAt) <= new Date(startAt)) {
     return { success: false, message: "Das Enddatum muss nach dem Startdatum liegen." };
@@ -70,7 +80,7 @@ export async function submitEvent(
   const supabase = getSupabaseServerClient();
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const { error } = await (supabase.from("events") as any).insert({
+  const { data: inserted, error } = await (supabase.from("events") as any).insert({
     title,
     slug,
     description,
@@ -88,12 +98,32 @@ export async function submitEvent(
     registration_enabled: true,
     source_type: "form",
     is_public: true,
-  });
+    submitted_by_third_party: isThirdParty,
+    claim_email: claimEmail,
+    claim_token: claimToken,
+    claim_status: claimToken ? "invited" : "none",
+    claim_sent_at: claimToken ? new Date().toISOString() : null,
+  }).select("id").single();
 
   if (error) {
     console.error("Event submit error:", error);
     return { success: false, message: "Etwas ist schiefgelaufen. Bitte versuche es erneut." };
   }
+
+  if (claimToken && claimEmail) {
+    try {
+      await sendClaimInvitation({
+        email: claimEmail,
+        entityType: "event",
+        entityTitle: title,
+        claimToken,
+      });
+    } catch (err) {
+      console.error("Claim invitation email failed:", err);
+    }
+  }
+
+  void inserted;
 
   return {
     success: true,

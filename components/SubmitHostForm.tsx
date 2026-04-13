@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { submitHost } from "@/app/actions/submit-host";
 import type { SubmitResult } from "@/app/actions/submit-event";
+import { OwnershipField } from "./OwnershipField";
 
 const initialState: SubmitResult = { success: false, message: "" };
 
@@ -97,6 +98,8 @@ export function SubmitHostForm() {
           <input id="linkedin" type="text" name="linkedin" placeholder="Profilname oder URL" className={inputClass} />
         </div>
       </fieldset>
+
+      <OwnershipField entityLabel="Profil" />
 
       {state.message && !state.success && (
         <p className="text-sm text-red-600">{state.message}</p>

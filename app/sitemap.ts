@@ -23,6 +23,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { city: "schleswig-holstein", category: "ganzheitliche-events" },
     { city: "kiel", category: "breathwork" },
     { city: "kiel", category: "ganzheitliche-events" },
+    { city: "berlin", category: "ganzheitliche-events" },
+    { city: "muenchen", category: "ganzheitliche-events" },
+    { city: "stuttgart", category: "ganzheitliche-events" },
+    { city: "freiburg", category: "ganzheitliche-events" },
+    { city: "schwarzwald", category: "ganzheitliche-events" },
   ];
 
   // Additional city/region overview pages
