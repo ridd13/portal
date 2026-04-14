@@ -8,7 +8,7 @@ import type { Event } from "@/lib/types";
 export const metadata: Metadata = {
   title: "Das Portal | Bewusste Events in deiner Nähe",
   description:
-    "Entdecke Breathwork, Yoga, Sound Healing, Kakao-Zeremonien und mehr — finde Facilitators und Erlebnisse, denen du vertrauen kannst.",
+    "Breathwork, Yoga, Sound Healing, Kakao-Zeremonien und mehr — finde Facilitators und Erlebnisse, denen du vertrauen kannst.",
 };
 
 export const revalidate = 300;
@@ -106,13 +106,13 @@ export default async function LandingPage() {
             href="/events"
             className="inline-flex items-center rounded-xl bg-accent-primary px-6 py-3 text-base font-semibold text-white shadow-md transition hover:brightness-95"
           >
-            Events entdecken
+            Alle Events ansehen
           </Link>
           <Link
             href="/hosts"
             className="inline-flex items-center rounded-xl border border-border bg-bg-card px-6 py-3 text-base font-medium text-text-primary transition hover:bg-bg-secondary"
           >
-            Anbieter entdecken
+            Anbieter finden
           </Link>
         </div>
 
@@ -199,7 +199,7 @@ export default async function LandingPage() {
               href="/hosts"
               className="text-sm text-accent-secondary hover:underline"
             >
-              Oder entdecke Anbieter in deiner Nähe &rarr;
+              Oder finde Anbieter in deiner Nähe &rarr;
             </Link>
           </p>
         </section>
@@ -296,7 +296,7 @@ export default async function LandingPage() {
               href="/hosts"
               className="text-sm font-semibold text-accent-secondary hover:underline"
             >
-              Alle Anbieter entdecken &rarr;
+              Alle Anbieter ansehen &rarr;
             </Link>
           </p>
         </section>

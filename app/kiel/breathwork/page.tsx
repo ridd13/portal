@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Breathwork in Kiel: Holotropes Atmen, Pranayama, Transformational Breath und Atemkreise. Aktuelle Workshops und Community-Events in Kiel und Umgebung auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/kiel/breathwork",
+    canonical: "https://das-portal.online/kiel/breathwork",
   },
   openGraph: {
     title: "Breathwork Kiel — Workshops & Events auf Das Portal",
     description:
       "Breathwork-Events in Kiel — Atemarbeit, Pranayama, Atemkreise und Workshops. Alle Termine auf Das Portal.",
-    url: "https://www.das-portal.online/kiel/breathwork",
+    url: "https://das-portal.online/kiel/breathwork",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -84,7 +84,7 @@ export default async function KielBreathworkPage() {
     name: "Breathwork Events Kiel",
     description:
       "Aktuelle Breathwork-Events und Atemarbeit-Workshops in Kiel",
-    url: "https://www.das-portal.online/kiel/breathwork",
+    url: "https://das-portal.online/kiel/breathwork",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -97,7 +97,7 @@ export default async function KielBreathworkPage() {
           name: event.location_name || "Kiel",
           address: event.address || "Kiel",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

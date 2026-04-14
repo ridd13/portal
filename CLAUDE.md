@@ -142,6 +142,7 @@ lib/
 - Sitemap wird automatisch generiert (app/sitemap.ts)
 - Strukturierte Daten (JSON-LD) für Events einbauen
 - Canonical URLs nutzen
+- **SEO Content Framework:** `SEO-CONTENT-FRAMEWORK.md` im Repo-Root — 6-Fragen-Matrix, Awareness-Stufen, Personas, Motive, Stil-Regeln. VOR jeder neuen City/Kategorie Page lesen.
 
 ### Performance
 - `priority` auf LCP-Images (Hero)
@@ -188,6 +189,7 @@ Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange B
 ## Kontext-Dateien
 
 Für tieferen Business-Kontext und offene Aufgaben:
+- `SEO-CONTENT-FRAMEWORK.md` — Awareness-Stufen, Personas, Motive, 6-Fragen-Matrix, Content-Regeln für City/Kategorie Pages
 - `PORTAL-KONTEXT.md` — Vollständiger Business-Kontext, Vision, Roadmap, Wettbewerb, Unit Economics
 - `CLAUDE-CODE-MAP-CLEANUP.md` — Aktuelle Aufgaben: Map-Feature, Auth-Cleanup, Telegram, City-Slugs
 - `CLAUDE-CODE-LOGO.md` — Logo-Einbau (Navbar + Hero + Favicon)

@@ -71,7 +71,7 @@ export async function generateMetadata({
 
   return {
     title: `${category.name_de} – Events, Workshops & Retreats | Das Portal`,
-    description: `Entdecke ${category.name_de}-Angebote in Norddeutschland: ${category.description_de || "Events, Workshops und Retreats"}. Finde dein nächstes Erlebnis auf Das Portal.`,
+    description: `${category.name_de}-Angebote in Norddeutschland: ${category.description_de || "Events, Workshops und Retreats"}. Finde dein nächstes Erlebnis auf Das Portal.`,
     alternates: {
       canonical: `/kategorie/${category.slug}`,
     },
@@ -125,7 +125,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
       {/* SEO Content Block */}
       <section className="prose prose-lg max-w-3xl text-text-secondary">
         <h2 className="font-serif text-2xl text-text-primary">
-          {category.name_de} entdecken
+          {category.name_de} — aktuelle Angebote
         </h2>
         <p>
           Auf Das Portal findest du {category.name_de}-Angebote von erfahrenen
@@ -215,24 +215,20 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": "CollectionPage",
+            "@type": "ItemList",
             name: `${category.name_de} – Das Portal`,
             description: category.description_de,
-            url: `https://www.das-portal.online/kategorie/${category.slug}`,
-            mainEntity: {
-              "@type": "ItemList",
-              numberOfItems: events.length,
-              itemListElement: events.slice(0, 10).map((event, index) => ({
-                "@type": "ListItem",
-                position: index + 1,
-                item: {
-                  "@type": "Event",
-                  name: event.title,
-                  startDate: event.start_at,
-                  url: `https://www.das-portal.online/events/${event.slug}`,
-                },
-              })),
-            },
+            url: `https://das-portal.online/kategorie/${category.slug}`,
+            itemListElement: events.slice(0, 10).map((event, index) => ({
+              "@type": "ListItem",
+              position: index + 1,
+              item: {
+                "@type": "Event",
+                name: event.title,
+                startDate: event.start_at,
+                url: `https://das-portal.online/events/${event.slug}`,
+              },
+            })),
           }),
         }}
       />

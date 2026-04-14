@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Ecstatic Dance in Hamburg: Freier Tanz, Conscious Dance und Bewegungs-Events ohne Alkohol. Finde deinen nächsten Ecstatic Dance auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/ecstatic-dance",
+    canonical: "https://das-portal.online/hamburg/ecstatic-dance",
   },
   openGraph: {
     title: "Ecstatic Dance Hamburg — Das Portal",
     description:
       "Ecstatic Dance in Hamburg — freier Tanz, Conscious Dance und Bewegungs-Events. Alle Termine auf Das Portal.",
-    url: "https://www.das-portal.online/hamburg/ecstatic-dance",
+    url: "https://das-portal.online/hamburg/ecstatic-dance",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -84,7 +84,7 @@ export default async function HamburgEcstaticDancePage() {
     name: "Ecstatic Dance Hamburg",
     description:
       "Aktuelle Ecstatic Dance Events und Conscious Dance Abende in Hamburg",
-    url: "https://www.das-portal.online/hamburg/ecstatic-dance",
+    url: "https://das-portal.online/hamburg/ecstatic-dance",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -97,7 +97,7 @@ export default async function HamburgEcstaticDancePage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

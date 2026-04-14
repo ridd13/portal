@@ -6,7 +6,7 @@ import type { Location } from "@/lib/types";
 export const metadata: Metadata = {
   title: "Orte",
   description:
-    "Entdecke besondere Orte für ganzheitliche Events – Studios, Retreat-Zentren, Seminarräume und mehr.",
+    "Besondere Orte für ganzheitliche Events — Studios, Retreat-Zentren, Seminarräume und mehr.",
 };
 
 interface LocationsPageProps {
@@ -60,7 +60,7 @@ export default async function LocationsPage({ searchParams }: LocationsPageProps
       {/* Header */}
       <section>
         <h1 className="font-serif text-3xl font-semibold text-text-primary sm:text-4xl">
-          Orte entdecken
+          Orte finden
         </h1>
         <p className="mt-2 max-w-2xl text-text-secondary">
           Studios, Retreat-Zentren, Seminarräume und besondere Orte für ganzheitliche Events.

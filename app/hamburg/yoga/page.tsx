@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Yoga-Events in Hamburg: Vinyasa, Yin Yoga, Kundalini, Acroyoga und mehr. Aktuelle Workshops, Retreat-Termine und Community-Formate auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/yoga",
+    canonical: "https://das-portal.online/hamburg/yoga",
   },
   openGraph: {
     title: "Yoga Hamburg — Events & Workshops auf Das Portal",
     description:
       "Yoga-Events in Hamburg — Workshops, Retreats und Community-Formate. Vinyasa, Yin, Kundalini und mehr. Alle Termine auf Das Portal.",
-    url: "https://www.das-portal.online/hamburg/yoga",
+    url: "https://das-portal.online/hamburg/yoga",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -78,7 +78,7 @@ export default async function HamburgYogaPage() {
     "@type": "ItemList",
     name: "Yoga Events Hamburg",
     description: "Aktuelle Yoga-Events, Workshops und Retreats in Hamburg",
-    url: "https://www.das-portal.online/hamburg/yoga",
+    url: "https://das-portal.online/hamburg/yoga",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -91,7 +91,7 @@ export default async function HamburgYogaPage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

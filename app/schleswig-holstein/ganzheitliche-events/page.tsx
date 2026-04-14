@@ -9,13 +9,13 @@ export const metadata: Metadata = {
     "Ganzheitliche Events in Schleswig-Holstein: Retreats, Yoga, Meditation, Kakaozeremonien und mehr. Termine aus Kiel, Lübeck, Flensburg und der ganzen Region auf Das Portal.",
   alternates: {
     canonical:
-      "https://www.das-portal.online/schleswig-holstein/ganzheitliche-events",
+      "https://das-portal.online/schleswig-holstein/ganzheitliche-events",
   },
   openGraph: {
     title: "Ganzheitliche Events Schleswig-Holstein — Das Portal",
     description:
       "Alle ganzheitlichen Events in Schleswig-Holstein. Von Kiel bis Flensburg, von Retreats bis Kakaozeremonie — Das Portal bündelt alle Termine der Region.",
-    url: "https://www.das-portal.online/schleswig-holstein/ganzheitliche-events",
+    url: "https://das-portal.online/schleswig-holstein/ganzheitliche-events",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -79,7 +79,7 @@ export default async function SchleswigHolsteinGanzheitlicheEventsPage() {
     name: "Ganzheitliche Events Schleswig-Holstein",
     description:
       "Aktuelle ganzheitliche Events, Workshops und Retreats in Schleswig-Holstein",
-    url: "https://www.das-portal.online/schleswig-holstein/ganzheitliche-events",
+    url: "https://das-portal.online/schleswig-holstein/ganzheitliche-events",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -92,7 +92,7 @@ export default async function SchleswigHolsteinGanzheitlicheEventsPage() {
           name: event.location_name || "Schleswig-Holstein",
           address: event.address || "Schleswig-Holstein",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

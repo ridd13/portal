@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Retreats in Hamburg und Umgebung: Mehrtägige Auszeiten, Wochenend-Retreats und transformative Rückzugsorte. Finde dein nächstes Retreat auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/retreat",
+    canonical: "https://das-portal.online/hamburg/retreat",
   },
   openGraph: {
     title: "Retreat Hamburg — Das Portal",
     description:
       "Retreats in Hamburg — mehrtägige Auszeiten, Wochenend-Retreats und transformative Rückzugsorte. Alle Termine auf Das Portal.",
-    url: "https://www.das-portal.online/hamburg/retreat",
+    url: "https://das-portal.online/hamburg/retreat",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -78,7 +78,7 @@ export default async function HamburgRetreatPage() {
     name: "Retreats Hamburg",
     description:
       "Aktuelle Retreats und mehrtägige Auszeiten in Hamburg und Umgebung",
-    url: "https://www.das-portal.online/hamburg/retreat",
+    url: "https://das-portal.online/hamburg/retreat",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -91,7 +91,7 @@ export default async function HamburgRetreatPage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

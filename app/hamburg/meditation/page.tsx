@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Meditations-Events in Hamburg: Geführte Meditationen, Stille-Retreats, Achtsamkeits-Workshops und Community-Formate. Aktuelle Termine auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/meditation",
+    canonical: "https://das-portal.online/hamburg/meditation",
   },
   openGraph: {
     title: "Meditation Hamburg — Events & Retreats auf Das Portal",
     description:
       "Meditations-Events in Hamburg — geführte Meditationen, Stille-Retreats, Achtsamkeits-Workshops. Alle Termine auf Das Portal.",
-    url: "https://www.das-portal.online/hamburg/meditation",
+    url: "https://das-portal.online/hamburg/meditation",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -81,7 +81,7 @@ export default async function HamburgMeditationPage() {
     name: "Meditations-Events Hamburg",
     description:
       "Aktuelle Meditations-Events, Workshops und Retreats in Hamburg",
-    url: "https://www.das-portal.online/hamburg/meditation",
+    url: "https://das-portal.online/hamburg/meditation",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -94,7 +94,7 @@ export default async function HamburgMeditationPage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

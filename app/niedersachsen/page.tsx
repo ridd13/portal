@@ -7,13 +7,13 @@ export const metadata: Metadata = {
   description:
     "Ganzheitliche Events in Niedersachsen: Retreats, Yoga, Meditation und Community-Formate in Hannover, Braunschweig, Oldenburg, Lüneburg und der ganzen Region.",
   alternates: {
-    canonical: "https://www.das-portal.online/niedersachsen",
+    canonical: "https://das-portal.online/niedersachsen",
   },
   openGraph: {
     title: "Ganzheitliche Events in Niedersachsen — Das Portal",
     description:
       "Retreats, Yoga, Meditation und ganzheitliche Events in Niedersachsen auf einen Blick.",
-    url: "https://www.das-portal.online/niedersachsen",
+    url: "https://das-portal.online/niedersachsen",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -71,11 +71,21 @@ export default async function NiedersachsenPage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
+    "@type": "ItemList",
     name: "Ganzheitliche Events in Niedersachsen",
     description: "Aktuelle ganzheitliche Events, Workshops und Retreats in Niedersachsen",
-    url: "https://www.das-portal.online/niedersachsen",
-    isPartOf: { "@type": "WebSite", name: "Das Portal", url: "https://www.das-portal.online" },
+    url: "https://das-portal.online/niedersachsen",
+    itemListElement: events.slice(0, 5).map((event: Record<string, unknown>, index: number) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
+        "@type": "Event",
+        name: event.title as string,
+        startDate: event.start_at as string,
+        location: { "@type": "Place", name: (event.location_name as string) || "Niedersachsen", address: "Niedersachsen" },
+        url: `https://das-portal.online/events/${event.slug}`,
+      },
+    })),
   };
 
   return (
@@ -188,24 +198,215 @@ export default async function NiedersachsenPage() {
         </section>
 
         {/* SEO Content */}
-        <section className="mt-16 space-y-6 text-text-primary">
-          <h2 className="text-2xl font-semibold">
-            Ganzheitliche Szene in Niedersachsen
+        <section className="mt-16 space-y-8 text-text-primary">
+          <div>
+            <h2 className="text-2xl font-semibold">
+              Ganzheitliche Events in Niedersachsen — was dich erwartet
+            </h2>
+            <div className="mt-4 space-y-4 text-text-secondary leading-relaxed">
+              <p>
+                Niedersachsen ist das zweitgrößte Bundesland Deutschlands — und entsprechend vielfältig. Von der urbanen Energie Hannovers mit seinen alternativen Vierteln wie Linden und Nordstadt bis zu den weiten Natur-Räumen der Lüneburger Heide, vom Harz mit seinen Waldretreats bis zu den Nordsee-Inseln: Die Kulisse für ganzheitliche Events könnte kaum unterschiedlicher sein.
+              </p>
+              <p>
+                Was macht Niedersachsen als Ort für ganzheitliche Formate interessant? Es ist die Mischung. In den Städten findest du spezialisierte Studios und Communities mit erfahrenen Teachers. Im ländlichen Raum locken großzügige Retreat-Räume — Bauernhöfe, umgebaute Gutshöfe, Seminarhäuser direkt neben der Natur. Und für viele Praktizierende ist Niedersachsen ohne Fernverkehr von Hamburg, Bremen oder Berlin erreichbar.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold">
+              Die Szene in Niedersachsen: Vielfältiger als gedacht
+            </h2>
+            <div className="mt-4 space-y-4 text-text-secondary leading-relaxed">
+              <p>
+                <strong>Hannover</strong> ist der urbane Kern. Die Stadt hat eine etablierte Yoga- und Meditationsszene mit Studios, deren Angebote von klassischem Hatha über Vinyasa bis zu Yin-Yoga reichen. Die Bezirke Linden und Nordstadt sind traditionell die Hotspots für alternative Kultur — dort findest du auch Breathwork-Workshops, Schamanische Zeremonien und kleinere Community-Events.
+              </p>
+              <p>
+                <strong>Lüneburg</strong> ist etwas Besonderes. Die Universitätsstadt hat einen unerwarteten Reichtum an ganzheitlichen Angeboten entwickelt. Hier treffen sich kreative Menschen, der Spirit ist offener als in manchen größeren Städten. Die Nähe zu Hamburg hilft — etablierte Teachers pendeln zwischen beiden Städten. Plus: Lüneburg sitzt direkt an der Lüneburger Heide, der klassischen Retreat-Region Norddeutschlands.
+              </p>
+              <p>
+                <strong>Oldenburg, Braunschweig, Göttingen, Osnabrück</strong> — jede Stadt hat ihre eigene, oft überraschend lebendige Community. Oldenburg profitiert von der kulturellen Tradition, Göttingen von der Studentenschaft, Braunschweig und Osnabrück haben unterschätzte Yoga- und Meditationsszenen.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold">
+              Welche Formate gibt es?
+            </h2>
+            <div className="mt-4 space-y-4 text-text-secondary leading-relaxed">
+              <p>
+                <strong>Yoga</strong> ist der Klassiker — in verschiedensten Varianten. <strong>Meditation und Achtsamkeit</strong> wachsen konstant, besonders in den Städten. <strong>Retreat-Wochenenden</strong> und mehrtägige Formate boomen, getragen von den Kapazitäten in der Lüneburger Heide, im Harz und auf den Nordsee-Inseln wie Juist, Norderney und Langeoog.
+              </p>
+              <p>
+                <strong>Breathwork und spezifische Techniken</strong> (Wim Hof, Holotropes Atmen) wachsen vor allem in den Städten. <strong>Kakaozeremonien und Schamanische Kreise</strong> sind noch Nischen, aber vorhanden und wachsend. Besonders in jüngerer Zeit entstehen <strong>Kontemplations-Retreats</strong> und <strong>Natur-Immersions-Programme</strong> — der Harz und die Heide sind dafür prädestiniert.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold">
+              Für wen sind ganzheitliche Events in Niedersachsen?
+            </h2>
+            <div className="mt-4 space-y-4 text-text-secondary leading-relaxed">
+              <p>
+                Diese Frage beantwortet sich selbst: Für dich, wenn du in Niedersachsen lebst oder regelmäßig dort bist. Aber auch für viele Pendler aus Hamburg, Bremen und Osnabrücker Land, die gerne auch mal raus in die Natur fahren für ein Wochenend-Retreat.
+              </p>
+              <p>
+                Sichtbar wird die Vielfalt in den Events selbst: <strong>Urban Professionals in Hannover</strong> nutzen Mittags-Yoga und After-Work-Meditationen. <strong>Studierende in Göttingen und Lüneburg</strong> sind oft kostenbewusst und suchen günstige oder kostenlose Angebote. <strong>Natursucher und Retreat-Gänger</strong> pendeln gezielt in die Heide und in den Harz — auch überregional. Und überall findest du Menschen, die ohne Vorerfahrung anfangen und in einer offenen Community aufgefangen werden möchten.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h2 className="text-2xl font-semibold">
+              Niedersachsen als Retreat-Region
+            </h2>
+            <div className="mt-4 space-y-4 text-text-secondary leading-relaxed">
+              <p>
+                Das Besondere an Niedersachsen für mehrtägige Events: Du brauchst nicht in die Schweiz oder nach Österreich fahren. Die <strong>Lüneburger Heide</strong> ist eine der klassischen Retreat-Destinationen Deutschlands — endlose Flächen, Ruhe, Geschichte, und etablierte Retreat-Häuser mit guter Infrastruktur.
+              </p>
+              <p>
+                Der <strong>Harz</strong> bietet Berglandschaften, Wanderungen und spezialisierte Seminarhäuser. Die <strong>Nordsee-Inseln</strong> (Juist, Norderney, Langeoog, Wangerooge) sind ideal für Intensiv-Wochen, besonders im Frühjahr und Herbst. Und überraschend unterschätzt: die <strong>Weserbergland</strong>-Region mit umgebauten Bauernhöfen und grünen Hanglagen.
+              </p>
+              <p>
+                Preis-leistungs-Verhältnis ist auf diesem Niveau deutlich besser als in Bayern oder Baden-Württemberg. Transport ist einfach — gute Bahn-Anbindung, Parkplätze nicht knapp. Das macht Niedersachsen zu einer praktischen Retreat-Region, gerade für längerfristige Programme oder wiederholte Events.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* FAQs */}
+        <section className="mt-16 space-y-6">
+          <h2 className="text-2xl font-semibold text-text-primary">
+            Häufig gefragt
           </h2>
-          <p className="text-text-secondary leading-relaxed">
-            Niedersachsen ist flächenmäßig das zweitgrößte Bundesland und
-            entsprechend vielfältig: In Hannover gibt es eine etablierte
-            Yoga- und Meditationsszene, Lüneburg profitiert von seiner Nähe
-            zu Hamburg und zieht kreative Facilitators an, und Oldenburg
-            hat eine überraschend lebendige alternative Community.
+
+          <div className="space-y-4">
+            <details className="group cursor-pointer rounded-lg border border-border bg-bg-card p-5 transition-all hover:border-accent-primary">
+              <summary className="flex items-center justify-between font-medium text-text-primary">
+                <span>Was sind ganzheitliche Events?</span>
+                <span className="text-lg text-accent-primary group-open:rotate-180 transition-transform">→</span>
+              </summary>
+              <div className="mt-4 text-text-secondary leading-relaxed">
+                <p>
+                  Ganzheitliche Events sind Formate, die Körper, Geist und Seele ansprechen. Yoga, Meditation, Atemarbeit, Tantra, Schamanismus, Kakaozeremonien, Kontemplatione-Retreats — all das gehört dazu. Der gemeinsame Nenner: Es geht nicht nur um Wissen, sondern um direktes, unmittelbares Erleben und Transformation. Oft sind die Events mehrstündig oder mehrtägig, nicht selten mit Übernachtung.
+                </p>
+              </div>
+            </details>
+
+            <details className="group cursor-pointer rounded-lg border border-border bg-bg-card p-5 transition-all hover:border-accent-primary">
+              <summary className="flex items-center justify-between font-medium text-text-primary">
+                <span>Wie finde ich Events in Niedersachsen?</span>
+                <span className="text-lg text-accent-primary group-open:rotate-180 transition-transform">→</span>
+              </summary>
+              <div className="mt-4 text-text-secondary leading-relaxed">
+                <p>
+                  Du bist gerade richtig. Auf dieser Seite siehst du aktuelle Termine aus Niedersachsen. Nutze die Filter nach Stadt (oben) um in deiner Nähe zu suchen, oder schau auf der Seite "Alle Events" für eine größere Liste. Du kannst auch unseren Telegram-Kanal abonnieren — dort werden neue Events direkt angekündigt.
+                </p>
+              </div>
+            </details>
+
+            <details className="group cursor-pointer rounded-lg border border-border bg-bg-card p-5 transition-all hover:border-accent-primary">
+              <summary className="flex items-center justify-between font-medium text-text-primary">
+                <span>Ich bin kompletter Anfänger — passe ich dazu?</span>
+                <span className="text-lg text-accent-primary group-open:rotate-180 transition-transform">→</span>
+              </summary>
+              <div className="mt-4 text-text-secondary leading-relaxed">
+                <p>
+                  Ja. Die große Mehrheit der Anbieter im Portal arbeitet bewusst anfängerfreundlich. Auf jeder Event-Seite siehst du, ob Vorerfahrung nötig ist — wenn nicht erwähnt, ist es offen für alle. Das Schöne an der ganzheitlichen Community ist die Offenheit. Viele Menschen beginnen genau so, wie du jetzt.
+                </p>
+              </div>
+            </details>
+
+            <details className="group cursor-pointer rounded-lg border border-border bg-bg-card p-5 transition-all hover:border-accent-primary">
+              <summary className="flex items-center justify-between font-medium text-text-primary">
+                <span>Was kosten ganzheitliche Events?</span>
+                <span className="text-lg text-accent-primary group-open:rotate-180 transition-transform">→</span>
+              </summary>
+              <div className="mt-4 text-text-secondary leading-relaxed">
+                <p>
+                  Sehr unterschiedlich. Einige Meditationen und Yoga-Kurse sind kostenlos oder zahle-was-du-kannst. Einzelne Workshops liegen zwischen 15 und 60 Euro. Retreat-Wochenenden in der Heide oder im Harz kosten je nach Länge und Ausstattung zwischen 150 und 600 Euro inkl. Unterkunft. Es gibt für (fast) jedes Budget etwas.
+                </p>
+              </div>
+            </details>
+
+            <details className="group cursor-pointer rounded-lg border border-border bg-bg-card p-5 transition-all hover:border-accent-primary">
+              <summary className="flex items-center justify-between font-medium text-text-primary">
+                <span>Wie trage ich meine Events ein?</span>
+                <span className="text-lg text-accent-primary group-open:rotate-180 transition-transform">→</span>
+              </summary>
+              <div className="mt-4 text-text-secondary leading-relaxed">
+                <p>
+                  Kostenlos und ohne versteckte Gebühren. Besuch die Seite <Link href="/#warteliste" className="text-accent-primary hover:underline">Eintragen</Link>, fülle das Formular aus und schreib uns eine kurze Nachricht. Wir überprüfen die Infos und aktivieren dein Event dann. Oder schreib direkt an unseren <Link href="https://t.me/+C1QQY29LZlExZWIy" target="_blank" className="text-accent-primary hover:underline">Telegram-Kanal</Link>.
+                </p>
+              </div>
+            </details>
+
+            <details className="group cursor-pointer rounded-lg border border-border bg-bg-card p-5 transition-all hover:border-accent-primary">
+              <summary className="flex items-center justify-between font-medium text-text-primary">
+                <span>Welche Retreat-Locations gibt es in Niedersachsen?</span>
+                <span className="text-lg text-accent-primary group-open:rotate-180 transition-transform">→</span>
+              </summary>
+              <div className="mt-4 text-text-secondary leading-relaxed">
+                <p>
+                  Hauptregionen sind die <strong>Lüneburger Heide</strong> (etablierte Seminarhäuser, idyllisch), der <strong>Harz</strong> (Bergnatur, Wanderungen), die <strong>Nordsee-Inseln</strong> (Juist, Norderney, Langeoog — intensiv und abgeschieden) und die <strong>Weserbergland</strong> (Bauernhöfe, weniger touristisch). Viele Events sind über die Such-Funktion mit "Retreat" oder "Wochenende" zu finden.
+                </p>
+              </div>
+            </details>
+          </div>
+        </section>
+
+        {/* CTA Warteliste */}
+        <section className="mt-16 rounded-3xl bg-linear-to-br from-[#f5ece1] to-[#e8ddd4] p-8 text-center sm:p-12">
+          <h2 className="text-2xl font-semibold text-text-primary">
+            Keine Events verpassen
+          </h2>
+          <p className="mt-3 text-text-secondary">
+            Trag dich ein und bleib über neue Termine in Niedersachsen informiert.
           </p>
-          <p className="text-text-secondary leading-relaxed">
-            Besonders im ländlichen Raum boomen Retreats — Gutshöfe in der
-            Lüneburger Heide, Seminarhäuser an der Nordsee und umgebaute
-            Bauernhöfe im Weserbergland bieten perfekte Bedingungen für
-            mehrtägige Formate. Das Portal macht dieses verteilte Angebot
-            sichtbar und hilft dir, das richtige Event zu finden.
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/#warteliste"
+              className="rounded-full bg-accent-primary px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
+            >
+              Eintragen →
+            </Link>
+            <Link
+              href="https://t.me/+C1QQY29LZlExZWIy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-border px-6 py-3 font-medium text-text-primary transition-colors hover:bg-bg-secondary"
+            >
+              Telegram Community
+            </Link>
+          </div>
+        </section>
+
+        {/* CTA Anbieter */}
+        <section className="mt-10 rounded-3xl bg-linear-to-br from-[#f5ece1] to-[#e8ddd4] p-8 text-center sm:p-12">
+          <h2 className="text-2xl font-semibold text-text-primary">
+            Du bist Anbieter in Niedersachsen?
+          </h2>
+          <p className="mt-3 text-text-secondary">
+            Mach deine Events sichtbar — kostenlos, ohne Haken.
           </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link
+              href="/#warteliste"
+              className="rounded-full bg-accent-primary px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
+            >
+              Event eintragen →
+            </Link>
+            <Link
+              href="https://t.me/+C1QQY29LZlExZWIy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-border px-6 py-3 font-medium text-text-primary transition-colors hover:bg-bg-secondary"
+            >
+              Telegram Community
+            </Link>
+          </div>
         </section>
 
         {/* Nachbar-Regionen */}
@@ -228,32 +429,6 @@ export default async function NiedersachsenPage() {
                 {name}
               </Link>
             ))}
-          </div>
-        </section>
-
-        {/* CTA */}
-        <section className="mt-16 rounded-3xl bg-linear-to-br from-[#f5ece1] to-[#e8ddd4] p-8 text-center sm:p-12">
-          <h2 className="text-2xl font-semibold text-text-primary">
-            Du bist Anbieter in Niedersachsen?
-          </h2>
-          <p className="mt-3 text-text-secondary">
-            Mach deine Events sichtbar — kostenlos, ohne Haken.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <Link
-              href="/fuer-facilitators"
-              className="rounded-full bg-accent-primary px-6 py-3 font-medium text-white transition-opacity hover:opacity-90"
-            >
-              So funktioniert es →
-            </Link>
-            <Link
-              href="https://t.me/+C1QQY29LZlExZWIy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border border-border px-6 py-3 font-medium text-text-primary transition-colors hover:bg-bg-secondary"
-            >
-              Telegram Community
-            </Link>
           </div>
         </section>
       </div>

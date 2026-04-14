@@ -48,34 +48,25 @@ export default async function KielGanzheitlicheEventsPage() {
 
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "CollectionPage",
+    "@type": "ItemList",
     name: "Ganzheitliche Events Kiel",
     description: "Ganzheitliche Events in Kiel: Breathwork, Tanz, Embodiment, Workshops und Community-Formate.",
     url: "https://das-portal.online/kiel/ganzheitliche-events",
-    mainEntity: {
-      "@type": "ItemList",
-      itemListElement: events.map((event, index) => ({
+    itemListElement: events.slice(0, 5).map((event, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      item: {
         "@type": "Event",
-        position: index + 1,
         name: event.title,
-        description: event.description,
         startDate: event.start_at,
-        endDate: event.end_at,
-        eventStatus: "EventScheduled",
-        eventAttendanceMode: "OfflineEventAttendanceMode",
         location: {
           "@type": "Place",
-          name: event.location_name,
-          address: event.address,
+          name: event.location_name || "Kiel",
+          address: event.address || "Kiel",
         },
-        organizer: event.hosts
-          ? {
-              "@type": "Organization",
-              name: event.hosts.name,
-            }
-          : undefined,
-      })),
-    },
+        url: `https://das-portal.online/events/${event.slug}`,
+      },
+    })),
   };
 
   return (

@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Spirituelle Events in Hamburg: Kakaozeremonien, Mondrituale, Frauenkreise, Soundhealing und mehr. Alle aktuellen Termine aus der Hamburger Community auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/spirituelle-events",
+    canonical: "https://das-portal.online/hamburg/spirituelle-events",
   },
   openGraph: {
     title: "Spirituelle Events Hamburg — Das Portal",
     description:
       "Kakaozeremonien, Mondrituale, Frauenkreise, Soundhealing und zeremonielle Formate in Hamburg. Das Portal zeigt dir alle spirituellen Events auf einen Blick.",
-    url: "https://www.das-portal.online/hamburg/spirituelle-events",
+    url: "https://das-portal.online/hamburg/spirituelle-events",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -90,7 +90,7 @@ export default async function HamburgSpiritueleEventsPage() {
     name: "Spirituelle Events Hamburg",
     description:
       "Aktuelle spirituelle Events, Zeremonien und Rituale in Hamburg",
-    url: "https://www.das-portal.online/hamburg/spirituelle-events",
+    url: "https://das-portal.online/hamburg/spirituelle-events",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -103,7 +103,7 @@ export default async function HamburgSpiritueleEventsPage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

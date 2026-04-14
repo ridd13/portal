@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Breathwork in Hamburg: Holotropes Atmen, Wim Hof, Pranayama, Transformational Breath und mehr. Aktuelle Workshops und Community-Events auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/breathwork",
+    canonical: "https://das-portal.online/hamburg/breathwork",
   },
   openGraph: {
     title: "Breathwork Hamburg — Workshops & Events auf Das Portal",
     description:
       "Breathwork-Events in Hamburg — Holotropes Atmen, Wim Hof, Pranayama und Atemarbeit-Workshops. Alle Termine auf Das Portal.",
-    url: "https://www.das-portal.online/hamburg/breathwork",
+    url: "https://das-portal.online/hamburg/breathwork",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -82,7 +82,7 @@ export default async function HamburgBreathworkPage() {
     name: "Breathwork Events Hamburg",
     description:
       "Aktuelle Breathwork-Events und Atemarbeit-Workshops in Hamburg",
-    url: "https://www.das-portal.online/hamburg/breathwork",
+    url: "https://das-portal.online/hamburg/breathwork",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -95,7 +95,7 @@ export default async function HamburgBreathworkPage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

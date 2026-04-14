@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Ganzheitliche Events in Hamburg: Kakaozeremonien, Breathwork, Meditation, Frauenkreise und mehr. Aktuelle Termine aus der Hamburger Community auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/ganzheitliche-events",
+    canonical: "https://das-portal.online/hamburg/ganzheitliche-events",
   },
   openGraph: {
     title: "Ganzheitliche Events Hamburg — Das Portal",
     description:
       "Die besten ganzheitlichen Events in Hamburg. Yoga, Meditation, Breathwork, Retreats und Community-Formate — alle Termine auf einen Blick.",
-    url: "https://www.das-portal.online/hamburg/ganzheitliche-events",
+    url: "https://das-portal.online/hamburg/ganzheitliche-events",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -60,7 +60,7 @@ export default async function HamburgGanzheitlicheEventsPage() {
     name: "Ganzheitliche Events Hamburg",
     description:
       "Aktuelle ganzheitliche Events, Workshops und Retreats in Hamburg",
-    url: "https://www.das-portal.online/hamburg/ganzheitliche-events",
+    url: "https://das-portal.online/hamburg/ganzheitliche-events",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -73,7 +73,7 @@ export default async function HamburgGanzheitlicheEventsPage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   description:
     "Kennst du eine Telegram-Gruppe mit ganzheitlichen Events in Norddeutschland? Schlag sie vor und hilf uns, alle Termine sichtbar zu machen.",
   alternates: {
-    canonical: "https://www.das-portal.online/telegram-gruppe-vorschlagen",
+    canonical: "https://das-portal.online/telegram-gruppe-vorschlagen",
   },
 };
 

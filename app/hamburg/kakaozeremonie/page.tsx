@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Kakaozeremonien in Hamburg: Aktuelle Termine, zeremonielle Abende und Community-Rituale mit Rohkakao. Finde deine nächste Kakaozeremonie auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/kakaozeremonie",
+    canonical: "https://das-portal.online/hamburg/kakaozeremonie",
   },
   openGraph: {
     title: "Kakaozeremonie Hamburg — Das Portal",
     description:
       "Kakaozeremonien in Hamburg — zeremonielle Abende, Gruppenrituale und Community-Events mit Rohkakao. Alle Termine auf Das Portal.",
-    url: "https://www.das-portal.online/hamburg/kakaozeremonie",
+    url: "https://das-portal.online/hamburg/kakaozeremonie",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -77,7 +77,7 @@ export default async function HamburgKakaozermoniePage() {
     name: "Kakaozeremonien Hamburg",
     description:
       "Aktuelle Kakaozeremonien und zeremonielle Kakao-Events in Hamburg",
-    url: "https://www.das-portal.online/hamburg/kakaozeremonie",
+    url: "https://das-portal.online/hamburg/kakaozeremonie",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -90,7 +90,7 @@ export default async function HamburgKakaozermoniePage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

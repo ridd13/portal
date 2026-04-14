@@ -33,7 +33,7 @@ export async function generateMetadata({
   if (city) {
     return {
       title: formatLabel ? `${formatLabel} in ${city}` : `Events in ${city}`,
-      description: `Entdecke ganzheitliche ${formatLabel || "Events, Workshops und Retreats"} in ${city}.`,
+      description: `Ganzheitliche ${formatLabel || "Events, Workshops und Retreats"} in ${city} — aktuelle Termine auf Das Portal.`,
       alternates: {
         canonical: `/events/${city.toLowerCase().replace(/\s+/g, "-")}`,
       },
@@ -51,7 +51,7 @@ export async function generateMetadata({
   return {
     title: formatLabel || "Events",
     description:
-      "Entdecke ganzheitliche und spirituelle Events – Tanz, Meditation, Coaching und mehr in deiner Nähe.",
+      "Ganzheitliche und spirituelle Events — Tanz, Meditation, Coaching und mehr in deiner Nähe.",
   };
 }
 
@@ -231,7 +231,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     <div className="space-y-8">
       <section className="rounded-3xl bg-linear-to-br from-[#f5ece1] via-[#f4ebe5] to-[#dce2d5] p-6 shadow-[0_8px_28px_rgba(44,36,24,0.08)] sm:p-8">
         <p className="mb-2 text-sm uppercase tracking-[0.18em] text-text-secondary">
-          Bewusste Events entdecken
+          Bewusste Events finden
         </p>
         <h1 className="text-4xl font-semibold leading-tight text-text-primary sm:text-5xl">
           {heroTitle}

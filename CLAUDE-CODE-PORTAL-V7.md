@@ -76,6 +76,16 @@ Aktuell filtert die Events-Seite vergangene Events komplett raus. Wenn ein User 
 
 ---
 
+## Task 4: Sitemap bereinigen
+
+**Datei:** `app/sitemap.ts`
+
+Die Sitemap enthält noch `/kontakt` (Zeile 25). Da die Kontakt-Seite nicht mehr verlinkt ist, entferne sie aus der Sitemap.
+
+Außerdem: `/auth` sollte NICHT in der Sitemap sein (ist es vermutlich nicht, aber bitte prüfen). Auch `/konto` nicht.
+
+---
+
 ## REGELN
 
 - Alle UI-Texte auf Deutsch

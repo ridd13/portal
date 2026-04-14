@@ -8,13 +8,13 @@ export const metadata: Metadata = {
   description:
     "Soundhealing in Hamburg: Gong Baths, Klangschalen-Sessions, Sound Journeys und Klangmeditationen. Finde deinen nächsten Klangabend auf Das Portal.",
   alternates: {
-    canonical: "https://www.das-portal.online/hamburg/soundhealing",
+    canonical: "https://das-portal.online/hamburg/soundhealing",
   },
   openGraph: {
     title: "Soundhealing Hamburg — Das Portal",
     description:
       "Soundhealing in Hamburg — Gong Baths, Klangschalen, Sound Journeys und Klangmeditationen. Alle Termine auf Das Portal.",
-    url: "https://www.das-portal.online/hamburg/soundhealing",
+    url: "https://das-portal.online/hamburg/soundhealing",
     siteName: "Das Portal",
     locale: "de_DE",
     type: "website",
@@ -81,7 +81,7 @@ export default async function HamburgSoundhealingPage() {
     name: "Soundhealing Hamburg",
     description:
       "Aktuelle Soundhealing-Events, Gong Baths und Klangabende in Hamburg",
-    url: "https://www.das-portal.online/hamburg/soundhealing",
+    url: "https://das-portal.online/hamburg/soundhealing",
     itemListElement: events.slice(0, 5).map((event, index) => ({
       "@type": "ListItem",
       position: index + 1,
@@ -94,7 +94,7 @@ export default async function HamburgSoundhealingPage() {
           name: event.location_name || "Hamburg",
           address: event.address || "Hamburg",
         },
-        url: `https://www.das-portal.online/events/${event.slug}`,
+        url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
   };

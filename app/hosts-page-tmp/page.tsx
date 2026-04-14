@@ -26,7 +26,7 @@ export async function generateMetadata({ searchParams }: AnbieterPageProps): Pro
   return {
     title,
     description:
-      "Finde Coaches, Heiler und Facilitators in deiner Nähe. Entdecke Profile, Angebote und bewusste Events auf Das Portal.",
+      "Finde Coaches, Heiler und Facilitators in deiner Nähe. Profile, Angebote und bewusste Events auf Das Portal.",
     alternates: { canonical: "/anbieter" },
   };
 }
@@ -160,7 +160,7 @@ export default async function AnbieterPage({ searchParams }: AnbieterPageProps) 
         </h1>
         <p className="mt-3 max-w-2xl text-text-secondary">
           Coaches, Heiler, Yogalehrer und Facilitators —
-          entdecke, wer in deiner Region bewusste Erlebnisse anbietet.
+          finde heraus, wer in deiner Region bewusste Erlebnisse anbietet.
         </p>
       </section>
 
