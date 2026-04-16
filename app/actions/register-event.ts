@@ -23,28 +23,24 @@ export async function registerForEvent(
   }
 
   const eventId = formData.get("event_id")?.toString().trim();
-  const firstName = formData.get("first_name")?.toString().trim();
-  const lastName = formData.get("last_name")?.toString().trim();
+  const fullName = formData.get("name")?.toString().trim();
   const email = formData.get("email")?.toString().trim().toLowerCase();
   const phone = formData.get("phone")?.toString().trim() || null;
   const message = formData.get("message")?.toString().trim() || null;
-  const privacyAccepted = formData.get("privacy") === "on";
+
+  // Split name into first/last for DB compatibility
+  const [firstName, ...lastParts] = (fullName || "").split(" ");
+  const lastName = lastParts.join(" ") || null;
 
   // Validation
   if (!eventId) {
     return { success: false, message: "Event nicht gefunden." };
   }
-  if (!firstName || firstName.length < 2) {
-    return { success: false, message: "Bitte gib deinen Vornamen ein." };
-  }
-  if (!lastName || lastName.length < 2) {
-    return { success: false, message: "Bitte gib deinen Nachnamen ein." };
+  if (!fullName || fullName.length < 2) {
+    return { success: false, message: "Bitte gib deinen Namen ein." };
   }
   if (!email || !email.includes("@")) {
     return { success: false, message: "Bitte gib eine gültige E-Mail-Adresse an." };
-  }
-  if (!privacyAccepted) {
-    return { success: false, message: "Bitte akzeptiere die Datenschutzerklärung." };
   }
 
   const supabase = getSupabaseServerClient();
@@ -132,8 +128,8 @@ export async function registerForEvent(
   // Send confirmation email to participant (async, don't block response)
   try {
     await sendRegistrationConfirmation({
-      firstName: firstName!,
-      lastName: lastName!,
+      firstName: firstName || fullName!,
+      lastName: lastName || "",
       email: email!,
       eventTitle: event.title,
       eventSlug: eventDetails?.slug || eventId!,
@@ -149,7 +145,7 @@ export async function registerForEvent(
 
   // Send notification email to host
   try {
-    await notifyHost(adminClient, event, firstName!, lastName!, email!, message, status, currentCount);
+    await notifyHost(adminClient, event, firstName || fullName!, lastName || "", email!, message, status, currentCount);
   } catch (e) {
     console.error("Host notification failed:", e);
   }

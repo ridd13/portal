@@ -11,7 +11,7 @@ import { CalendarDownloadButton } from "@/components/CalendarDownloadButton";
 import { SingleEventMap } from "@/components/SingleEventMap";
 import { SocialLinks } from "@/components/SocialLinks";
 import { EventCard } from "@/components/EventCard";
-import { EventRegistrationForm } from "@/components/EventRegistrationForm";
+import { EventRegistration } from "@/components/EventRegistration";
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 import type { Event, Host, HostPreview } from "@/lib/types";
 
@@ -389,18 +389,11 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               );
             })() : null}
 
-            {/* Event Registration Form */}
+            {/* Anchor-Link zur Anmeldung */}
             {event.registration_enabled !== false && (
-              <EventRegistrationForm
-                eventId={event.id}
-                eventTitle={event.title}
-                capacity={(event as unknown as Record<string, unknown>).capacity as number | null}
-                confirmedCount={confirmedCount}
-                waitlistEnabled={(event as unknown as Record<string, unknown>).waitlist_enabled as boolean ?? false}
-                registrationEnabled={true}
-                priceModel={event.price_model}
-                priceAmount={event.price_amount}
-              />
+              <a href="#anmeldung" className="inline-flex items-center gap-2 rounded-full bg-accent-primary px-8 py-3 text-lg font-semibold text-white transition hover:brightness-95">
+                Jetzt anmelden <span aria-hidden="true">&rarr;</span>
+              </a>
             )}
 
             {/* Structured Description Sections */}
@@ -505,6 +498,20 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                 </ReactMarkdown>
               </div>
             ) : null}
+
+            {/* Event Registration */}
+            {event.registration_enabled !== false && (
+              <EventRegistration
+                eventId={event.id}
+                eventTitle={event.title}
+                capacity={(event as unknown as Record<string, unknown>).capacity as number | null}
+                confirmedCount={confirmedCount}
+                waitlistEnabled={(event as unknown as Record<string, unknown>).waitlist_enabled as boolean ?? false}
+                registrationEnabled={true}
+                priceModel={event.price_model}
+                priceAmount={event.price_amount}
+              />
+            )}
 
             {/* Facilitator / Host Box */}
             {host ? (
