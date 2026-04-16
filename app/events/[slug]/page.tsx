@@ -25,7 +25,7 @@ async function getEvent(slug: string) {
   const supabase = getSupabaseServerClient();
   const { data, error } = await supabase
     .from("events")
-    .select("*, hosts(name, slug, description, website_url, social_links, telegram_username, email), locations(name, slug, type, city)")
+    .select("*, hosts(name, slug, description, website_url, social_links, telegram_username, email, is_public), locations(name, slug, type, city)")
     .eq("slug", slug)
     .eq("is_public", true)
     .eq("status", "published")
@@ -293,12 +293,12 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               </div>
 
               {/* Anbieter */}
-              {hostPreview ? (
-                <div className="flex items-start gap-3">
-                  <span className="mt-0.5 text-xl" aria-hidden="true">🙋</span>
-                  <div>
-                    <p className="text-sm font-medium text-text-muted">Anbieter</p>
-                    {hostPreview.slug ? (
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 text-xl" aria-hidden="true">🙋</span>
+                <div>
+                  <p className="text-sm font-medium text-text-muted">Anbieter</p>
+                  {hostPreview && hostPreview.is_public !== false ? (
+                    hostPreview.slug ? (
                       <Link
                         href={`/hosts/${hostPreview.slug}`}
                         className="font-medium text-accent-primary hover:underline"
@@ -307,10 +307,12 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
                       </Link>
                     ) : (
                       <p className="font-medium text-text-primary">{hostPreview.name}</p>
-                    )}
-                  </div>
+                    )
+                  ) : (
+                    <p className="font-medium text-text-primary">Das Portal</p>
+                  )}
                 </div>
-              ) : null}
+              </div>
 
               {/* Beginner-friendly Badge */}
               {event.description_sections?.is_beginner_friendly === true ? (
@@ -504,6 +506,7 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               <EventRegistration
                 eventId={event.id}
                 eventTitle={event.title}
+                eventSlug={event.slug}
                 capacity={(event as unknown as Record<string, unknown>).capacity as number | null}
                 confirmedCount={confirmedCount}
                 waitlistEnabled={(event as unknown as Record<string, unknown>).waitlist_enabled as boolean ?? false}
@@ -513,8 +516,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
               />
             )}
 
-            {/* Facilitator / Host Box */}
-            {host ? (
+            {/* Facilitator / Host Box — nur bei öffentlichen Hosts */}
+            {host && hostPreview?.is_public !== false ? (
               <section className="rounded-2xl border border-border bg-bg-secondary p-4">
                 <h2 className="mb-3 text-xl font-normal text-text-primary">Anbieter</h2>
                 {hostPreview?.slug ? (

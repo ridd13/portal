@@ -42,7 +42,8 @@ export default async function AnbieterPage({ searchParams }: AnbieterPageProps) 
   // Load all hosts
   const { data: hostsRaw } = await supabase
     .from("hosts")
-    .select("id, name, slug, description, avatar_url, created_at");
+    .select("id, name, slug, description, avatar_url, created_at")
+    .eq("is_public", true);
 
   const allHosts = (hostsRaw || []) as Host[];
 

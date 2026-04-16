@@ -74,6 +74,7 @@ export default async function HostPage({ params }: HostPageProps) {
     .from("hosts")
     .select("*")
     .eq("slug", slug)
+    .eq("is_public", true)
     .maybeSingle();
 
   if (hostError) {

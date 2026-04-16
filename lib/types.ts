@@ -17,6 +17,7 @@ export interface Host {
 export interface HostPreview {
   name: string;
   slug: string | null;
+  is_public?: boolean;
 }
 
 export type EventFormat = "event" | "workshop" | "retreat" | "kurs" | "festival" | "kreis";
