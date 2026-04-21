@@ -24,9 +24,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { city: "kiel", category: "breathwork" },
     { city: "kiel", category: "ganzheitliche-events" },
     { city: "berlin", category: "ganzheitliche-events" },
+    { city: "berlin", category: "tantra" },
     { city: "muenchen", category: "ganzheitliche-events" },
+    { city: "muenchen", category: "meditation" },
+    { city: "muenchen", category: "tantra" },
     { city: "stuttgart", category: "ganzheitliche-events" },
     { city: "freiburg", category: "ganzheitliche-events" },
+    { city: "freiburg", category: "meditation" },
+    { city: "freiburg", category: "tantra" },
     { city: "schwarzwald", category: "ganzheitliche-events" },
   ];
 
