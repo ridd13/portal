@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: HostPageProps): Promise<Metad
       title: typedHost.name,
       description,
     },
-    alternates: { canonical: `/hosts/${slug}` },
+    alternates: { canonical: `https://das-portal.online/hosts/${slug}` },
   };
 }
 

@@ -47,7 +47,7 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
       title: typedLocation.name,
       description,
     },
-    alternates: { canonical: `/locations/${slug}` },
+    alternates: { canonical: `https://das-portal.online/locations/${slug}` },
   };
 }
 

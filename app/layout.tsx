@@ -3,7 +3,6 @@ import { Cinzel, DM_Sans } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { getSiteUrl } from "@/lib/site-url";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -19,10 +18,8 @@ const dmSans = DM_Sans({
   display: "swap",
 });
 
-const siteUrl = getSiteUrl();
-
 export const metadata: Metadata = {
-  metadataBase: new URL(siteUrl),
+  metadataBase: new URL("https://das-portal.online"),
   title: {
     default: "Das Portal | Ganzheitliche Events",
     template: "%s | Das Portal",
@@ -36,7 +33,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "de_DE",
-    url: siteUrl,
+    url: "https://das-portal.online",
     siteName: "Das Portal",
     title: "Das Portal | Ganzheitliche Events",
     description:
@@ -51,7 +48,7 @@ export const metadata: Metadata = {
     images: ["/logo.png"],
   },
   alternates: {
-    canonical: "/",
+    canonical: "https://das-portal.online",
   },
 };
 

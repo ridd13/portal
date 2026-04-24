@@ -109,7 +109,7 @@ export async function generateMetadata({ params }: EventDetailProps): Promise<Me
       description,
       ...(event.cover_image_url ? { images: [event.cover_image_url] } : {}),
     },
-    alternates: { canonical: `/events/${slug}` },
+    alternates: { canonical: `https://das-portal.online/events/${slug}` },
   };
 }
 
