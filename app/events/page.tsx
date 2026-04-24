@@ -27,16 +27,24 @@ export async function generateMetadata({
   const city = params.city?.trim();
   const plz = params.plz?.trim();
   const fmt = params.format?.trim();
+  const kategorie = params.kategorie?.trim();
 
   const formatLabel = fmt === "retreat" ? "Retreats" : fmt === "workshop" ? "Workshops" : null;
+
+  // Build canonical URL keeping only SEO-valuable params.
+  // Strip ephemeral params (from, to, q, online, plz) that generate
+  // near-infinite URL variants without unique indexable content.
+  const canonicalParts = new URLSearchParams();
+  if (city) canonicalParts.set("city", city);
+  if (fmt) canonicalParts.set("format", fmt);
+  if (kategorie) canonicalParts.set("kategorie", kategorie);
+  const canonical = `/events${canonicalParts.toString() ? `?${canonicalParts.toString()}` : ""}`;
 
   if (city) {
     return {
       title: formatLabel ? `${formatLabel} in ${city}` : `Events in ${city}`,
       description: `Ganzheitliche ${formatLabel || "Events, Workshops und Retreats"} in ${city} — aktuelle Termine auf Das Portal.`,
-      alternates: {
-        canonical: `/events/${city.toLowerCase().replace(/\s+/g, "-")}`,
-      },
+      alternates: { canonical },
     };
   }
 
@@ -44,7 +52,7 @@ export async function generateMetadata({
     return {
       title: `Events nahe ${plz}`,
       description: `Ganzheitliche Events und Workshops in der Nähe von ${plz}.`,
-      alternates: { canonical: `/events/${plz}` },
+      alternates: { canonical },
     };
   }
 
@@ -52,6 +60,7 @@ export async function generateMetadata({
     title: formatLabel || "Events",
     description:
       "Ganzheitliche und spirituelle Events — Tanz, Meditation, Coaching und mehr in deiner Nähe.",
+    alternates: { canonical },
   };
 }
 
