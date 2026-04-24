@@ -178,8 +178,12 @@ Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes 
 
 "Ja aber..." ist KEINE Bestätigung. Nur ein klares "Ja, lösch das" oder "Ja, mach den Rollback" zählt.
 
-### Robots.txt / Sitemap: Keine dynamischen URLs auf Modul-Ebene
-`getSiteUrl()` auf Modul-Ebene in robots.ts/sitemap.ts kann fehlschlagen wenn Env-Vars zur Runtime nicht verfügbar sind. Lösung: URL hardcoden auf `https://das-portal.online`. Außerdem: Domain-Redirect muss korrekt konfiguriert sein (das-portal.online = Primary, www → 308 Redirect). Ein 307 Redirect auf der Root-Domain führt dazu, dass Google robots.txt als "nicht erreichbar" meldet und die Seite nicht indexiert.
+### Robots.txt / Sitemap / Layout: Keine dynamischen URLs auf Modul-Ebene
+`getSiteUrl()` auf Modul-Ebene in robots.ts/sitemap.ts/layout.tsx kann fehlschlagen wenn Env-Vars zur Runtime nicht verfügbar sind. Fallback ist `https://example.com` — das führt zu falschen Canonical-URLs in GSC und verhindert Indexierung. Lösung: URL **immer** hardcoden auf `https://das-portal.online`.
+
+**Betroffene Dateien:** `app/robots.ts`, `app/sitemap.ts`, `app/layout.tsx`, `app/events/[slug]/page.tsx`, `app/hosts/[slug]/page.tsx`, `app/locations/[slug]/page.tsx` — alle nutzen jetzt absolute, hardkodierte URLs.
+
+Außerdem: Domain-Redirect muss korrekt konfiguriert sein (das-portal.online = Primary, www → 308 Redirect). Ein 307 Redirect auf der Root-Domain führt dazu, dass Google robots.txt als "nicht erreichbar" meldet und die Seite nicht indexiert.
 
 ### Navbar-Beschreibung aktuell
 Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist deaktiviert.
