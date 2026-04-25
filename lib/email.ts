@@ -3,8 +3,7 @@ import { getSiteUrl } from "@/lib/site-url";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-// TODO: Eigene Domain verifizieren und Absender ändern auf z.B. hallo@das-portal.online
-const FROM_ADDRESS = "Das Portal <onboarding@resend.dev>";
+const FROM_ADDRESS = "Das Portal <hallo@das-portal.online>";
 
 const SITE_URL = "https://das-portal.online";
 
