@@ -5,7 +5,31 @@ import { ACCESS_COOKIE } from "@/lib/auth-cookies";
 import { getUserFromAccessToken } from "@/lib/auth-server";
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 
-export default async function KontoPage() {
+const CLAIM_ERROR_COPY: Record<string, { heading: string; body: string }> = {
+  email_mismatch: {
+    heading: "E-Mail-Adresse passt nicht zum Eintrag",
+    body: "Der Magic-Link wurde an eine andere E-Mail-Adresse als die im Eintrag hinterlegte gesendet. Melde dich bitte unter lb@justclose.de, wenn du der/die rechtmäßige Inhaber:in bist.",
+  },
+  invalid_token: {
+    heading: "Übernahme nicht möglich",
+    body: "Der Übernahme-Link ist nicht mehr gültig. Bitte fordere einen neuen an oder kontaktiere uns unter lb@justclose.de.",
+  },
+  missing_email: {
+    heading: "Übernahme nicht möglich",
+    body: "Wir konnten deine E-Mail-Adresse nicht aus dem Login auslesen. Versuche es erneut oder kontaktiere uns.",
+  },
+};
+
+const CLAIMED_COPY: Record<string, string> = {
+  event: "Du hast den Event-Eintrag erfolgreich übernommen. Wir melden uns mit den nächsten Schritten.",
+  location: "Du hast den Raum-Eintrag erfolgreich übernommen. Wir melden uns mit den nächsten Schritten.",
+};
+
+export default async function KontoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ claimed?: string; claim_error?: string }>;
+}) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_COOKIE)?.value;
   if (!accessToken) redirect("/auth?next=/konto");
@@ -14,6 +38,9 @@ export default async function KontoPage() {
   if (!user) redirect("/auth?next=/konto");
 
   const supabase = getSupabaseAdminClient();
+  const params = await searchParams;
+  const claimError = params.claim_error ? CLAIM_ERROR_COPY[params.claim_error] : null;
+  const claimedCopy = params.claimed ? CLAIMED_COPY[params.claimed] : null;
 
   // Host profile
   const { data: host } = await supabase
@@ -54,6 +81,20 @@ export default async function KontoPage() {
         <p className="text-text-secondary">Eingeloggt als</p>
         <p className="text-lg font-medium text-text-primary">{user.email}</p>
       </section>
+
+      {claimedCopy ? (
+        <section className="rounded-2xl border border-success-border bg-success-bg p-5">
+          <p className="font-medium text-success-text">Übernahme erfolgreich</p>
+          <p className="mt-1 text-sm text-success-text">{claimedCopy}</p>
+        </section>
+      ) : null}
+
+      {claimError ? (
+        <section className="rounded-2xl border border-error-border bg-error-bg p-5">
+          <p className="font-medium text-error-text">{claimError.heading}</p>
+          <p className="mt-1 text-sm text-error-text">{claimError.body}</p>
+        </section>
+      ) : null}
 
       {/* Pending Claims */}
       {pendingClaims && pendingClaims.length > 0 ? (

@@ -7,7 +7,11 @@ import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 import { ProfileEditorFull } from "@/components/ProfileEditorFull";
 import type { Host } from "@/lib/types";
 
-export default async function ProfilPage() {
+export default async function ProfilPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ claimed?: string }>;
+}) {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get(ACCESS_COOKIE)?.value;
   if (!accessToken) redirect("/auth?next=/konto/profil");
@@ -16,6 +20,8 @@ export default async function ProfilPage() {
   if (!user) redirect("/auth?next=/konto/profil");
 
   const supabase = getSupabaseAdminClient();
+  const params = await searchParams;
+  const justClaimed = params.claimed === "1";
 
   const { data: host } = await supabase
     .from("hosts")
@@ -44,6 +50,14 @@ export default async function ProfilPage() {
 
   return (
     <div className="space-y-6">
+      {justClaimed ? (
+        <div className="rounded-2xl border border-success-border bg-success-bg p-5">
+          <p className="font-medium text-success-text">Willkommen — du hast dein Profil übernommen.</p>
+          <p className="mt-1 text-sm text-success-text">
+            Du kannst jetzt Beschreibung, Logo, Links und Kontaktdaten anpassen. Änderungen sind sofort live.
+          </p>
+        </div>
+      ) : null}
       <h2 className="text-2xl font-normal text-text-primary">Profil bearbeiten</h2>
       <div className="rounded-2xl border border-border bg-bg-card p-6">
         <ProfileEditorFull host={host as Host} />
