@@ -131,8 +131,11 @@ lib/
 - Dynamic imports mit `{ ssr: false }` für Client-only Libraries (z.B. Leaflet)
 
 ### Auth
-- Auth ist aktuell **deaktiviert**. Keine Links zu /auth/* oder /konto in der UI.
-- Auth-Code nicht löschen — wird später überarbeitet und wieder aktiviert
+- Auth ist via Supabase Magic-Link **aktiv**, aber **nicht öffentlich beworben**: kein Anmelde-Link in der Navbar.
+- Eintrittspunkte sind nur:
+  1. "Profil beanspruchen"-CTA auf `/hosts/[slug]` (für unclaimed Profile) → `/auth?mode=claim&host=<slug>`
+  2. Claim-Token-E-Mails für Drittparty-Submits → `/claim/[token]`
+- `/konto/*` und `/auth/*` sind erreichbar, werden aber nicht in der Navbar verlinkt
 - Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange CTA)
 - URL-Struktur ist Englisch: /events, /locations, /hosts, /einreichen
 - /anbieter redirected 308 auf /hosts (Legacy-URL)
@@ -186,7 +189,7 @@ Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes 
 Außerdem: Domain-Redirect muss korrekt konfiguriert sein (das-portal.online = Primary, www → 308 Redirect). Ein 307 Redirect auf der Root-Domain führt dazu, dass Google robots.txt als "nicht erreichbar" meldet und die Seite nicht indexiert.
 
 ### Navbar-Beschreibung aktuell
-Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist deaktiviert.
+Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist nicht in der Navbar verlinkt — Eintrittspunkte siehe Regel-Abschnitt "Auth".
 
 ---
 

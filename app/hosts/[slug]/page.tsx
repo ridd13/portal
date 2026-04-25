@@ -267,7 +267,7 @@ export default async function HostPage({ params }: HostPageProps) {
                 Informationen.
               </p>
               <Link
-                href="/einreichen/host"
+                href={`/auth?mode=claim&host=${encodeURIComponent(slug)}`}
                 className="mt-4 inline-block rounded-full border border-accent-sage px-5 py-2 text-sm font-semibold text-accent-sage transition hover:bg-accent-sage/10"
               >
                 Du bist {typedHost.name}? Profil beanspruchen
@@ -488,7 +488,7 @@ export default async function HostPage({ params }: HostPageProps) {
                 Ist das dein Profil? Ergänze deine Beschreibung, Links und Angebote.
               </p>
               <Link
-                href="/einreichen/host"
+                href={`/auth?mode=claim&host=${encodeURIComponent(slug)}`}
                 className="mt-3 inline-block rounded-full bg-accent-sage px-5 py-2 text-sm font-semibold text-white transition hover:brightness-95"
               >
                 Profil beanspruchen

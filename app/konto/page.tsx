@@ -1,20 +1,25 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import { ACCESS_COOKIE } from "@/lib/auth-cookies";
 import { getUserFromAccessToken } from "@/lib/auth-server";
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 
 export default async function KontoPage() {
   const cookieStore = await cookies();
-  const accessToken = cookieStore.get(ACCESS_COOKIE)!.value;
+  const accessToken = cookieStore.get(ACCESS_COOKIE)?.value;
+  if (!accessToken) redirect("/auth?next=/konto");
+
   const { user } = await getUserFromAccessToken(accessToken);
+  if (!user) redirect("/auth?next=/konto");
+
   const supabase = getSupabaseAdminClient();
 
   // Host profile
   const { data: host } = await supabase
     .from("hosts")
     .select("id, name, slug, description")
-    .eq("owner_id", user!.id)
+    .eq("owner_id", user.id)
     .maybeSingle();
 
   // Stats
@@ -39,7 +44,7 @@ export default async function KontoPage() {
   const { data: pendingClaims } = await supabase
     .from("claim_requests")
     .select("id")
-    .eq("user_id", user!.id)
+    .eq("user_id", user.id)
     .eq("status", "pending");
 
   return (
@@ -47,7 +52,7 @@ export default async function KontoPage() {
       {/* Welcome */}
       <section className="rounded-2xl border border-border bg-bg-card p-6">
         <p className="text-text-secondary">Eingeloggt als</p>
-        <p className="text-lg font-medium text-text-primary">{user!.email}</p>
+        <p className="text-lg font-medium text-text-primary">{user.email}</p>
       </section>
 
       {/* Pending Claims */}
