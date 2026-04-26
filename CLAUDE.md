@@ -191,6 +191,15 @@ Außerdem: Domain-Redirect muss korrekt konfiguriert sein (das-portal.online = P
 ### Navbar-Beschreibung aktuell
 Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist nicht in der Navbar verlinkt — Eintrittspunkte siehe Regel-Abschnitt "Auth".
 
+### Event-Duplikate aus Telegram-Import: Titel-Normalisierung nötig
+Telegram-Events werden teilweise mehrfach importiert mit minimal abweichenden Titeln (Emoji-Varianten wie "TANTRA REBIRTH" vs "TANTRA REBIRTH 🌱", Satzzeichen-Unterschiede). Die `deduplicateEvents()`-Funktion in `lib/event-utils.ts` normalisiert deshalb Titel vor dem Key-Vergleich: Emoji stripping via `\p{Extended_Pictographic}`, Dash-Vereinheitlichung, Lowercase. Nie inline-Dedup-Logik schreiben — immer `deduplicateEvents()` aus `event-utils.ts` nutzen.
+
+### locations.event_count ist ein stale-Cache-Feld
+Das `event_count`-Feld auf der `locations`-Tabelle wird nicht automatisch aktualisiert und ist ggf. veraltet. Für Live-Counts immer direkt `events` abfragen. Feld in der UI nicht als verlässliche Quelle nutzen.
+
+### 56% der Hamburg-Events ohne location_id
+Events werden aus Telegram mit `address`-Feld importiert, aber ohne `location_id`-Zuweisung. Venue-Pages (`/locations/[slug]`) zeigen nur Events mit passendem `location_id` → viele echte Venue-Events fehlen. Für Location-Count-Anzeigen daher ggf. nach `address ILIKE '%venue_name%'` zusätzlich filtern oder `location_name` matchen.
+
 ---
 
 ## Kontext-Dateien
