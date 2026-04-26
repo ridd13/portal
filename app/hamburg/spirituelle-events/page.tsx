@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -69,7 +70,7 @@ export default async function HamburgSpiritueleEventsPage() {
     .order("start_at", { ascending: true })
     .limit(16);
 
-  const allEvents = (data || []) as Event[];
+  const allEvents = deduplicateEvents((data || []) as Event[]);
 
   // Prefer events with spiritual tags, but show all Hamburg events if few matches
   const spiritualEvents = allEvents.filter(

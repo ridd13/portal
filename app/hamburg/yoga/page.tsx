@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -62,10 +63,10 @@ export default async function HamburgYogaPage() {
     .gte("start_at", new Date().toISOString())
     .or("address.ilike.%Hamburg%,address.ilike.%hamburg%")
     .order("start_at", { ascending: true })
-    .limit(20);
+    .limit(30);
 
-  const allEvents = (data || []) as Event[];
-  const events = allEvents.filter(
+    const allEvents = deduplicateEvents((data || []) as Event[]);
+    const events = allEvents.filter(
     (event) =>
       event.tags?.some((tag) =>
         YOGA_TAGS.some((yt) => tag.toLowerCase().includes(yt))

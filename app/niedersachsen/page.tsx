@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents } from "@/lib/event-utils";
+import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Ganzheitliche Events in Niedersachsen — Termine & Community | Das Portal",
@@ -67,7 +69,7 @@ export default async function NiedersachsenPage() {
     .order("start_at", { ascending: true })
     .limit(8);
 
-  const events = data || [];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -75,14 +77,14 @@ export default async function NiedersachsenPage() {
     name: "Ganzheitliche Events in Niedersachsen",
     description: "Aktuelle ganzheitliche Events, Workshops und Retreats in Niedersachsen",
     url: "https://das-portal.online/niedersachsen",
-    itemListElement: events.slice(0, 5).map((event: Record<string, unknown>, index: number) => ({
+    itemListElement: events.slice(0, 5).map((event: Event, index: number) => ({
       "@type": "ListItem",
       position: index + 1,
       item: {
         "@type": "Event",
-        name: event.title as string,
-        startDate: event.start_at as string,
-        location: { "@type": "Place", name: (event.location_name as string) || "Niedersachsen", address: "Niedersachsen" },
+        name: event.title,
+        startDate: event.start_at,
+        location: { "@type": "Place", name: event.location_name || "Niedersachsen", address: "Niedersachsen" },
         url: `https://das-portal.online/events/${event.slug}`,
       },
     })),
@@ -140,15 +142,15 @@ export default async function NiedersachsenPage() {
 
           {events.length > 0 && (
             <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {events.map((event: Record<string, unknown>) => (
+              {events.map((event: Event) => (
                 <Link
-                  key={event.id as string}
+                  key={event.id}
                   href={`/events/${event.slug}`}
                   className="group rounded-2xl border border-border bg-bg-card p-5 transition-shadow hover:shadow-md"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="font-medium text-text-primary group-hover:text-accent-primary">
-                      {event.title as string}
+                      {event.title}
                     </h3>
                     {event.price_model === "free" && (
                       <span className="shrink-0 rounded-full bg-[#edf5e6] px-2 py-0.5 text-xs text-[#4b6841]">
@@ -157,11 +159,11 @@ export default async function NiedersachsenPage() {
                     )}
                   </div>
                   <p className="mt-1 text-sm text-text-muted">
-                    {formatDate(event.start_at as string)} · {formatTime(event.start_at as string)}
+                    {formatDate(event.start_at)} · {formatTime(event.start_at)}
                   </p>
                   {Boolean(event.location_name) && (
                     <p className="mt-0.5 text-sm text-text-muted">
-                      {event.location_name as string}
+                      {event.location_name}
                     </p>
                   )}
                 </Link>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -53,7 +54,7 @@ export default async function MuenchenTantraPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as Event[];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",

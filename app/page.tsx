@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { EventCard } from "@/components/EventCard";
-import { matchCity } from "@/lib/event-utils";
+import { deduplicateEvents, matchCity } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -27,7 +27,7 @@ export default async function LandingPage() {
     .order("start_at", { ascending: true })
     .limit(4);
 
-  const upcomingEvents = (data || []) as Event[];
+  const upcomingEvents = deduplicateEvents((data || []) as Event[]).slice(0, 4);
 
   // Social Proof Counts (alle Events, nicht nur published)
   const { count: eventCount } = await supabase
@@ -60,16 +60,18 @@ export default async function LandingPage() {
     .limit(50);
 
   // Upcoming event counts per host
-  const { data: upcomingByHost } = await supabase
+  const { data: upcomingByHostRaw } = await supabase
     .from("events")
-    .select("host_id")
+    .select("id, title, start_at, host_id, created_at")
     .eq("is_public", true)
     .eq("status", "published")
     .gte("start_at", new Date().toISOString());
 
+  const upcomingByHost = deduplicateEvents((upcomingByHostRaw || []) as Event[]);
+
   const hostEventCounts = new Map<string, number>();
-  for (const e of upcomingByHost || []) {
-    const hid = (e as { host_id: string | null }).host_id;
+  for (const e of upcomingByHost) {
+    const hid = e.host_id;
     if (hid) hostEventCounts.set(hid, (hostEventCounts.get(hid) || 0) + 1);
   }
 

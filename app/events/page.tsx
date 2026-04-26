@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EventFilters } from "@/components/EventFilters";
 import { EventsClientWrapper } from "@/components/EventsClientWrapper";
-import { getCityFromAddress, matchCity } from "@/lib/event-utils";
+import { deduplicateEvents, getCityFromAddress, matchCity } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import type { Category, Event, EventFormat } from "@/lib/types";
 
@@ -176,19 +176,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   }
 
   // Deduplicate events with same title + start_at (keep newest by created_at)
-  {
-    const seen = new Map<string, Event>();
-    for (const event of events) {
-      const key = `${event.title}__${event.start_at}`;
-      const existing = seen.get(key);
-      if (!existing || (event.created_at && existing.created_at && event.created_at > existing.created_at)) {
-        seen.set(key, event);
-      }
-    }
-    events = [...seen.values()].sort(
-      (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime()
-    );
-  }
+  events = deduplicateEvents(events);
 
   // Load categories from DB
   const { data: categoriesData } = await supabase
