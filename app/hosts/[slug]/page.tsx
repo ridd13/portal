@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { EventCard } from "@/components/EventCard";
-import { formatEventDate, FORMAT_LABELS } from "@/lib/event-utils";
+import { formatEventDate, FORMAT_LABELS, deduplicateEvents } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
 import type { Event, EventFormat, Host } from "@/lib/types";
@@ -116,21 +116,8 @@ export default async function HostPage({ params }: HostPageProps) {
     .order("start_at", { ascending: false })
     .limit(6);
 
-  // Dedup helper: same title + start_at → keep newest
-  function dedupEvents(events: Event[]): Event[] {
-    const seen = new Map<string, Event>();
-    for (const event of events) {
-      const key = `${event.title}::${event.start_at}`;
-      const existing = seen.get(key);
-      if (!existing || (event.created_at && existing.created_at && event.created_at > existing.created_at)) {
-        seen.set(key, event);
-      }
-    }
-    return Array.from(seen.values());
-  }
-
-  const upcomingEvents = dedupEvents((upcomingData || []) as Event[]);
-  const pastEvents = dedupEvents((pastData || []) as Event[]);
+  const upcomingEvents = deduplicateEvents((upcomingData || []) as Event[]);
+  const pastEvents = deduplicateEvents((pastData || []) as Event[]);
   const allEvents = [...upcomingEvents, ...pastEvents];
 
   // Extract unique tags and formats from events
@@ -267,7 +254,7 @@ export default async function HostPage({ params }: HostPageProps) {
                 Informationen.
               </p>
               <Link
-                href="/einreichen/host"
+                href={`/auth?mode=claim&host=${encodeURIComponent(slug)}`}
                 className="mt-4 inline-block rounded-full border border-accent-sage px-5 py-2 text-sm font-semibold text-accent-sage transition hover:bg-accent-sage/10"
               >
                 Du bist {typedHost.name}? Profil beanspruchen
@@ -488,7 +475,7 @@ export default async function HostPage({ params }: HostPageProps) {
                 Ist das dein Profil? Ergänze deine Beschreibung, Links und Angebote.
               </p>
               <Link
-                href="/einreichen/host"
+                href={`/auth?mode=claim&host=${encodeURIComponent(slug)}`}
                 className="mt-3 inline-block rounded-full bg-accent-sage px-5 py-2 text-sm font-semibold text-white transition hover:brightness-95"
               >
                 Profil beanspruchen

@@ -131,8 +131,11 @@ lib/
 - Dynamic imports mit `{ ssr: false }` für Client-only Libraries (z.B. Leaflet)
 
 ### Auth
-- Auth ist aktuell **deaktiviert**. Keine Links zu /auth/* oder /konto in der UI.
-- Auth-Code nicht löschen — wird später überarbeitet und wieder aktiviert
+- Auth ist via Supabase Magic-Link **aktiv**, aber **nicht öffentlich beworben**: kein Anmelde-Link in der Navbar.
+- Eintrittspunkte sind nur:
+  1. "Profil beanspruchen"-CTA auf `/hosts/[slug]` (für unclaimed Profile) → `/auth?mode=claim&host=<slug>`
+  2. Claim-Token-E-Mails für Drittparty-Submits → `/claim/[token]`
+- `/konto/*` und `/auth/*` sind erreichbar, werden aber nicht in der Navbar verlinkt
 - Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange CTA)
 - URL-Struktur ist Englisch: /events, /locations, /hosts, /einreichen
 - /anbieter redirected 308 auf /hosts (Legacy-URL)
@@ -186,7 +189,16 @@ Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes 
 Außerdem: Domain-Redirect muss korrekt konfiguriert sein (das-portal.online = Primary, www → 308 Redirect). Ein 307 Redirect auf der Root-Domain führt dazu, dass Google robots.txt als "nicht erreichbar" meldet und die Seite nicht indexiert.
 
 ### Navbar-Beschreibung aktuell
-Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist deaktiviert.
+Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist nicht in der Navbar verlinkt — Eintrittspunkte siehe Regel-Abschnitt "Auth".
+
+### Event-Duplikate aus Telegram-Import: Titel-Normalisierung nötig
+Telegram-Events werden teilweise mehrfach importiert mit minimal abweichenden Titeln (Emoji-Varianten wie "TANTRA REBIRTH" vs "TANTRA REBIRTH 🌱", Satzzeichen-Unterschiede). Die `deduplicateEvents()`-Funktion in `lib/event-utils.ts` normalisiert deshalb Titel vor dem Key-Vergleich: Emoji stripping via `\p{Extended_Pictographic}`, Dash-Vereinheitlichung, Lowercase. Nie inline-Dedup-Logik schreiben — immer `deduplicateEvents()` aus `event-utils.ts` nutzen.
+
+### locations.event_count ist ein stale-Cache-Feld
+Das `event_count`-Feld auf der `locations`-Tabelle wird nicht automatisch aktualisiert und ist ggf. veraltet. Für Live-Counts immer direkt `events` abfragen. Feld in der UI nicht als verlässliche Quelle nutzen.
+
+### 56% der Hamburg-Events ohne location_id
+Events werden aus Telegram mit `address`-Feld importiert, aber ohne `location_id`-Zuweisung. Venue-Pages (`/locations/[slug]`) zeigen nur Events mit passendem `location_id` → viele echte Venue-Events fehlen. Für Location-Count-Anzeigen daher ggf. nach `address ILIKE '%venue_name%'` zusätzlich filtern oder `location_name` matchen.
 
 ---
 

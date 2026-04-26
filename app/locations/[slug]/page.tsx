@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { EventCard } from "@/components/EventCard";
-import { formatEventDate } from "@/lib/event-utils";
+import { formatEventDate, deduplicateEvents } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
 import type { Event, Location } from "@/lib/types";
@@ -101,8 +101,8 @@ export default async function LocationPage({ params }: LocationPageProps) {
     .order("start_at", { ascending: false })
     .limit(6);
 
-  const upcomingEvents = (upcomingData || []) as Event[];
-  const pastEvents = (pastData || []) as Event[];
+  const upcomingEvents = deduplicateEvents((upcomingData || []) as Event[]);
+  const pastEvents = deduplicateEvents((pastData || []) as Event[]);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">

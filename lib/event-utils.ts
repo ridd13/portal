@@ -230,3 +230,43 @@ export const getCityFromAddress = (address: string | null): string | null => {
 
   return null;
 };
+
+/**
+ * Normalize a title for duplicate detection:
+ * strip emoji, unify punctuation/dashes, collapse whitespace, lowercase.
+ */
+function normTitle(s: string): string {
+  return s
+    .trim()
+    // Strip emoji (Extended_Pictographic covers all modern emoji)
+    .replace(/\p{Extended_Pictographic}/gu, "")
+    // Unify dash variants (em-dash, en-dash, middle dot, bullet) to hyphen
+    .replace(/[–—·•]/g, "-")
+    // Collapse multiple spaces
+    .replace(/\s+/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * Deduplicate events with same (normalized) title and start_at.
+ * Keeps the newest one by created_at if available.
+ */
+export function deduplicateEvents(events: Event[]): Event[] {
+  const seen = new Map<string, Event>();
+  for (const event of events) {
+    const key = `${normTitle(event.title)}__${event.start_at}`;
+    const existing = seen.get(key);
+    if (
+      !existing ||
+      (event.created_at &&
+        existing.created_at &&
+        new Date(event.created_at) > new Date(existing.created_at))
+    ) {
+      seen.set(key, event);
+    }
+  }
+  return [...seen.values()].sort(
+    (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime()
+  );
+}

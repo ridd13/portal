@@ -7,6 +7,7 @@ const NAV_ITEMS = [
   { href: "/konto", label: "Übersicht" },
   { href: "/konto/anmeldungen", label: "Anmeldungen" },
   { href: "/konto/profil", label: "Profil" },
+  { href: "/konto/mcp-tokens", label: "MCP Tokens" },
 ];
 
 export function KontoNav() {

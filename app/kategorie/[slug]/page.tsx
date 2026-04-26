@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EventCard } from "@/components/EventCard";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents } from "@/lib/event-utils";
 import type { Category, Event } from "@/lib/types";
 
 interface CategoryPageProps {
@@ -40,7 +41,7 @@ async function getCategoryEvents(categorySlug: string): Promise<Event[]> {
     .gte("start_at", new Date().toISOString())
     .order("start_at", { ascending: true });
 
-  return (data || []) as Event[];
+  return deduplicateEvents((data || []) as Event[]);
 }
 
 async function getRelatedCategories(currentSlug: string, groupName: string): Promise<Category[]> {

@@ -76,6 +76,10 @@ export function AuthForm() {
 
       if (!res.ok) {
         setError(data.error || "Claim-Anfrage fehlgeschlagen.");
+      } else if (data.alreadyOwner) {
+        setSuccess("Du bist bereits Inhaber:in dieses Profils. Du kannst es jetzt bearbeiten.");
+      } else if (data.alreadyPending) {
+        setSuccess("Wir prüfen deine Anfrage bereits und melden uns in Kürze. Du kannst dein Konto schon einsehen.");
       } else {
         setSuccess(
           "Deine Anfrage wurde eingereicht! Wir prüfen sie und melden uns in Kürze."
@@ -193,9 +197,17 @@ export function AuthForm() {
           <p className="mt-4 text-text-secondary">Anfrage wird gesendet...</p>
         ) : null}
         {error ? (
-          <p className="mt-4 rounded-xl border border-error-border bg-error-bg px-3 py-2 text-sm text-error-text">
-            {error}
-          </p>
+          <div className="mt-4 space-y-3">
+            <p className="rounded-xl border border-error-border bg-error-bg px-3 py-2 text-sm text-error-text">
+              {error}
+            </p>
+            <Link
+              href="/konto"
+              className="inline-block rounded-full border border-border px-5 py-2 text-sm font-semibold text-text-secondary transition hover:bg-bg-secondary"
+            >
+              Zu Mein Konto
+            </Link>
+          </div>
         ) : null}
         {success ? (
           <div className="mt-4 space-y-3">

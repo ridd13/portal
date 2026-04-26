@@ -85,7 +85,10 @@ export function EventsClientWrapper({
 
   // Filter + sort events by radius when user location is set
   const filteredEvents = useMemo(() => {
-    if (!userLocation) return events;
+    // If a city is explicitly selected, we show all events from that city 
+    // (the server already filtered them by address). 
+    // We only apply radius filtering if NO city is selected OR if radius filter is explicitly wanted.
+    if (!userLocation || selectedCity) return events;
 
     const withDistance = events.map((event) => {
       if (!event.geo_lat || !event.geo_lng) {

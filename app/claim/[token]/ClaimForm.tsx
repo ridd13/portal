@@ -21,6 +21,21 @@ export function ClaimForm({
   const [state, formAction, isPending] = useActionState(requestClaim, initialState);
 
   if (state.success) {
+    if (state.magicLinkSent) {
+      return (
+        <div className="rounded-2xl border border-accent-sage/30 bg-accent-sage/10 p-8 text-center">
+          <p className="text-lg font-medium text-text-primary">
+            Magic-Link gesendet
+          </p>
+          <p className="mt-3 text-sm text-text-secondary">
+            {state.message}
+          </p>
+          <p className="mt-3 text-xs text-text-muted">
+            Der Link ist 1 Stunde gültig. Falls du nichts findest, prüfe auch deinen Spam-Ordner.
+          </p>
+        </div>
+      );
+    }
     return (
       <div className="rounded-2xl border border-accent-sage/30 bg-accent-sage/10 p-8 text-center">
         <p className="text-lg font-medium text-text-primary">
