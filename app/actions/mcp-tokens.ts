@@ -12,12 +12,13 @@ export async function createMcpToken(userId: string, label: string) {
   const expiresAt = new Date();
   expiresAt.setDate(expiresAt.getDate() + 365); // 1 year expiry by default
 
+  const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
   const { data, error } = await supabase
     .from("mcp_tokens")
     .insert({
       user_id: userId,
       label,
-      token_hash: token, // Note: In production we should hash this, but we'll follow the pattern for now
+      token_hash: tokenHash,
       expires_at: expiresAt.toISOString(),
     })
     .select()

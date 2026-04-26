@@ -50,10 +50,9 @@ export default async function McpTokensPage() {
 {`{
   "mcpServers": {
     "paperclip": {
-      "command": "npx",
-      "args": ["@paperclipai/server", "run"],
-      "env": {
-        "PAPERCLIP_TOKEN": "DEIN_TOKEN_HIER"
+      "url": "https://mcp.paperclip.ing/sse",
+      "headers": {
+        "Authorization": "Bearer DEIN_TOKEN_HIER"
       }
     }
   }
