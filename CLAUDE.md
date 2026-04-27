@@ -200,6 +200,9 @@ Das `event_count`-Feld auf der `locations`-Tabelle wird nicht automatisch aktual
 ### 56% der Hamburg-Events ohne location_id
 Events werden aus Telegram mit `address`-Feld importiert, aber ohne `location_id`-Zuweisung. Venue-Pages (`/locations/[slug]`) zeigen nur Events mit passendem `location_id` → viele echte Venue-Events fehlen. Für Location-Count-Anzeigen daher ggf. nach `address ILIKE '%venue_name%'` zusätzlich filtern oder `location_name` matchen.
 
+### React Purity Rule: Kein `Date.now()` im Render-Pfad
+Mit Next.js 16 + React 19 schlägt ESLint (`react-hooks/purity`) fehl, wenn `Date.now()` direkt in Komponenten-Renderpfaden verwendet wird (z. B. `app/claim/[token]/page.tsx`). Für Zeitvergleiche im Renderpfad stattdessen `new Date().getTime()` oder noch besser request-/datengetriebene Werte nutzen.
+
 ---
 
 ## Kontext-Dateien

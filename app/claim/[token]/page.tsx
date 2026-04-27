@@ -130,7 +130,8 @@ export default async function ClaimPage({
   // Expired
   if (target.claimSentAt) {
     const sent = new Date(target.claimSentAt).getTime();
-    if (Date.now() - sent > THIRTY_DAYS_MS) {
+    const nowMs = new Date().getTime();
+    if (nowMs - sent > THIRTY_DAYS_MS) {
       return (
         <main className="mx-auto max-w-2xl px-4 py-16">
           <h1 className="mb-4 font-serif text-3xl text-text-primary">Link abgelaufen</h1>
