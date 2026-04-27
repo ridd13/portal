@@ -5,6 +5,7 @@ import { SubmitLocationForm } from "@/components/SubmitLocationForm";
 export const metadata: Metadata = {
   title: "Ort hinzufügen – Das Portal",
   description: "Füge einen besonderen Ort für ganzheitliche Events bei Das Portal hinzu.",
+  alternates: { canonical: "https://das-portal.online/einreichen/location" },
 };
 
 export default function SubmitLocationPage() {

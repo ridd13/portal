@@ -5,6 +5,7 @@ import { SubmitHostForm } from "@/components/SubmitHostForm";
 export const metadata: Metadata = {
   title: "Profil erstellen – Das Portal",
   description: "Erstelle dein Profil als Facilitator, Coach oder Heiler auf Das Portal.",
+  alternates: { canonical: "https://das-portal.online/einreichen/host" },
 };
 
 export default function SubmitHostPage() {

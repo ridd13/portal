@@ -1,3 +1,11 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Kontakt",
+  description: "Schreib uns – bei Fragen zu Events, Kooperationen oder technischen Themen.",
+  alternates: { canonical: "https://das-portal.online/kontakt" },
+};
+
 export default function KontaktPage() {
   return (
     <article className="mx-auto max-w-3xl rounded-3xl border border-border bg-bg-card p-6 shadow-[0_8px_24px_rgba(44,36,24,0.07)] sm:p-8">

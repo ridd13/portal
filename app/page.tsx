@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   title: "Das Portal | Bewusste Events in deiner Nähe",
   description:
     "Breathwork, Yoga, Sound Healing, Kakao-Zeremonien und mehr — finde Facilitators und Erlebnisse, denen du vertrauen kannst.",
+  alternates: { canonical: "https://das-portal.online" },
 };
 
 export const revalidate = 300;

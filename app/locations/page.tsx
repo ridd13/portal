@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Orte",
   description:
     "Besondere Orte für ganzheitliche Events — Studios, Retreat-Zentren, Seminarräume und mehr.",
+  alternates: { canonical: "https://das-portal.online/locations" },
 };
 
 interface LocationsPageProps {

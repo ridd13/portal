@@ -5,6 +5,7 @@ import { SubmitEventForm } from "@/components/SubmitEventForm";
 export const metadata: Metadata = {
   title: "Event einreichen – Das Portal",
   description: "Reiche dein Event bei Das Portal ein – kostenlos und ohne Registrierung.",
+  alternates: { canonical: "https://das-portal.online/einreichen/event" },
 };
 
 export default function SubmitEventPage() {

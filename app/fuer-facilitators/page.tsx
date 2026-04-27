@@ -7,6 +7,7 @@ export const metadata: Metadata = {
   title: "Für Anbieter | Das Portal",
   description:
     "Werde sichtbar als Coach, Heiler oder Facilitator. Registriere dich auf Das Portal und erreiche die Menschen, die dich suchen.",
+  alternates: { canonical: "https://das-portal.online/fuer-facilitators" },
 };
 
 export default async function FacilitatorsPage() {
