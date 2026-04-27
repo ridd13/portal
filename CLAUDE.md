@@ -122,6 +122,15 @@ lib/
 - **Region:** DACH-weit (Ursprung SH & Hamburg). SEO City Pages werden für alle Städte mit genug Events gebaut.
 - **Keine Emojis in Code** — nur in UI-Texten wo sie bewusst eingesetzt werden
 
+### Git-Workflow (Pflicht nach jeder Implementierung)
+Nach dem Abschluss jeder Code-Task **muss** der Feature-Branch in `main` gemergt und gepusht werden, bevor das Issue auf `done` gesetzt wird:
+```bash
+git checkout main && git pull origin main
+git merge --no-ff feat/<branch> -m "chore: merge feat/<branch> → main"
+git push origin main
+```
+Vercel deployt automatisch bei jedem Push auf `main`. Den Merge-Commit im Issue-Kommentar erwähnen. Begründung: [LBV-195] — Fixes ohne Merge auf main landen nie in Production.
+
 ### Code-Stil
 - Server Components als Default — `"use client"` nur wenn nötig (Interaktivität, Browser APIs)
 - `useActionState` für Formulare (React 19 Pattern, nicht `useFormState`)
@@ -217,6 +226,11 @@ In `components/AuthForm.tsx` führen Mode-Syncs via `setState` im Renderpfad (un
 
 ### Resend-Client: Kein Top-Level `new Resend(...)` — lazy initialisieren
 `const resend = new Resend(process.env.RESEND_API_KEY)` auf Modul-Ebene in `lib/email.ts` crasht den Build, wenn `RESEND_API_KEY` zur Build-Zeit nicht gesetzt ist. Lösung: lazy getter `getResend()` — identisches Muster wie `getSupabaseAdminClient()` in `lib/supabase-admin.ts`.
+
+### Supabase `admin.generateLink()` ignoriert `redirectTo` wenn URL nicht in Allowlist
+Supabase fällt beim `redirectTo`-Argument in `admin.generateLink()` stillschweigend auf die hinterlegte **Site URL** zurück, wenn der übergebene Wert nicht in den **Redirect URLs** des Projekts steht. In Development-Projekten ist die Site URL oft `localhost:3000` — dann enthält jeder generierte Magic-Link einen `localhost`-Link.
+- **Kurzfristig:** `patchActionLinkRedirect()` in `lib/supabase-admin.ts` patcht `localhost` im `redirect_to`-Parameter der `action_link`-URL vor dem Versand.
+- **Dauerhaft:** Supabase Dashboard → Authentication → URL Configuration: **Site URL** = `https://das-portal.online`, **Redirect URLs** = `https://das-portal.online/auth/callback` + `https://das-portal.online/auth/callback?*`.
 
 ---
 
