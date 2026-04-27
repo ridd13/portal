@@ -73,6 +73,11 @@ export function AuthForm() {
       const data = await res.json();
       if (cancelled) return;
 
+      if (res.status === 401) {
+        // Session expired or missing — send back to magic-link login
+        router.replace(`/auth?mode=claim&host=${encodeURIComponent(hostSlug)}`);
+        return;
+      }
       if (!res.ok) {
         setError(data.error || "Claim-Anfrage fehlgeschlagen.");
       } else if (data.alreadyOwner) {
