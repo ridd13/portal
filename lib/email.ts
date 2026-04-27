@@ -1,10 +1,17 @@
 import { Resend } from "resend";
-import { getSiteUrl } from "@/lib/site-url";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
+let _resend: Resend | null = null;
+
+function getResend(): Resend {
+  if (!_resend) {
+    const key = process.env.RESEND_API_KEY;
+    if (!key) throw new Error("Missing RESEND_API_KEY");
+    _resend = new Resend(key);
+  }
+  return _resend;
+}
 
 const FROM_ADDRESS = "Das Portal <hallo@das-portal.online>";
-
 const SITE_URL = "https://das-portal.online";
 
 /** Shared email wrapper with portal branding */
@@ -43,10 +50,9 @@ export async function sendConfirmationEmail(
   name: string | null,
   token: string
 ) {
-  const siteUrl = getSiteUrl();
-  const confirmUrl = `${siteUrl}/api/confirm?token=${token}`;
+  const confirmUrl = `${SITE_URL}/api/confirm?token=${token}`;
 
-  await resend.emails.send({
+  await getResend().emails.send({
     from: FROM_ADDRESS,
     to: email,
     subject: "Bitte bestätige deine Anmeldung – Das Portal",
@@ -145,7 +151,7 @@ export async function sendRegistrationConfirmation(data: RegistrationEmailData) 
   `);
 
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: FROM_ADDRESS,
       to: data.email,
       subject,
@@ -206,7 +212,7 @@ export async function sendClaimInvitation({
   `);
 
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: FROM_ADDRESS,
       to: email,
       subject,
@@ -261,7 +267,7 @@ export async function sendClaimRequestNotification({
   `);
 
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: FROM_ADDRESS,
       to: "lb@justclose.de",
       subject,
@@ -302,7 +308,7 @@ export async function sendClaimRequestConfirmation({
   `);
 
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: FROM_ADDRESS,
       to: email,
       subject,
@@ -310,6 +316,95 @@ export async function sendClaimRequestConfirmation({
     });
   } catch (error) {
     console.error("[EMAIL ERROR] Claim request confirmation failed:", error);
+  }
+}
+
+// ─── Auth: Magic Link (branded, bypasses Supabase default template) ──
+
+/** Branded sign-in magic link — use after admin.generateLink(), never signInWithOtp() */
+export async function sendMagicLinkEmail(email: string, magicLinkUrl: string) {
+  if (!process.env.RESEND_API_KEY) {
+    console.log("[EMAIL SKIP] RESEND_API_KEY not set — skipping magic link email");
+    return;
+  }
+
+  const html = portalEmailLayout(`
+    <h1 style="color: #2c2418; font-size: 24px;">Dein Anmeldelink</h1>
+    <p style="color: #6b5b4e; font-size: 16px; line-height: 1.6;">
+      Klick auf den Button, um dich bei Das Portal anzumelden.<br>
+      Der Link ist 60 Minuten gültig und kann nur einmal verwendet werden.
+    </p>
+    <a href="${magicLinkUrl}"
+       style="display: inline-block; background-color: #b5651d; color: white; padding: 14px 28px;
+              border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 16px; margin: 20px 0;">
+      Jetzt anmelden
+    </a>
+    <p style="color: #9a8b7a; font-size: 14px; line-height: 1.5; margin-top: 30px;">
+      Falls du diese E-Mail nicht angefordert hast, kannst du sie ignorieren.<br>
+      Dein Konto bleibt unverändert.
+    </p>
+  `);
+
+  try {
+    await getResend().emails.send({
+      from: FROM_ADDRESS,
+      to: email,
+      subject: "Dein Anmeldelink – Das Portal",
+      html,
+    });
+  } catch (error) {
+    console.error("[EMAIL ERROR] Magic link email failed:", error);
+    throw error;
+  }
+}
+
+/** Branded claim magic link — use after admin.generateLink() in claim flow */
+export async function sendClaimMagicLinkEmail({
+  email,
+  magicLinkUrl,
+  entityTitle,
+  entityType,
+}: {
+  email: string;
+  magicLinkUrl: string;
+  entityTitle: string;
+  entityType: ClaimEntityType;
+}) {
+  if (!process.env.RESEND_API_KEY) {
+    console.log("[EMAIL SKIP] RESEND_API_KEY not set — skipping claim magic link email");
+    return;
+  }
+
+  const { noun } = CLAIM_LABELS[entityType];
+
+  const html = portalEmailLayout(`
+    <h1 style="color: #2c2418; font-size: 24px;">${noun} übernehmen</h1>
+    <p style="color: #6b5b4e; font-size: 16px; line-height: 1.6;">
+      Hey,<br><br>
+      klick auf den Button, um <strong>${entityTitle}</strong> auf Das Portal zu übernehmen
+      und das Profil selbst zu verwalten.
+    </p>
+    <a href="${magicLinkUrl}"
+       style="display: inline-block; background-color: #b5651d; color: white; padding: 14px 28px;
+              border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 16px; margin: 20px 0;">
+      ${noun} übernehmen
+    </a>
+    <p style="color: #9a8b7a; font-size: 14px; line-height: 1.5; margin-top: 30px;">
+      Der Link ist 60 Minuten gültig und kann nur einmal verwendet werden.<br>
+      Falls du keinen Eintrag haben möchtest, kannst du diese E-Mail ignorieren.
+    </p>
+  `);
+
+  try {
+    await getResend().emails.send({
+      from: FROM_ADDRESS,
+      to: email,
+      subject: `${noun} auf Das Portal übernehmen – ${entityTitle}`,
+      html,
+    });
+  } catch (error) {
+    console.error("[EMAIL ERROR] Claim magic link email failed:", error);
+    throw error;
   }
 }
 
@@ -374,7 +469,7 @@ export async function sendHostRegistrationNotification(data: HostNotificationDat
   `);
 
   try {
-    await resend.emails.send({
+    await getResend().emails.send({
       from: FROM_ADDRESS,
       to: data.hostEmail,
       subject: `Neue Anmeldung: ${data.eventTitle} – Das Portal`,

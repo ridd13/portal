@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createStatelessAuthClient } from "@/lib/supabase";
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 import { setAuthSessionCookies } from "@/lib/auth-session";
-import { getSiteUrl } from "@/lib/site-url";
+
+const SITE_URL = "https://das-portal.online";
 
 type ClaimEntityType = "event" | "host" | "location";
 
@@ -75,7 +76,7 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get("code");
   const hostSlug = searchParams.get("host");
   const claimToken = searchParams.get("claim_token");
-  const siteUrl = getSiteUrl();
+  const siteUrl = SITE_URL;
 
   if (!code) {
     return NextResponse.redirect(`${siteUrl}/auth?error=missing_code`);

@@ -1,13 +1,14 @@
 "use server";
 
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
-import { createStatelessAuthClient } from "@/lib/supabase";
-import { getSiteUrl } from "@/lib/site-url";
 import {
   sendClaimRequestConfirmation,
   sendClaimRequestNotification,
+  sendClaimMagicLinkEmail,
   type ClaimEntityType,
 } from "@/lib/email";
+
+const SITE_URL = "https://das-portal.online";
 
 export type ClaimResult = {
   success: boolean;
@@ -107,16 +108,31 @@ export async function requestClaim(
       return { success: false, message: "Etwas ist schiefgelaufen. Bitte versuche es erneut." };
     }
 
-    const supabaseAuth = createStatelessAuthClient();
-    const redirectTo = `${getSiteUrl()}/auth/callback?claim_token=${encodeURIComponent(token)}`;
+    const redirectTo = `${SITE_URL}/auth/callback?claim_token=${encodeURIComponent(token)}`;
 
-    const { error: otpErr } = await supabaseAuth.auth.signInWithOtp({
+    const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+      type: "magiclink",
       email: storedClaimEmail,
-      options: { emailRedirectTo: redirectTo },
+      options: { redirectTo },
     });
 
-    if (otpErr) {
-      console.error("Claim magic-link send failed:", otpErr);
+    if (linkErr || !linkData?.properties?.action_link) {
+      console.error("Claim magic-link generation failed:", linkErr);
+      return {
+        success: false,
+        message: "Magic-Link konnte nicht erstellt werden. Bitte versuche es später erneut oder melde dich bei lb@justclose.de.",
+      };
+    }
+
+    try {
+      await sendClaimMagicLinkEmail({
+        email: storedClaimEmail,
+        magicLinkUrl: linkData.properties.action_link,
+        entityTitle,
+        entityType,
+      });
+    } catch (emailErr) {
+      console.error("Claim magic-link email send failed:", emailErr);
       return {
         success: false,
         message: "Magic-Link konnte nicht gesendet werden. Bitte versuche es später erneut oder melde dich bei lb@justclose.de.",

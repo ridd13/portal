@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyTurnstileToken } from "@/lib/turnstile";
-import { createStatelessAuthClient } from "@/lib/supabase";
-import { getSiteUrl } from "@/lib/site-url";
+import { getSupabaseAdminClient } from "@/lib/supabase-admin";
+import { sendMagicLinkEmail } from "@/lib/email";
+
+const SITE_URL = "https://das-portal.online";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
@@ -23,24 +25,30 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const supabase = createStatelessAuthClient();
-  const siteUrl = getSiteUrl();
-
   // Build redirect URL — include host slug for claim flow
-  let redirectTo = `${siteUrl}/auth/callback`;
+  let redirectTo = `${SITE_URL}/auth/callback`;
   if (hostSlug) {
     redirectTo += `?host=${encodeURIComponent(hostSlug)}`;
   }
 
-  const { error } = await supabase.auth.signInWithOtp({
+  const admin = getSupabaseAdminClient();
+  const { data, error } = await admin.auth.admin.generateLink({
+    type: "magiclink",
     email,
-    options: {
-      emailRedirectTo: redirectTo,
-    },
+    options: { redirectTo },
   });
 
-  if (error) {
-    console.error("Magic link error:", error);
+  if (error || !data?.properties?.action_link) {
+    console.error("Magic link generation error:", error);
+    return NextResponse.json(
+      { error: "Magic Link konnte nicht erstellt werden. Bitte versuche es erneut." },
+      { status: 500 }
+    );
+  }
+
+  try {
+    await sendMagicLinkEmail(email, data.properties.action_link);
+  } catch {
     return NextResponse.json(
       { error: "Magic Link konnte nicht gesendet werden. Bitte versuche es erneut." },
       { status: 500 }
