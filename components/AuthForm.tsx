@@ -6,6 +6,7 @@ import Link from "next/link";
 import { TurnstileField } from "@/components/TurnstileField";
 
 type Mode = "magic-link" | "login" | "signup" | "claim" | "claim-confirm";
+type PublicAuthMode = "magic-link" | "login" | "signup";
 
 export function AuthForm() {
   const searchParams = useSearchParams();
@@ -22,7 +23,13 @@ export function AuthForm() {
     return "magic-link";
   }, [modeParam, hostSlug]);
 
-  const [mode, setMode] = useState<Mode>(derivedMode);
+  const initialPublicMode: PublicAuthMode =
+    derivedMode === "login" || derivedMode === "signup" ? derivedMode : "magic-link";
+  const [publicMode, setPublicMode] = useState<PublicAuthMode>(initialPublicMode);
+  const mode: Mode =
+    derivedMode === "claim" || derivedMode === "claim-confirm"
+      ? derivedMode
+      : publicMode;
   const emailParam = searchParams.get("email");
   const [email, setEmail] = useState(emailParam || "");
   const [password, setPassword] = useState("");
@@ -31,14 +38,6 @@ export function AuthForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [hostName, setHostName] = useState<string | null>(null);
-
-  // Sync mode when URL changes
-  if (mode !== derivedMode) {
-    setMode(derivedMode);
-    setCaptchaToken(null);
-    setError(null);
-    setSuccess(null);
-  }
 
   // Fetch host name for claim mode
   useEffect(() => {
@@ -248,7 +247,7 @@ export function AuthForm() {
           <button
             type="button"
             onClick={() => {
-              setMode("magic-link");
+              setPublicMode("magic-link");
               setCaptchaToken(null);
               setError(null);
               setSuccess(null);
@@ -264,7 +263,7 @@ export function AuthForm() {
           <button
             type="button"
             onClick={() => {
-              setMode("login");
+              setPublicMode("login");
               setCaptchaToken(null);
               setError(null);
               setSuccess(null);
@@ -280,7 +279,7 @@ export function AuthForm() {
           <button
             type="button"
             onClick={() => {
-              setMode("signup");
+              setPublicMode("signup");
               setCaptchaToken(null);
               setError(null);
               setSuccess(null);

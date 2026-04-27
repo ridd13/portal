@@ -59,7 +59,7 @@ export async function requestClaim(
 
   const { data: row, error: fetchErr } = await supabase
     .from(table)
-    .select(`id, ${titleCol}, claim_status, claim_sent_at, claimed_at`)
+    .select(`id, ${titleCol}, claim_status, claim_email, claim_sent_at, claimed_at`)
     .eq("claim_token", token)
     .maybeSingle();
 
