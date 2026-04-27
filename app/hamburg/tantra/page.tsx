@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Tantra Events Hamburg — Workshops & Termine auf Das Portal",
+  title: "Tantra Events Hamburg — Workshops & Termine",
   description: "Tantra Events in Hamburg: Tantramassage-Workshops, Tantra Retreats, sinnliche Rituale und Community-Formate. Aktuelle Termine auf Das Portal.",
   alternates: {
     canonical: "https://das-portal.online/hamburg/tantra",
@@ -50,7 +51,7 @@ export default async function TantraHamburgPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as Event[];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -64,7 +65,7 @@ export default async function TantraHamburgPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Hamburg",

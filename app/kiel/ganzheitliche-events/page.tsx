@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 import { formatDate, formatTime } from "@/lib/date-utils";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events Kiel — Termine & Workshops auf Das Portal",
+  title: "Ganzheitliche Events Kiel — Termine & Workshops",
   description: "Ganzheitliche Events in Kiel: Breathwork, Tanz, Embodiment, Workshops und Community-Formate. Aktuelle Termine aus der Kieler Szene auf Das Portal.",
   alternates: {
     canonical: "https://das-portal.online/kiel/ganzheitliche-events",
@@ -44,7 +45,7 @@ export default async function KielGanzheitlicheEventsPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as (Event & { hosts: { name: string; slug: string } | null })[];
+  const events = deduplicateEvents((data || []) as (Event & { hosts: { name: string; slug: string } | null })[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -58,7 +59,7 @@ export default async function KielGanzheitlicheEventsPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Kiel",
@@ -131,7 +132,7 @@ export default async function KielGanzheitlicheEventsPage() {
                   <div className="text-sm text-text-muted">
                     {formatEventDate(event.start_at, event.end_at || event.start_at)}
                   </div>
-                  {event.hosts && (
+                  {event.hosts && !Array.isArray(event.hosts) && (
                     <div className="text-xs text-text-muted pt-2">
                       von {event.hosts.name}
                     </div>

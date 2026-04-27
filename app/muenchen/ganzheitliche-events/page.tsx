@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events München — Termine & Workshops auf Das Portal",
+  title: "Ganzheitliche Events München — Termine & Workshops",
   description:
     "Ganzheitliche Events in München: Meditation, Tantra, Breathwork, Kakaozeremonien, Heilarbeit und Retreats im Umland. Aktuelle Termine der Münchner Szene auf Das Portal.",
   alternates: {
@@ -52,7 +53,7 @@ export default async function MuenchenGanzheitlicheEventsPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as Event[];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -67,7 +68,7 @@ export default async function MuenchenGanzheitlicheEventsPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "München",

@@ -50,13 +50,31 @@ export async function POST(request: NextRequest) {
 
   // Check if already claimed
   if (host.owner_id) {
+    // If the current user is already the owner, treat as idempotent success.
+    if (host.owner_id === user.id) {
+      return NextResponse.json({ ok: true, hostName: host.name, alreadyOwner: true });
+    }
     return NextResponse.json(
-      { error: "Dieses Profil wurde bereits beansprucht. Falls du der/die Inhaber:in bist, melde dich an." },
+      { error: "Dieses Profil wurde bereits von jemand anderem übernommen. Bitte kontaktiere uns, wenn du der/die rechtmäßige Inhaber:in bist." },
       { status: 409 }
     );
   }
 
-  // Check for existing pending claim
+  // Check for existing pending claim by this user — idempotent
+  const { data: existingClaimByUser } = await supabase
+    .from("claim_requests")
+    .select("id")
+    .eq("host_id", host.id)
+    .eq("user_id", user.id)
+    .eq("status", "pending")
+    .limit(1)
+    .maybeSingle();
+
+  if (existingClaimByUser) {
+    return NextResponse.json({ ok: true, hostName: host.name, alreadyPending: true });
+  }
+
+  // Check for pending claim from someone else
   const { data: existingClaim } = await supabase
     .from("claim_requests")
     .select("id")
@@ -67,7 +85,7 @@ export async function POST(request: NextRequest) {
 
   if (existingClaim) {
     return NextResponse.json(
-      { error: "Für dieses Profil liegt bereits eine Anfrage vor." },
+      { error: "Für dieses Profil liegt bereits eine Anfrage einer anderen Person vor. Wir prüfen jede Anfrage manuell." },
       { status: 409 }
     );
   }

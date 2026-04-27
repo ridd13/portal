@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events Hamburg — Termine & Workshops auf Das Portal",
+  title: "Ganzheitliche Events Hamburg — Termine & Workshops",
   description:
     "Ganzheitliche Events in Hamburg: Kakaozeremonien, Breathwork, Meditation, Frauenkreise und mehr. Aktuelle Termine aus der Hamburger Community auf Das Portal.",
   alternates: {
@@ -52,7 +53,7 @@ export default async function HamburgGanzheitlicheEventsPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as Event[];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -67,7 +68,7 @@ export default async function HamburgGanzheitlicheEventsPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Hamburg",

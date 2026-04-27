@@ -4,10 +4,21 @@ import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 import {
   sendClaimRequestConfirmation,
   sendClaimRequestNotification,
+  sendClaimMagicLinkEmail,
   type ClaimEntityType,
 } from "@/lib/email";
 
-export type ClaimResult = { success: boolean; message: string };
+const SITE_URL = "https://das-portal.online";
+
+export type ClaimResult = {
+  success: boolean;
+  message: string;
+  /**
+   * Set when the auto-claim magic-link path was used: the user must check the
+   * pre-registered claim email to complete the claim. UI should adapt copy.
+   */
+  magicLinkSent?: boolean;
+};
 
 const TABLE_BY_TYPE: Record<ClaimEntityType, string> = {
   event: "events",
@@ -49,7 +60,7 @@ export async function requestClaim(
 
   const { data: row, error: fetchErr } = await supabase
     .from(table)
-    .select(`id, ${titleCol}, claim_status, claim_sent_at, claimed_at`)
+    .select(`id, ${titleCol}, claim_status, claim_email, claim_sent_at, claimed_at`)
     .eq("claim_token", token)
     .maybeSingle();
 
@@ -74,9 +85,85 @@ export async function requestClaim(
   }
 
   const nowIso = new Date().toISOString();
+  const storedClaimEmail = (r.claim_email as string | null)?.toLowerCase().trim() || null;
+  const entityTitle = r[titleCol] as string;
 
-  // Build update with claim fields + (optional) claimer name/message if columns exist.
-  // We store the requester info in the existing claim_email field; name/message go to notification email.
+  // Auto-claim path: when the entity was created with a target email at intake,
+  // we trust that email as the rightful owner and send the magic-link there
+  // (regardless of what the visitor typed). The /auth/callback handler verifies
+  // user.email === claim_email before linking ownership.
+  if (storedClaimEmail) {
+    const update: Record<string, unknown> = {
+      claim_status: "requested",
+      claim_requested_at: nowIso,
+    };
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { error: updErr } = await (supabase.from(table) as any)
+      .update(update)
+      .eq("claim_token", token);
+
+    if (updErr) {
+      console.error("Claim update error:", updErr);
+      return { success: false, message: "Etwas ist schiefgelaufen. Bitte versuche es erneut." };
+    }
+
+    const redirectTo = `${SITE_URL}/auth/callback?claim_token=${encodeURIComponent(token)}`;
+
+    const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+      type: "magiclink",
+      email: storedClaimEmail,
+      options: { redirectTo },
+    });
+
+    if (linkErr || !linkData?.properties?.action_link) {
+      console.error("Claim magic-link generation failed:", linkErr);
+      return {
+        success: false,
+        message: "Magic-Link konnte nicht erstellt werden. Bitte versuche es später erneut oder melde dich bei lb@justclose.de.",
+      };
+    }
+
+    try {
+      await sendClaimMagicLinkEmail({
+        email: storedClaimEmail,
+        magicLinkUrl: linkData.properties.action_link,
+        entityTitle,
+        entityType,
+      });
+    } catch (emailErr) {
+      console.error("Claim magic-link email send failed:", emailErr);
+      return {
+        success: false,
+        message: "Magic-Link konnte nicht gesendet werden. Bitte versuche es später erneut oder melde dich bei lb@justclose.de.",
+      };
+    }
+
+    // If the visitor typed a different email, log it for admin review without blocking the auto-claim.
+    if (email !== storedClaimEmail) {
+      try {
+        await sendClaimRequestNotification({
+          entityType,
+          entityTitle,
+          entityId: r.id,
+          claimerEmail: `${email} (visitor) — magic-link sent to ${storedClaimEmail}`,
+          claimerName: name,
+          message,
+        });
+      } catch (err) {
+        console.error("Claim mismatch notification failed:", err);
+      }
+    }
+
+    return {
+      success: true,
+      magicLinkSent: true,
+      message: `Wir haben dir einen Magic-Link an ${storedClaimEmail} gesendet. Öffne deine E-Mail und klicke darauf, um den Eintrag zu übernehmen.`,
+    };
+  }
+
+  // Manual-review path: no email was registered at intake, so we cannot
+  // verify ownership automatically. Save the visitor-typed email and notify admin.
   const update: Record<string, unknown> = {
     claim_status: "requested",
     claim_requested_at: nowIso,
@@ -92,8 +179,6 @@ export async function requestClaim(
     console.error("Claim update error:", updErr);
     return { success: false, message: "Etwas ist schiefgelaufen. Bitte versuche es erneut." };
   }
-
-  const entityTitle = r[titleCol] as string;
 
   try {
     await sendClaimRequestNotification({
@@ -120,6 +205,6 @@ export async function requestClaim(
 
   return {
     success: true,
-    message: "Danke! Wir prüfen deine Anfrage.",
+    message: "Danke! Wir prüfen deine Anfrage und melden uns innerhalb von 48 Stunden.",
   };
 }

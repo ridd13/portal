@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Yoga Hamburg — Events, Workshops & Retreats auf Das Portal",
+  title: "Yoga Hamburg — Events, Workshops & Retreats",
   description:
     "Yoga-Events in Hamburg: Vinyasa, Yin Yoga, Kundalini, Acroyoga und mehr. Aktuelle Workshops, Retreat-Termine und Community-Formate auf Das Portal.",
   alternates: {
@@ -62,10 +63,10 @@ export default async function HamburgYogaPage() {
     .gte("start_at", new Date().toISOString())
     .or("address.ilike.%Hamburg%,address.ilike.%hamburg%")
     .order("start_at", { ascending: true })
-    .limit(20);
+    .limit(30);
 
-  const allEvents = (data || []) as Event[];
-  const events = allEvents.filter(
+    const allEvents = deduplicateEvents((data || []) as Event[]);
+    const events = allEvents.filter(
     (event) =>
       event.tags?.some((tag) =>
         YOGA_TAGS.some((yt) => tag.toLowerCase().includes(yt))
@@ -85,7 +86,7 @@ export default async function HamburgYogaPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Hamburg",

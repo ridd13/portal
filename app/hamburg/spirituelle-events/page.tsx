@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Spirituelle Events Hamburg — Zeremonien, Rituale & Workshops auf Das Portal",
+  title: "Spirituelle Events Hamburg — Zeremonien, Rituale & Workshops",
   description:
     "Spirituelle Events in Hamburg: Kakaozeremonien, Mondrituale, Frauenkreise, Soundhealing und mehr. Alle aktuellen Termine aus der Hamburger Community auf Das Portal.",
   alternates: {
@@ -69,7 +70,7 @@ export default async function HamburgSpiritueleEventsPage() {
     .order("start_at", { ascending: true })
     .limit(16);
 
-  const allEvents = (data || []) as Event[];
+  const allEvents = deduplicateEvents((data || []) as Event[]);
 
   // Prefer events with spiritual tags, but show all Hamburg events if few matches
   const spiritualEvents = allEvents.filter(
@@ -97,7 +98,7 @@ export default async function HamburgSpiritueleEventsPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Hamburg",

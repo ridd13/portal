@@ -48,13 +48,9 @@ export function MobileNav({ isLoggedIn }: MobileNavProps) {
             <Link href="/einreichen" onClick={() => setOpen(false)} className="rounded-xl bg-accent-primary px-3 py-2.5 text-center text-sm font-medium text-white transition hover:brightness-110">
               Eintragen
             </Link>
-            {isLoggedIn ? (
+            {isLoggedIn && (
               <Link href="/konto" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-center text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary">
                 Mein Bereich
-              </Link>
-            ) : (
-              <Link href="/auth" onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-center text-sm font-medium text-text-secondary transition hover:bg-bg-secondary hover:text-text-primary">
-                Anmelden
               </Link>
             )}
           </nav>

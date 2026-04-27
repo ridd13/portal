@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Meditation Hamburg — Events, Kurse & Stille-Retreats auf Das Portal",
+  title: "Meditation Hamburg — Events, Kurse & Stille-Retreats",
   description:
     "Meditations-Events in Hamburg: Geführte Meditationen, Stille-Retreats, Achtsamkeits-Workshops und Community-Formate. Aktuelle Termine auf Das Portal.",
   alternates: {
@@ -64,7 +65,7 @@ export default async function HamburgMeditationPage() {
     .order("start_at", { ascending: true })
     .limit(20);
 
-  const allEvents = (data || []) as Event[];
+  const allEvents = deduplicateEvents((data || []) as Event[]);
   const events = allEvents.filter(
     (event) =>
       event.tags?.some((tag) =>
@@ -88,7 +89,7 @@ export default async function HamburgMeditationPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Hamburg",

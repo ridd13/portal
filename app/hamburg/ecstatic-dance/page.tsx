@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ecstatic Dance Hamburg — Termine & Events auf Das Portal",
+  title: "Ecstatic Dance Hamburg — Termine & Events",
   description:
     "Ecstatic Dance in Hamburg: Freier Tanz, Conscious Dance und Bewegungs-Events ohne Alkohol. Finde deinen nächsten Ecstatic Dance auf Das Portal.",
   alternates: {
@@ -66,7 +67,7 @@ export default async function HamburgEcstaticDancePage() {
     .order("start_at", { ascending: true })
     .limit(30);
 
-  const allEvents = (data || []) as Event[];
+  const allEvents = deduplicateEvents((data || []) as Event[]);
   const events = allEvents.filter(
     (event) =>
       event.tags?.some((tag) =>
@@ -91,7 +92,7 @@ export default async function HamburgEcstaticDancePage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Hamburg",

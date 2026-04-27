@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Meditation München — Termine, Kurse & Retreats auf Das Portal",
+  title: "Meditation München — Termine, Kurse & Retreats",
   description:
     "Meditation in München: Stille-Abende, Zen, Vipassana, geführte Meditationen und Retreats im Voralpenland. Aktuelle Termine aus der Münchner Szene auf Das Portal.",
   alternates: {
@@ -53,7 +54,7 @@ export default async function MuenchenMeditationPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as Event[];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -68,7 +69,7 @@ export default async function MuenchenMeditationPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "München",

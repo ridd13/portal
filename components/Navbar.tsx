@@ -43,19 +43,12 @@ export async function Navbar() {
           >
             Eintragen
           </Link>
-          {isLoggedIn ? (
+          {isLoggedIn && (
             <Link
               href="/konto"
               className="px-2 py-2 text-text-secondary transition hover:text-text-primary"
             >
               Mein Bereich
-            </Link>
-          ) : (
-            <Link
-              href="/auth"
-              className="px-2 py-2 text-text-secondary transition hover:text-text-primary"
-            >
-              Anmelden
             </Link>
           )}
         </nav>

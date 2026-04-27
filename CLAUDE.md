@@ -131,8 +131,11 @@ lib/
 - Dynamic imports mit `{ ssr: false }` für Client-only Libraries (z.B. Leaflet)
 
 ### Auth
-- Auth ist aktuell **deaktiviert**. Keine Links zu /auth/* oder /konto in der UI.
-- Auth-Code nicht löschen — wird später überarbeitet und wieder aktiviert
+- Auth ist via Supabase Magic-Link **aktiv**, aber **nicht öffentlich beworben**: kein Anmelde-Link in der Navbar.
+- Eintrittspunkte sind nur:
+  1. "Profil beanspruchen"-CTA auf `/hosts/[slug]` (für unclaimed Profile) → `/auth?mode=claim&host=<slug>`
+  2. Claim-Token-E-Mails für Drittparty-Submits → `/claim/[token]`
+- `/konto/*` und `/auth/*` sind erreichbar, werden aber nicht in der Navbar verlinkt
 - Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange CTA)
 - URL-Struktur ist Englisch: /events, /locations, /hosts, /einreichen
 - /anbieter redirected 308 auf /hosts (Legacy-URL)
@@ -178,6 +181,9 @@ Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes 
 
 "Ja aber..." ist KEINE Bestätigung. Nur ein klares "Ja, lösch das" oder "Ja, mach den Rollback" zählt.
 
+### Layout darf kein `alternates.canonical` setzen
+`app/layout.tsx` darf **kein** `alternates: { canonical: "..." }` setzen. In Next.js App Router erben alle Child-Pages, die kein eigenes `alternates` definieren, den Wert vom Layout — das bedeutet alle Seiten ohne explizites Canonical bekommen die Homepage-URL. Regel: Jede öffentlich indexierbare Page-Datei setzt ihr eigenes `alternates: { canonical: "https://das-portal.online/..." }`. Neue Seiten ohne Canonical werden Google als Duplikate der Homepage gemeldet.
+
 ### Robots.txt / Sitemap / Layout: Keine dynamischen URLs auf Modul-Ebene
 `getSiteUrl()` auf Modul-Ebene in robots.ts/sitemap.ts/layout.tsx kann fehlschlagen wenn Env-Vars zur Runtime nicht verfügbar sind. Fallback ist `https://example.com` — das führt zu falschen Canonical-URLs in GSC und verhindert Indexierung. Lösung: URL **immer** hardcoden auf `https://das-portal.online`.
 
@@ -186,7 +192,31 @@ Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes 
 Außerdem: Domain-Redirect muss korrekt konfiguriert sein (das-portal.online = Primary, www → 308 Redirect). Ein 307 Redirect auf der Root-Domain führt dazu, dass Google robots.txt als "nicht erreichbar" meldet und die Seite nicht indexiert.
 
 ### Navbar-Beschreibung aktuell
-Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist deaktiviert.
+Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist nicht in der Navbar verlinkt — Eintrittspunkte siehe Regel-Abschnitt "Auth".
+
+### Event-Duplikate aus Telegram-Import: Titel-Normalisierung nötig
+Telegram-Events werden teilweise mehrfach importiert mit minimal abweichenden Titeln (Emoji-Varianten wie "TANTRA REBIRTH" vs "TANTRA REBIRTH 🌱", Satzzeichen-Unterschiede). Die `deduplicateEvents()`-Funktion in `lib/event-utils.ts` normalisiert deshalb Titel vor dem Key-Vergleich: Emoji stripping via `\p{Extended_Pictographic}`, Dash-Vereinheitlichung, Lowercase. Nie inline-Dedup-Logik schreiben — immer `deduplicateEvents()` aus `event-utils.ts` nutzen.
+
+### locations.event_count ist ein stale-Cache-Feld
+Das `event_count`-Feld auf der `locations`-Tabelle wird nicht automatisch aktualisiert und ist ggf. veraltet. Für Live-Counts immer direkt `events` abfragen. Feld in der UI nicht als verlässliche Quelle nutzen.
+
+### 56% der Hamburg-Events ohne location_id
+Events werden aus Telegram mit `address`-Feld importiert, aber ohne `location_id`-Zuweisung. Venue-Pages (`/locations/[slug]`) zeigen nur Events mit passendem `location_id` → viele echte Venue-Events fehlen. Für Location-Count-Anzeigen daher ggf. nach `address ILIKE '%venue_name%'` zusätzlich filtern oder `location_name` matchen.
+
+### React Purity Rule: Kein `Date.now()` im Render-Pfad
+Mit Next.js 16 + React 19 schlägt ESLint (`react-hooks/purity`) fehl, wenn `Date.now()` direkt in Komponenten-Renderpfaden verwendet wird (z. B. `app/claim/[token]/page.tsx`). Für Zeitvergleiche im Renderpfad stattdessen `new Date().getTime()` oder noch besser request-/datengetriebene Werte nutzen.
+
+### Claim Auto-Path: `claim_email` muss explizit selektiert werden
+Im Token-Claim-Flow (`app/claim/[token]/actions.ts`) darf `claim_email` nicht im `select(...)` fehlen. Wenn das Feld nicht geladen wird, bleibt `storedClaimEmail` immer `null` und der Magic-Link-Auto-Path wird stillschweigend übersprungen.
+
+### AuthForm Mode-Sync: Kein `setState` im Render oder Sync-Effect
+In `components/AuthForm.tsx` führen Mode-Syncs via `setState` im Renderpfad (und auch naive Sync-Effects) zu instabilen Zuständen und ESLint-Fehlern (`react-hooks/set-state-in-effect`). Für Claim/Auth-Modi stattdessen URL-forcierte Modus-Ableitung + separaten lokalen Tab-State nutzen.
+
+### Auth: Niemals `signInWithOtp()` für Magic Links nutzen — immer `admin.generateLink()` + Resend
+`supabase.auth.signInWithOtp()` lässt Supabase eine eigene E-Mail schicken (englisch, ungebrandtet, "Confirm Your Signup"). Stattdessen: `getSupabaseAdminClient().auth.admin.generateLink({ type: "magiclink", email, options: { redirectTo } })` → gibt `data.properties.action_link` zurück → diesen Link per Resend in branded E-Mail verschicken (`sendMagicLinkEmail` bzw. `sendClaimMagicLinkEmail` aus `lib/email.ts`). So bleibt volle Kontrolle über Inhalt, Sprache und Absender.
+
+### Resend-Client: Kein Top-Level `new Resend(...)` — lazy initialisieren
+`const resend = new Resend(process.env.RESEND_API_KEY)` auf Modul-Ebene in `lib/email.ts` crasht den Build, wenn `RESEND_API_KEY` zur Build-Zeit nicht gesetzt ist. Lösung: lazy getter `getResend()` — identisches Muster wie `getSupabaseAdminClient()` in `lib/supabase-admin.ts`.
 
 ---
 

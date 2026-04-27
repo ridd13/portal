@@ -47,9 +47,6 @@ export const metadata: Metadata = {
       "Entdecke Tanz-, Meditations- und Coaching-Events in deiner Nähe.",
     images: ["/logo.png"],
   },
-  alternates: {
-    canonical: "https://das-portal.online",
-  },
 };
 
 export default function RootLayout({

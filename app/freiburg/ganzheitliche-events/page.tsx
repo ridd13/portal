@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events Freiburg — Termine & Workshops auf Das Portal",
+  title: "Ganzheitliche Events Freiburg — Termine & Workshops",
   description:
     "Ganzheitliche Events in Freiburg: Tantra, Breathwork, Kakaozeremonien, Retreats im Schwarzwald und mehr. Aktuelle Termine aus der Freiburger Community auf Das Portal.",
   alternates: {
@@ -52,7 +53,7 @@ export default async function FreiburgGanzheitlicheEventsPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as Event[];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -67,7 +68,7 @@ export default async function FreiburgGanzheitlicheEventsPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Freiburg",

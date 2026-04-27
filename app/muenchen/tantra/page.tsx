@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Tantra München — Workshops, Retreats & Circles auf Das Portal",
+  title: "Tantra München — Workshops, Retreats & Circles",
   description:
     "Tantra in München: Workshops, Paarseminare, Tantramassage-Kurse und Retreats im Voralpenland. Aktuelle Termine aus der Münchner Szene auf Das Portal.",
   alternates: {
@@ -53,7 +54,7 @@ export default async function MuenchenTantraPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as Event[];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -68,7 +69,7 @@ export default async function MuenchenTantraPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "München",

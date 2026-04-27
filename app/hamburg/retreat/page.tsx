@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Retreat Hamburg — Retreats & Auszeiten auf Das Portal",
+  title: "Retreat Hamburg — Retreats & Auszeiten",
   description:
     "Retreats in Hamburg und Umgebung: Mehrtägige Auszeiten, Wochenend-Retreats und transformative Rückzugsorte. Finde dein nächstes Retreat auf Das Portal.",
   alternates: {
@@ -59,10 +60,10 @@ export default async function HamburgRetreatPage() {
     .gte("start_at", new Date().toISOString())
     .or("address.ilike.%Hamburg%,address.ilike.%hamburg%")
     .order("start_at", { ascending: true })
-    .limit(30);
+    .limit(20);
 
-  const allEvents = (data || []) as Event[];
-  const events = allEvents.filter(
+    const allEvents = deduplicateEvents((data || []) as Event[]);
+    const events = allEvents.filter(
     (event) =>
       event.tags?.some((tag) =>
         RETREAT_TAGS.some((rt) => tag.toLowerCase().includes(rt))
@@ -85,7 +86,7 @@ export default async function HamburgRetreatPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Hamburg",

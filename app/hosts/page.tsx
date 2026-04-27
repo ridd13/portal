@@ -21,8 +21,8 @@ export async function generateMetadata({ searchParams }: AnbieterPageProps): Pro
   const params = await searchParams;
   const city = params.city?.trim();
   const title = city
-    ? `Anbieter in ${city} | Das Portal`
-    : "Anbieter | Das Portal";
+    ? `Anbieter in ${city}`
+    : "Anbieter";
   return {
     title,
     description:

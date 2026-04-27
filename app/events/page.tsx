@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EventFilters } from "@/components/EventFilters";
 import { EventsClientWrapper } from "@/components/EventsClientWrapper";
-import { getCityFromAddress, matchCity } from "@/lib/event-utils";
+import { deduplicateEvents, getCityFromAddress, matchCity } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import type { Category, Event, EventFormat } from "@/lib/types";
 
@@ -82,13 +82,24 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     ? new Date(fromDate + "T00:00:00").toISOString()
     : new Date().toISOString();
 
+  // Explicit column select — omits description_sections, source_type,
+  // source_message_id, end_at, host_id, is_public, status, ticket_link,
+  // location_id, capacity, waitlist_enabled, registration_enabled.
+  // Detail page fetches the full row; list only needs preview fields.
+  const LIST_SELECT =
+    "id, slug, title, description, start_at, cover_image_url, " +
+    "location_name, address, geo_lat, geo_lng, " +
+    "event_format, tags, is_online, price_model, price_amount, created_at, " +
+    "hosts(name, slug)";
+
   let query = supabase
     .from("events")
-    .select("*, hosts(name, slug)")
+    .select(LIST_SELECT)
     .eq("is_public", true)
     .eq("status", "published")
     .gte("start_at", startFrom)
-    .order("start_at", { ascending: true });
+    .order("start_at", { ascending: true })
+    .limit(300);
 
   if (toDate) {
     query = query.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
@@ -150,12 +161,13 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
     let tagQuery = supabase
       .from("events")
-      .select("*, hosts(name, slug)")
+      .select(LIST_SELECT)
       .eq("is_public", true)
       .eq("status", "published")
       .gte("start_at", startFrom)
       .contains("tags", [tagSearch])
-      .order("start_at", { ascending: true });
+      .order("start_at", { ascending: true })
+      .limit(100);
 
     if (toDate) {
       tagQuery = tagQuery.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
@@ -176,19 +188,14 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
   }
 
   // Deduplicate events with same title + start_at (keep newest by created_at)
-  {
-    const seen = new Map<string, Event>();
-    for (const event of events) {
-      const key = `${event.title}__${event.start_at}`;
-      const existing = seen.get(key);
-      if (!existing || (event.created_at && existing.created_at && event.created_at > existing.created_at)) {
-        seen.set(key, event);
-      }
-    }
-    events = [...seen.values()].sort(
-      (a, b) => new Date(a.start_at).getTime() - new Date(b.start_at).getTime()
-    );
-  }
+  events = deduplicateEvents(events);
+
+  // Truncate descriptions for list view — card renders line-clamp-3 (~150 chars).
+  // Full text is fetched by the detail page via its own query.
+  events = events.map((e) => ({
+    ...e,
+    description: e.description ? e.description.slice(0, 300) : null,
+  }));
 
   // Load categories from DB
   const { data: categoriesData } = await supabase

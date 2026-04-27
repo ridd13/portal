@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Tantra Berlin — Workshops, Retreats & Circles auf Das Portal",
+  title: "Tantra Berlin — Workshops, Retreats & Circles",
   description:
     "Tantra in Berlin: Workshops, Paarseminare, offene Circles und Retreats im Umland. Aktuelle Termine aus einer der lebendigsten Tantra-Szenen Europas auf Das Portal.",
   alternates: {
@@ -53,7 +54,7 @@ export default async function BerlinTantraPage() {
     .order("start_at", { ascending: true })
     .limit(12);
 
-  const events = (data || []) as Event[];
+  const events = deduplicateEvents((data || []) as Event[]);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -68,7 +69,7 @@ export default async function BerlinTantraPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Berlin",

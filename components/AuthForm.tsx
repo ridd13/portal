@@ -6,6 +6,7 @@ import Link from "next/link";
 import { TurnstileField } from "@/components/TurnstileField";
 
 type Mode = "magic-link" | "login" | "signup" | "claim" | "claim-confirm";
+type PublicAuthMode = "magic-link" | "login" | "signup";
 
 export function AuthForm() {
   const searchParams = useSearchParams();
@@ -22,7 +23,13 @@ export function AuthForm() {
     return "magic-link";
   }, [modeParam, hostSlug]);
 
-  const [mode, setMode] = useState<Mode>(derivedMode);
+  const initialPublicMode: PublicAuthMode =
+    derivedMode === "login" || derivedMode === "signup" ? derivedMode : "magic-link";
+  const [publicMode, setPublicMode] = useState<PublicAuthMode>(initialPublicMode);
+  const mode: Mode =
+    derivedMode === "claim" || derivedMode === "claim-confirm"
+      ? derivedMode
+      : publicMode;
   const emailParam = searchParams.get("email");
   const [email, setEmail] = useState(emailParam || "");
   const [password, setPassword] = useState("");
@@ -31,14 +38,6 @@ export function AuthForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [hostName, setHostName] = useState<string | null>(null);
-
-  // Sync mode when URL changes
-  if (mode !== derivedMode) {
-    setMode(derivedMode);
-    setCaptchaToken(null);
-    setError(null);
-    setSuccess(null);
-  }
 
   // Fetch host name for claim mode
   useEffect(() => {
@@ -76,6 +75,10 @@ export function AuthForm() {
 
       if (!res.ok) {
         setError(data.error || "Claim-Anfrage fehlgeschlagen.");
+      } else if (data.alreadyOwner) {
+        setSuccess("Du bist bereits Inhaber:in dieses Profils. Du kannst es jetzt bearbeiten.");
+      } else if (data.alreadyPending) {
+        setSuccess("Wir prüfen deine Anfrage bereits und melden uns in Kürze. Du kannst dein Konto schon einsehen.");
       } else {
         setSuccess(
           "Deine Anfrage wurde eingereicht! Wir prüfen sie und melden uns in Kürze."
@@ -193,9 +196,17 @@ export function AuthForm() {
           <p className="mt-4 text-text-secondary">Anfrage wird gesendet...</p>
         ) : null}
         {error ? (
-          <p className="mt-4 rounded-xl border border-error-border bg-error-bg px-3 py-2 text-sm text-error-text">
-            {error}
-          </p>
+          <div className="mt-4 space-y-3">
+            <p className="rounded-xl border border-error-border bg-error-bg px-3 py-2 text-sm text-error-text">
+              {error}
+            </p>
+            <Link
+              href="/konto"
+              className="inline-block rounded-full border border-border px-5 py-2 text-sm font-semibold text-text-secondary transition hover:bg-bg-secondary"
+            >
+              Zu Mein Konto
+            </Link>
+          </div>
         ) : null}
         {success ? (
           <div className="mt-4 space-y-3">
@@ -236,7 +247,7 @@ export function AuthForm() {
           <button
             type="button"
             onClick={() => {
-              setMode("magic-link");
+              setPublicMode("magic-link");
               setCaptchaToken(null);
               setError(null);
               setSuccess(null);
@@ -252,7 +263,7 @@ export function AuthForm() {
           <button
             type="button"
             onClick={() => {
-              setMode("login");
+              setPublicMode("login");
               setCaptchaToken(null);
               setError(null);
               setSuccess(null);
@@ -268,7 +279,7 @@ export function AuthForm() {
           <button
             type="button"
             onClick={() => {
-              setMode("signup");
+              setPublicMode("signup");
               setCaptchaToken(null);
               setError(null);
               setSuccess(null);

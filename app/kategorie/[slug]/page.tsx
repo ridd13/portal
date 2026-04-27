@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EventCard } from "@/components/EventCard";
 import { getSupabaseServerClient } from "@/lib/supabase";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Category, Event } from "@/lib/types";
 
 interface CategoryPageProps {
@@ -40,7 +41,7 @@ async function getCategoryEvents(categorySlug: string): Promise<Event[]> {
     .gte("start_at", new Date().toISOString())
     .order("start_at", { ascending: true });
 
-  return (data || []) as Event[];
+  return deduplicateEvents((data || []) as Event[]);
 }
 
 async function getRelatedCategories(currentSlug: string, groupName: string): Promise<Category[]> {
@@ -70,7 +71,7 @@ export async function generateMetadata({
   if (!category) return { title: "Kategorie nicht gefunden" };
 
   return {
-    title: `${category.name_de} – Events, Workshops & Retreats | Das Portal`,
+    title: `${category.name_de} – Events, Workshops & Retreats`,
     description: `${category.name_de}-Angebote in Norddeutschland: ${category.description_de || "Events, Workshops und Retreats"}. Finde dein nächstes Erlebnis auf Das Portal.`,
     alternates: {
       canonical: `/kategorie/${category.slug}`,
@@ -225,7 +226,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               item: {
                 "@type": "Event",
                 name: event.title,
-                startDate: event.start_at,
+                startDate: formatBerlinISO(event.start_at),
                 url: `https://das-portal.online/events/${event.slug}`,
               },
             })),
