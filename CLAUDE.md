@@ -212,6 +212,12 @@ Im Token-Claim-Flow (`app/claim/[token]/actions.ts`) darf `claim_email` nicht im
 ### AuthForm Mode-Sync: Kein `setState` im Render oder Sync-Effect
 In `components/AuthForm.tsx` führen Mode-Syncs via `setState` im Renderpfad (und auch naive Sync-Effects) zu instabilen Zuständen und ESLint-Fehlern (`react-hooks/set-state-in-effect`). Für Claim/Auth-Modi stattdessen URL-forcierte Modus-Ableitung + separaten lokalen Tab-State nutzen.
 
+### Auth: Niemals `signInWithOtp()` für Magic Links nutzen — immer `admin.generateLink()` + Resend
+`supabase.auth.signInWithOtp()` lässt Supabase eine eigene E-Mail schicken (englisch, ungebrandtet, "Confirm Your Signup"). Stattdessen: `getSupabaseAdminClient().auth.admin.generateLink({ type: "magiclink", email, options: { redirectTo } })` → gibt `data.properties.action_link` zurück → diesen Link per Resend in branded E-Mail verschicken (`sendMagicLinkEmail` bzw. `sendClaimMagicLinkEmail` aus `lib/email.ts`). So bleibt volle Kontrolle über Inhalt, Sprache und Absender.
+
+### Resend-Client: Kein Top-Level `new Resend(...)` — lazy initialisieren
+`const resend = new Resend(process.env.RESEND_API_KEY)` auf Modul-Ebene in `lib/email.ts` crasht den Build, wenn `RESEND_API_KEY` zur Build-Zeit nicht gesetzt ist. Lösung: lazy getter `getResend()` — identisches Muster wie `getSupabaseAdminClient()` in `lib/supabase-admin.ts`.
+
 ---
 
 ## Kontext-Dateien
