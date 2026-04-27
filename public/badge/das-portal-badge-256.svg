@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="80" viewBox="0 0 256 80" fill="none">
+  <!-- Background pill -->
+  <rect width="256" height="80" rx="12" fill="#faf6f1"/>
+  <rect x="0.5" y="0.5" width="255" height="79" rx="11.5" stroke="#e5ddd3"/>
+
+  <!-- Icon square -->
+  <rect x="16" y="16" width="48" height="48" rx="8" fill="#b5651d"/>
+  <path d="M26 22h12C43.3 22 48 26.7 48 32s-4.7 10-10 10H32v8h-6V22zm6 6v8h6c2.2 0 4-1.8 4-4s-1.8-4-4-4h-6z" fill="white"/>
+
+  <!-- Text: Das Portal -->
+  <text x="80" y="32" font-family="Georgia, 'Times New Roman', serif" font-size="18" font-weight="600" fill="#2c2418">Das Portal</text>
+
+  <!-- Text: Powered by -->
+  <text x="80" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="12" fill="#9a8b7a">Powered by</text>
+
+  <!-- Text: das-portal.online -->
+  <text x="80" y="66" font-family="system-ui, -apple-system, sans-serif" font-size="11" fill="#6b5b4e">das-portal.online</text>
+</svg>

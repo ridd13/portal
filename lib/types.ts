@@ -12,12 +12,15 @@ export interface Host {
   avatar_url: string | null;
   city: string | null;
   region: string | null;
+  is_featured: boolean;
+  featured_until: string | null;
 }
 
 export interface HostPreview {
   name: string;
   slug: string | null;
   is_public?: boolean;
+  is_featured?: boolean;
 }
 
 export type EventFormat = "event" | "workshop" | "retreat" | "kurs" | "festival" | "kreis";

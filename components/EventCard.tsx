@@ -21,9 +21,10 @@ export function EventCard({ event }: EventCardProps) {
   const host = getHostPreview(event);
   const city = getCityFromAddress(event.address);
   const displayTags = (event.tags ?? []).filter((t) => !FORMAT_TAG_NAMES.has(t.toLowerCase()));
+  const isFeatured = host?.is_featured === true;
 
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg-card shadow-[0_8px_24px_rgba(44,36,24,0.08)] transition-shadow duration-200 hover:shadow-[0_12px_32px_rgba(44,36,24,0.14)]">
+    <article className={`group relative flex h-full flex-col overflow-hidden rounded-2xl border bg-bg-card shadow-[0_8px_24px_rgba(44,36,24,0.08)] transition-shadow duration-200 hover:shadow-[0_12px_32px_rgba(44,36,24,0.14)] ${isFeatured ? "border-accent-sage/40" : "border-border"}`}>
       <Link
         href={`/events/${event.slug}`}
         className="absolute inset-0 z-10"
@@ -47,6 +48,11 @@ export function EventCard({ event }: EventCardProps) {
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex flex-wrap gap-1.5">
+          {isFeatured ? (
+            <span className="rounded-full bg-accent-sage/20 px-2.5 py-0.5 text-xs font-semibold text-accent-sage">
+              Featured
+            </span>
+          ) : null}
           {event.event_format && event.event_format !== "event" ? (
             <span
               className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${FORMAT_COLORS[event.event_format]}`}

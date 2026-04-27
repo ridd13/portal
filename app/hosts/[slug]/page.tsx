@@ -161,7 +161,7 @@ export default async function HostPage({ params }: HostPageProps) {
   return (
     <div className="mx-auto max-w-5xl space-y-8">
       {/* Hero Header */}
-      <section className="overflow-hidden rounded-3xl border border-border bg-bg-card shadow-[0_8px_24px_rgba(44,36,24,0.07)]">
+      <section className={`overflow-hidden rounded-3xl border bg-bg-card shadow-[0_8px_24px_rgba(44,36,24,0.07)] ${typedHost.is_featured ? "border-accent-sage/40" : "border-border"}`}>
         {/* Cover gradient */}
         <div className="h-32 bg-linear-to-br from-[#E9DACA] via-[#DDD5C8] to-[#C8D5C0]" />
 
@@ -183,9 +183,19 @@ export default async function HostPage({ params }: HostPageProps) {
             )}
           </div>
 
-          <h1 className="font-serif text-3xl font-semibold text-text-primary sm:text-4xl">
-            {typedHost.name}
-          </h1>
+          <div className="flex flex-wrap items-center gap-3">
+            <h1 className="font-serif text-3xl font-semibold text-text-primary sm:text-4xl">
+              {typedHost.name}
+            </h1>
+            {typedHost.is_featured ? (
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent-sage/30 bg-accent-sage/10 px-3 py-1 text-xs font-semibold text-accent-sage">
+                <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                </svg>
+                Featured Partner
+              </span>
+            ) : null}
+          </div>
           {typedHost.city ? (
             <p className="mt-1 text-sm text-text-muted">
               {[typedHost.city, typedHost.region].filter(Boolean).join(", ")}

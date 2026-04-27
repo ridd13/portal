@@ -82,20 +82,20 @@ export default async function KielGanzheitlicheEventsPage() {
             Breathwork, Tanz, Embodiment und Community-Formate aus der Kieler Szene — aktuelle Termine übersichtlich auf Das Portal.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-            <a
+            <Link
               href="#events"
               className="inline-block px-6 py-3 bg-accent-primary text-white rounded-lg font-medium hover:opacity-90 transition"
             >
               Zu den Events
-            </a>
-            <a
+            </Link>
+            <Link
               href="https://t.me/+C1QQY29LZlExZWIy"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block px-6 py-3 bg-bg-card border border-border text-text-primary rounded-lg font-medium hover:bg-bg-secondary transition"
             >
               Telegram Community
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -294,20 +294,20 @@ export default async function KielGanzheitlicheEventsPage() {
             Neue Events, Ankündigungen und Community-Updates direkt in dein Postfach oder deinen Telegram.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-            <a
+            <Link
               href="https://t.me/+C1QQY29LZlExZWIy"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-block px-8 py-3 bg-accent-primary text-white rounded-lg font-medium hover:opacity-90 transition"
             >
               Telegram Community beitreten
-            </a>
-            <a
+            </Link>
+            <Link
               href="/#warteliste"
               className="inline-block px-8 py-3 bg-bg-card border border-border text-text-primary rounded-lg font-medium hover:bg-bg-secondary transition"
             >
               Zur Warteliste
-            </a>
+            </Link>
           </div>
         </div>
       </section>

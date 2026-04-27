@@ -85,8 +85,8 @@ export function EventsClientWrapper({
 
   // Filter + sort events by radius when user location is set
   const filteredEvents = useMemo(() => {
-    // If a city is explicitly selected, we show all events from that city 
-    // (the server already filtered them by address). 
+    // If a city is explicitly selected, we show all events from that city
+    // (the server already filtered them by address).
     // We only apply radius filtering if NO city is selected OR if radius filter is explicitly wanted.
     if (!userLocation || selectedCity) return events;
 
@@ -113,6 +113,19 @@ export function EventsClientWrapper({
 
     return [...inRadius, ...noGeo].map((e) => e.event);
   }, [events, userLocation, radius]);
+
+  // Featured events bubble to the top of the list, chronological order preserved within each group.
+  const displayEvents = useMemo(() => {
+    const featured = filteredEvents.filter((e) => {
+      const h = Array.isArray(e.hosts) ? e.hosts[0] : e.hosts;
+      return h?.is_featured === true;
+    });
+    const regular = filteredEvents.filter((e) => {
+      const h = Array.isArray(e.hosts) ? e.hosts[0] : e.hosts;
+      return h?.is_featured !== true;
+    });
+    return [...featured, ...regular];
+  }, [filteredEvents]);
 
   // Helper: navigate with a filter removed
   const removeFilter = useCallback(
@@ -256,7 +269,7 @@ export function EventsClientWrapper({
       </div>
 
       {/* Event List */}
-      {filteredEvents.length === 0 ? (
+      {displayEvents.length === 0 ? (
         <div className="rounded-2xl border border-border bg-bg-card p-10 text-center text-text-secondary">
           {userLocation ? (
             <>
@@ -276,7 +289,7 @@ export function EventsClientWrapper({
       ) : (
         <section>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
-            {filteredEvents.map((event) => (
+            {displayEvents.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}
           </div>

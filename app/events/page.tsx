@@ -90,7 +90,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     "id, slug, title, description, start_at, cover_image_url, " +
     "location_name, address, geo_lat, geo_lng, " +
     "event_format, tags, is_online, price_model, price_amount, created_at, " +
-    "hosts(name, slug)";
+    "hosts(name, slug, is_featured)";
 
   let query = supabase
     .from("events")
