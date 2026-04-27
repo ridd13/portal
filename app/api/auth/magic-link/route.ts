@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyTurnstileToken } from "@/lib/turnstile";
-import { getSupabaseAdminClient } from "@/lib/supabase-admin";
+import { getSupabaseAdminClient, patchActionLinkRedirect } from "@/lib/supabase-admin";
 import { sendMagicLinkEmail } from "@/lib/email";
 
 const SITE_URL = "https://das-portal.online";
@@ -46,8 +46,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const actionLink = patchActionLinkRedirect(data.properties.action_link, redirectTo);
+
   try {
-    await sendMagicLinkEmail(email, data.properties.action_link);
+    await sendMagicLinkEmail(email, actionLink);
   } catch {
     return NextResponse.json(
       { error: "Magic Link konnte nicht gesendet werden. Bitte versuche es erneut." },

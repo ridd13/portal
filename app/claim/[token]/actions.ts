@@ -1,6 +1,6 @@
 "use server";
 
-import { getSupabaseAdminClient } from "@/lib/supabase-admin";
+import { getSupabaseAdminClient, patchActionLinkRedirect } from "@/lib/supabase-admin";
 import {
   sendClaimRequestConfirmation,
   sendClaimRequestNotification,
@@ -124,10 +124,12 @@ export async function requestClaim(
       };
     }
 
+    const claimActionLink = patchActionLinkRedirect(linkData.properties.action_link, redirectTo);
+
     try {
       await sendClaimMagicLinkEmail({
         email: storedClaimEmail,
-        magicLinkUrl: linkData.properties.action_link,
+        magicLinkUrl: claimActionLink,
         entityTitle,
         entityType,
       });
