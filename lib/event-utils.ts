@@ -1,8 +1,22 @@
 import { format } from "date-fns";
 import { de } from "date-fns/locale";
+import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
 import type { Event, EventFormat, HostPreview } from "@/lib/types";
 
 export const PAGE_SIZE = 12;
+
+/**
+ * Format a Supabase timestamp for JSON-LD structured data.
+ * Supabase returns timestamps as naive local time labeled +00:00.
+ * This function treats the stored time as Europe/Berlin wall-clock time
+ * and outputs it with the correct UTC offset (e.g. +02:00 during CEST).
+ */
+export function formatBerlinISO(isoString: string | null | undefined): string | undefined {
+  if (!isoString) return undefined;
+  const naive = isoString.replace(/([+-]\d{2}:\d{2}|Z)$/, "");
+  const utcDate = fromZonedTime(naive, "Europe/Berlin");
+  return formatInTimeZone(utcDate, "Europe/Berlin", "yyyy-MM-dd'T'HH:mm:ssxxx");
+}
 
 /** Human-readable labels for event formats */
 export const FORMAT_LABELS: Record<EventFormat, string> = {

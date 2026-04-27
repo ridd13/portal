@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { EventCard } from "@/components/EventCard";
 import { getSupabaseServerClient } from "@/lib/supabase";
-import { deduplicateEvents } from "@/lib/event-utils";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Category, Event } from "@/lib/types";
 
 interface CategoryPageProps {
@@ -226,7 +226,7 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
               item: {
                 "@type": "Event",
                 name: event.title,
-                startDate: event.start_at,
+                startDate: formatBerlinISO(event.start_at),
                 url: `https://das-portal.online/events/${event.slug}`,
               },
             })),

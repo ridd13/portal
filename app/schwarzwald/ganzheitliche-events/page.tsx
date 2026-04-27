@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getSupabaseServerClient } from "@/lib/supabase";
-import { deduplicateEvents } from "@/lib/event-utils";
+import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
@@ -68,7 +68,7 @@ export default async function SchwarzwaldGanzheitlicheEventsPage() {
       item: {
         "@type": "Event",
         name: event.title,
-        startDate: event.start_at,
+        startDate: formatBerlinISO(event.start_at),
         location: {
           "@type": "Place",
           name: event.location_name || "Schwarzwald",

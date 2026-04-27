@@ -3,7 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import ReactMarkdown from "react-markdown";
 import type { Metadata } from "next";
-import { formatEventDate, formatPrice, getHostPreview, getCityFromAddress, buildGoogleCalendarUrl } from "@/lib/event-utils";
+import { formatEventDate, formatPrice, getHostPreview, getCityFromAddress, buildGoogleCalendarUrl, formatBerlinISO } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
 import { generateICS } from "@/lib/ics";
@@ -147,8 +147,8 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
     "@type": "Event",
     name: event.title,
     description: event.description || undefined,
-    startDate: event.start_at,
-    endDate: event.end_at || undefined,
+    startDate: formatBerlinISO(event.start_at),
+    endDate: formatBerlinISO(event.end_at),
     eventStatus: "https://schema.org/EventScheduled",
     eventAttendanceMode: event.is_online
       ? "https://schema.org/OnlineEventAttendanceMode"
