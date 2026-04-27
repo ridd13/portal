@@ -1,7 +1,13 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { joinWaitlist, type WaitlistResult } from "@/app/actions/waitlist";
+
+declare global {
+  interface Window {
+    plausible?: (event: string) => void;
+  }
+}
 
 const initialState: WaitlistResult = { success: false, message: "" };
 
@@ -20,6 +26,12 @@ const roles = [
 
 export function WaitlistForm() {
   const [state, formAction, isPending] = useActionState(joinWaitlist, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      window.plausible?.("Waitlist-Signup");
+    }
+  }, [state.success]);
 
   if (state.success) {
     return (

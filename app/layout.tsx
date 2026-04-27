@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import Script from "next/script";
 
 const cinzel = Cinzel({
   subsets: ["latin"],
@@ -66,6 +67,12 @@ export default function RootLayout({
         </div>
         <Analytics />
         <SpeedInsights />
+        <Script
+          defer
+          data-domain="das-portal.online"
+          src="https://plausible.io/js/script.tagged-events.js"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
