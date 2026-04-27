@@ -120,7 +120,7 @@ export async function requestClaim(
       console.error("Claim magic-link generation failed:", linkErr);
       return {
         success: false,
-        message: "Magic-Link konnte nicht erstellt werden. Bitte versuche es später erneut oder melde dich bei lb@justclose.de.",
+        message: "Magic-Link konnte nicht erstellt werden. Bitte versuche es später erneut oder melde dich bei hallo@das-portal.online.",
       };
     }
 
@@ -137,7 +137,7 @@ export async function requestClaim(
       console.error("Claim magic-link email send failed:", emailErr);
       return {
         success: false,
-        message: "Magic-Link konnte nicht gesendet werden. Bitte versuche es später erneut oder melde dich bei lb@justclose.de.",
+        message: "Magic-Link konnte nicht gesendet werden. Bitte versuche es später erneut oder melde dich bei hallo@das-portal.online.",
       };
     }
 

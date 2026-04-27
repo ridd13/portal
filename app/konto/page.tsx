@@ -8,11 +8,11 @@ import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 const CLAIM_ERROR_COPY: Record<string, { heading: string; body: string }> = {
   email_mismatch: {
     heading: "E-Mail-Adresse passt nicht zum Eintrag",
-    body: "Der Magic-Link wurde an eine andere E-Mail-Adresse als die im Eintrag hinterlegte gesendet. Melde dich bitte unter lb@justclose.de, wenn du der/die rechtmäßige Inhaber:in bist.",
+    body: "Der Magic-Link wurde an eine andere E-Mail-Adresse als die im Eintrag hinterlegte gesendet. Melde dich bitte unter hallo@das-portal.online, wenn du der/die rechtmäßige Inhaber:in bist.",
   },
   invalid_token: {
     heading: "Übernahme nicht möglich",
-    body: "Der Übernahme-Link ist nicht mehr gültig. Bitte fordere einen neuen an oder kontaktiere uns unter lb@justclose.de.",
+    body: "Der Übernahme-Link ist nicht mehr gültig. Bitte fordere einen neuen an oder kontaktiere uns unter hallo@das-portal.online.",
   },
   missing_email: {
     heading: "Übernahme nicht möglich",

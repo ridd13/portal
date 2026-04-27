@@ -20,6 +20,8 @@
 - **Domain:** das-portal.online (www.das-portal.online)
 - **Repo:** lennertbewernick/portal
 - **Hosting:** Vercel
+- **Admin-E-Mail (Lennert):** `lennert.bewernick@gmail.com` — wird für Admin-Gates im Code und Benachrichtigungs-E-Mails genutzt. `lb@justclose.de` gehört NICHT in diesen Scope (justclose.de ist eine private Domain außerhalb von Das Portal)
+- **Kontakt-E-Mail für Nutzer:** `hallo@das-portal.online`
 - **DB/Auth:** Supabase (Projekt-ID: fjyaolxtipqtcvvclegl)
 
 ## Tech-Stack

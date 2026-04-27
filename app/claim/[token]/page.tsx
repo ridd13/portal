@@ -137,8 +137,8 @@ export default async function ClaimPage({
           <h1 className="mb-4 font-serif text-3xl text-text-primary">Link abgelaufen</h1>
           <p className="text-text-secondary">
             Dieser Link ist abgelaufen. Bitte kontaktiere uns unter{" "}
-            <a href="mailto:lb@justclose.de" className="text-accent-primary underline">
-              lb@justclose.de
+            <a href="mailto:hallo@das-portal.online" className="text-accent-primary underline">
+              hallo@das-portal.online
             </a>
             , wenn du den Eintrag noch übernehmen möchtest.
           </p>
@@ -166,8 +166,8 @@ export default async function ClaimPage({
         <h1 className="mb-4 font-serif text-3xl text-text-primary">Anfrage nicht bestätigt</h1>
         <p className="text-text-secondary">
           Wir konnten deine Anfrage nicht bestätigen. Bitte melde dich bei uns unter{" "}
-          <a href="mailto:lb@justclose.de" className="text-accent-primary underline">
-            lb@justclose.de
+          <a href="mailto:hallo@das-portal.online" className="text-accent-primary underline">
+            hallo@das-portal.online
           </a>
           .
         </p>

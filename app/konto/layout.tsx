@@ -30,7 +30,7 @@ export default async function KontoLayout({ children }: { children: React.ReactN
         </Link>
       </div>
 
-      <KontoNav isAdmin={user.email === "lb@justclose.de"} />
+      <KontoNav isAdmin={user.email === "lennert.bewernick@gmail.com"} />
 
       {children}
     </div>

@@ -269,7 +269,7 @@ export async function sendClaimRequestNotification({
   try {
     await getResend().emails.send({
       from: FROM_ADDRESS,
-      to: "lb@justclose.de",
+      to: "lennert.bewernick@gmail.com",
       subject,
       html,
     });

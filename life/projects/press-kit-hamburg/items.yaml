@@ -1,0 +1,16 @@
+- id: 1
+  fact: "Press-Kit Light components drafted in drafts/press-kit/."
+  created_at: "2026-04-26"
+  status: "active"
+- id: 2
+  fact: "Upcoming public events in Hamburg/SH: 571 (as of 2026-04-26)."
+  created_at: "2026-04-26"
+  status: "active"
+- id: 3
+  fact: "Total hosts in database: 1029 (as of 2026-04-26)."
+  created_at: "2026-04-26"
+  status: "active"
+- id: 4
+  fact: "Identified 3 O-Ton candidates: Lena Somatara, Laura Louisa Mara Göllner, Iris Uderstädt."
+  created_at: "2026-04-26"
+  status: "active"
