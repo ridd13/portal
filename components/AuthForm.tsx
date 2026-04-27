@@ -99,20 +99,13 @@ export function AuthForm() {
     setSuccess(null);
     setIsLoading(true);
 
-    if (!captchaToken) {
-      setError("Bitte bestätige das Captcha.");
-      setIsLoading(false);
-      return;
-    }
-
-    // Magic Link mode (default + claim)
+    // Magic Link mode (default + claim) — no captcha required; email is the auth factor
     if (mode === "magic-link" || mode === "claim") {
       const res = await fetch("/api/auth/magic-link", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email,
-          captchaToken,
           hostSlug: mode === "claim" ? hostSlug : undefined,
         }),
       });
@@ -125,6 +118,13 @@ export function AuthForm() {
       }
 
       setSuccess("Magic Link wurde gesendet! Prüfe dein E-Mail-Postfach.");
+      setIsLoading(false);
+      return;
+    }
+
+    // Captcha required for password-based flows
+    if (!captchaToken) {
+      setError("Bitte bestätige das Captcha.");
       setIsLoading(false);
       return;
     }
@@ -340,7 +340,8 @@ export function AuthForm() {
           </p>
         ) : null}
 
-        <TurnstileField onTokenChange={setCaptchaToken} />
+        {/* Captcha only needed for password-based flows */}
+        {!isMagicOrClaim ? <TurnstileField onTokenChange={setCaptchaToken} /> : null}
 
         <button
           type="submit"

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyTurnstileToken } from "@/lib/turnstile";
 import { getSupabaseAdminClient, patchActionLinkRedirect } from "@/lib/supabase-admin";
 import { sendMagicLinkEmail } from "@/lib/email";
 
@@ -7,20 +6,11 @@ const SITE_URL = "https://das-portal.online";
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { email, captchaToken, hostSlug } = body;
+  const { email, hostSlug } = body;
 
   if (!email) {
     return NextResponse.json(
       { error: "E-Mail-Adresse ist erforderlich." },
-      { status: 400 }
-    );
-  }
-
-  // Verify Turnstile captcha
-  const captchaResult = await verifyTurnstileToken(captchaToken || "");
-  if (!captchaResult.ok) {
-    return NextResponse.json(
-      { error: "Captcha-Verifizierung fehlgeschlagen." },
       { status: 400 }
     );
   }
