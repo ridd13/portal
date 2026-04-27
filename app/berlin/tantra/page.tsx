@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Tantra Berlin — Workshops, Retreats & Circles auf Das Portal",
+  title: "Tantra Berlin — Workshops, Retreats & Circles",
   description:
     "Tantra in Berlin: Workshops, Paarseminare, offene Circles und Retreats im Umland. Aktuelle Termine aus einer der lebendigsten Tantra-Szenen Europas auf Das Portal.",
   alternates: {

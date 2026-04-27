@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ecstatic Dance Hamburg — Termine & Events auf Das Portal",
+  title: "Ecstatic Dance Hamburg — Termine & Events",
   description:
     "Ecstatic Dance in Hamburg: Freier Tanz, Conscious Dance und Bewegungs-Events ohne Alkohol. Finde deinen nächsten Ecstatic Dance auf Das Portal.",
   alternates: {

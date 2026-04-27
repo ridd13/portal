@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events München — Termine & Workshops auf Das Portal",
+  title: "Ganzheitliche Events München — Termine & Workshops",
   description:
     "Ganzheitliche Events in München: Meditation, Tantra, Breathwork, Kakaozeremonien, Heilarbeit und Retreats im Umland. Aktuelle Termine der Münchner Szene auf Das Portal.",
   alternates: {

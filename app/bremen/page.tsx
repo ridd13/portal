@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events in Bremen — Termine & Community | Das Portal",
+  title: "Ganzheitliche Events in Bremen — Termine & Community",
   description:
     "Finde ganzheitliche Events in Bremen: Yoga, Breathwork, Sound Healing, Kakaozeremonien und Retreats. Aktuelle Termine aus der Bremer Community auf Das Portal.",
   alternates: {

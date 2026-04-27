@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events Freiburg — Termine & Workshops auf Das Portal",
+  title: "Ganzheitliche Events Freiburg — Termine & Workshops",
   description:
     "Ganzheitliche Events in Freiburg: Tantra, Breathwork, Kakaozeremonien, Retreats im Schwarzwald und mehr. Aktuelle Termine aus der Freiburger Community auf Das Portal.",
   alternates: {

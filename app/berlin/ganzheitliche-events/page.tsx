@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events Berlin — Termine & Workshops auf Das Portal",
+  title: "Ganzheitliche Events Berlin — Termine & Workshops",
   description:
     "Ganzheitliche Events in Berlin: Ecstatic Dance, Tantra, Breathwork, Kakaozeremonien, Heilarbeit und Community-Formate. Aktuelle Termine aus der Berliner Szene auf Das Portal.",
   alternates: {

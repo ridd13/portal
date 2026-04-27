@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Retreat Schwarzwald — Auszeiten in der Natur auf Das Portal",
+  title: "Retreat Schwarzwald — Auszeiten in der Natur",
   description:
     "Retreats im Schwarzwald: Wochenend-Auszeiten, Stille-Retreats, Yoga- und Naturretreats in den Schwarzwaldhöfen. Aktuelle Termine auf Das Portal.",
   alternates: {

@@ -4,7 +4,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 import { ClaimForm } from "./ClaimForm";
 
 export const metadata: Metadata = {
-  title: "Eintrag übernehmen – Das Portal",
+  title: "Eintrag übernehmen",
   robots: { index: false, follow: false },
 };
 

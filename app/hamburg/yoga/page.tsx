@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Yoga Hamburg — Events, Workshops & Retreats auf Das Portal",
+  title: "Yoga Hamburg — Events, Workshops & Retreats",
   description:
     "Yoga-Events in Hamburg: Vinyasa, Yin Yoga, Kundalini, Acroyoga und mehr. Aktuelle Workshops, Retreat-Termine und Community-Formate auf Das Portal.",
   alternates: {

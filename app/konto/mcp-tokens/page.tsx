@@ -7,7 +7,7 @@ import { getSupabaseAdminClient } from "@/lib/supabase-admin";
 import { McpTokenList } from "./McpTokenList";
 
 export const metadata: Metadata = {
-  title: "MCP Tokens — Mein Bereich | Das Portal",
+  title: "MCP Tokens — Mein Bereich",
   robots: { index: false },
 };
 

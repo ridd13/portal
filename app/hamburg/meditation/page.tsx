@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Meditation Hamburg — Events, Kurse & Stille-Retreats auf Das Portal",
+  title: "Meditation Hamburg — Events, Kurse & Stille-Retreats",
   description:
     "Meditations-Events in Hamburg: Geführte Meditationen, Stille-Retreats, Achtsamkeits-Workshops und Community-Formate. Aktuelle Termine auf Das Portal.",
   alternates: {

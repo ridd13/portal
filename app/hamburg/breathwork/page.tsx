@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Breathwork Hamburg — Atemarbeit, Workshops & Events auf Das Portal",
+  title: "Breathwork Hamburg — Atemarbeit, Workshops & Events",
   description:
     "Breathwork in Hamburg: Holotropes Atmen, Wim Hof, Pranayama, Transformational Breath und mehr. Aktuelle Workshops und Community-Events auf Das Portal.",
   alternates: {

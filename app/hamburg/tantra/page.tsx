@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Tantra Events Hamburg — Workshops & Termine auf Das Portal",
+  title: "Tantra Events Hamburg — Workshops & Termine",
   description: "Tantra Events in Hamburg: Tantramassage-Workshops, Tantra Retreats, sinnliche Rituale und Community-Formate. Aktuelle Termine auf Das Portal.",
   alternates: {
     canonical: "https://das-portal.online/hamburg/tantra",

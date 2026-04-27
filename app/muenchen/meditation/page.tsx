@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Meditation München — Termine, Kurse & Retreats auf Das Portal",
+  title: "Meditation München — Termine, Kurse & Retreats",
   description:
     "Meditation in München: Stille-Abende, Zen, Vipassana, geführte Meditationen und Retreats im Voralpenland. Aktuelle Termine aus der Münchner Szene auf Das Portal.",
   alternates: {

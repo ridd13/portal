@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events Schwarzwald — Retreats & Workshops auf Das Portal",
+  title: "Ganzheitliche Events Schwarzwald — Retreats & Workshops",
   description:
     "Ganzheitliche Events im Schwarzwald: Retreats in der Natur, Embodiment, Breathwork, Heilarbeit, Frauen- und Männerkreise. Aktuelle Termine auf Das Portal.",
   alternates: {

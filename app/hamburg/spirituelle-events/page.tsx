@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Spirituelle Events Hamburg — Zeremonien, Rituale & Workshops auf Das Portal",
+  title: "Spirituelle Events Hamburg — Zeremonien, Rituale & Workshops",
   description:
     "Spirituelle Events in Hamburg: Kakaozeremonien, Mondrituale, Frauenkreise, Soundhealing und mehr. Alle aktuellen Termine aus der Hamburger Community auf Das Portal.",
   alternates: {

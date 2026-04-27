@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Meditation Freiburg — Termine, Kurse & Retreats auf Das Portal",
+  title: "Meditation Freiburg — Termine, Kurse & Retreats",
   description:
     "Meditation in Freiburg: Stille-Abende, geführte Meditationen, Vipassana-Tage und Meditation-Retreats im Schwarzwald. Aktuelle Termine aus der Freiburger Szene auf Das Portal.",
   alternates: {

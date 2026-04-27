@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SubmitEventForm } from "@/components/SubmitEventForm";
 
 export const metadata: Metadata = {
-  title: "Event einreichen – Das Portal",
+  title: "Event einreichen",
   description: "Reiche dein Event bei Das Portal ein – kostenlos und ohne Registrierung.",
   alternates: { canonical: "https://das-portal.online/einreichen/event" },
 };

@@ -71,7 +71,7 @@ export async function generateMetadata({
   if (!category) return { title: "Kategorie nicht gefunden" };
 
   return {
-    title: `${category.name_de} – Events, Workshops & Retreats | Das Portal`,
+    title: `${category.name_de} – Events, Workshops & Retreats`,
     description: `${category.name_de}-Angebote in Norddeutschland: ${category.description_de || "Events, Workshops und Retreats"}. Finde dein nächstes Erlebnis auf Das Portal.`,
     alternates: {
       canonical: `/kategorie/${category.slug}`,

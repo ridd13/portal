@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: HostPageProps): Promise<Metad
   const description = typedHost.description?.slice(0, 155) || `Events von ${typedHost.name} auf Das Portal`;
 
   return {
-    title: `${typedHost.name} | Raumhalter auf Das Portal`,
+    title: `${typedHost.name} | Raumhalter`,
     description,
     openGraph: {
       type: "profile",

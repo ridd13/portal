@@ -4,7 +4,7 @@ import { getSupabaseServerClient } from "@/lib/supabase";
 import { getCityFromAddress } from "@/lib/event-utils";
 
 export const metadata: Metadata = {
-  title: "Für Anbieter | Das Portal",
+  title: "Für Anbieter",
   description:
     "Werde sichtbar als Coach, Heiler oder Facilitator. Registriere dich auf Das Portal und erreiche die Menschen, die dich suchen.",
   alternates: { canonical: "https://das-portal.online/fuer-facilitators" },

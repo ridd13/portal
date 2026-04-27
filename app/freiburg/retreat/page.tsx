@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Retreat Freiburg — Retreats & Auszeiten auf Das Portal",
+  title: "Retreat Freiburg — Retreats & Auszeiten",
   description:
     "Retreats in Freiburg und im Schwarzwald: Wochenend-Auszeiten, Stille-Retreats, Yoga- und Tantra-Retreats. Aktuelle Termine aus der Freiburger Szene auf Das Portal.",
   alternates: {

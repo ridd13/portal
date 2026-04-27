@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events Schleswig-Holstein — Das Portal",
+  title: "Ganzheitliche Events Schleswig-Holstein",
   description:
     "Ganzheitliche Events in Schleswig-Holstein: Retreats, Yoga, Meditation, Kakaozeremonien und mehr. Termine aus Kiel, Lübeck, Flensburg und der ganzen Region auf Das Portal.",
   alternates: {

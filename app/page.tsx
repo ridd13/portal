@@ -6,7 +6,7 @@ import { deduplicateEvents, matchCity } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Das Portal | Bewusste Events in deiner Nähe",
+  title: { absolute: "Das Portal | Bewusste Events in deiner Nähe" },
   description:
     "Breathwork, Yoga, Sound Healing, Kakao-Zeremonien und mehr — finde Facilitators und Erlebnisse, denen du vertrauen kannst.",
   alternates: { canonical: "https://das-portal.online" },

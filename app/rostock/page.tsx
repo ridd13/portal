@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events in Rostock — Termine & Community | Das Portal",
+  title: "Ganzheitliche Events in Rostock — Termine & Community",
   description:
     "Finde ganzheitliche Events in Rostock und Warnemünde: Yoga, Breathwork, Meditation, Sound Healing und Retreats. Aktuelle Termine auf Das Portal.",
   alternates: {

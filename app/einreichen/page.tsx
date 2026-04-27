@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Eintragen – Das Portal",
+  title: "Eintragen",
   description:
     "Reiche dein Event, dein Profil oder deinen Ort bei Das Portal ein – kostenlos und ohne Registrierung.",
   alternates: { canonical: "https://das-portal.online/einreichen" },

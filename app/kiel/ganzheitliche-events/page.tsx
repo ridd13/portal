@@ -6,7 +6,7 @@ import type { Event } from "@/lib/types";
 import { formatDate, formatTime } from "@/lib/date-utils";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events Kiel — Termine & Workshops auf Das Portal",
+  title: "Ganzheitliche Events Kiel — Termine & Workshops",
   description: "Ganzheitliche Events in Kiel: Breathwork, Tanz, Embodiment, Workshops und Community-Formate. Aktuelle Termine aus der Kieler Szene auf Das Portal.",
   alternates: {
     canonical: "https://das-portal.online/kiel/ganzheitliche-events",

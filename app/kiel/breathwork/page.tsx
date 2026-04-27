@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Breathwork Kiel — Atemarbeit, Workshops & Events auf Das Portal",
+  title: "Breathwork Kiel — Atemarbeit, Workshops & Events",
   description:
     "Breathwork in Kiel: Holotropes Atmen, Pranayama, Transformational Breath und Atemkreise. Aktuelle Workshops und Community-Events in Kiel und Umgebung auf Das Portal.",
   alternates: {

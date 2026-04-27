@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Retreat Hamburg — Retreats & Auszeiten auf Das Portal",
+  title: "Retreat Hamburg — Retreats & Auszeiten",
   description:
     "Retreats in Hamburg und Umgebung: Mehrtägige Auszeiten, Wochenend-Retreats und transformative Rückzugsorte. Finde dein nächstes Retreat auf Das Portal.",
   alternates: {

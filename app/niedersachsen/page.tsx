@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events in Niedersachsen — Termine & Community | Das Portal",
+  title: "Ganzheitliche Events in Niedersachsen — Termine & Community",
   description:
     "Ganzheitliche Events in Niedersachsen: Retreats, Yoga, Meditation und Community-Formate in Hannover, Braunschweig, Oldenburg, Lüneburg und der ganzen Region.",
   alternates: {

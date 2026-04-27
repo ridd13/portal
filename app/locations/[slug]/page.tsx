@@ -38,7 +38,7 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
   const description = typedLocation.description?.slice(0, 155) || `Events bei ${typedLocation.name}${cityPart}`;
 
   return {
-    title: `${typedLocation.name} | Ort auf Das Portal`,
+    title: `${typedLocation.name} | Ort`,
     description,
     openGraph: {
       type: "website",

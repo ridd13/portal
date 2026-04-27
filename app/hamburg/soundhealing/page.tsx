@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Soundhealing Hamburg — Klangabende & Termine auf Das Portal",
+  title: "Soundhealing Hamburg — Klangabende & Termine",
   description:
     "Soundhealing in Hamburg: Gong Baths, Klangschalen-Sessions, Sound Journeys und Klangmeditationen. Finde deinen nächsten Klangabend auf Das Portal.",
   alternates: {

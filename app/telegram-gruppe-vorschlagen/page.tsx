@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SuggestGroupForm } from "@/components/SuggestGroupForm";
 
 export const metadata: Metadata = {
-  title: "Telegram-Gruppe vorschlagen — Das Portal",
+  title: "Telegram-Gruppe vorschlagen",
   description:
     "Kennst du eine Telegram-Gruppe mit ganzheitlichen Events in Norddeutschland? Schlag sie vor und hilf uns, alle Termine sichtbar zu machen.",
   alternates: {

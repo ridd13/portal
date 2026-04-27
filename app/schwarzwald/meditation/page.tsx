@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Meditation Schwarzwald — Kurse, Stille & Retreats auf Das Portal",
+  title: "Meditation Schwarzwald — Kurse, Stille & Retreats",
   description:
     "Meditation im Schwarzwald: Stille-Retreats, Vipassana, Zen, Achtsamkeitskurse und Meditationswochenenden. Aktuelle Termine auf Das Portal.",
   alternates: {

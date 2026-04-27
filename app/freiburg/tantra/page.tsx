@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Tantra Freiburg — Workshops, Retreats & Circles auf Das Portal",
+  title: "Tantra Freiburg — Workshops, Retreats & Circles",
   description:
     "Tantra in Freiburg: Workshops, Paarseminare, Tantramassage-Kurse und Retreats im Schwarzwald. Aktuelle Termine aus der Freiburger Community auf Das Portal.",
   alternates: {

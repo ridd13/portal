@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Frauenkreis München — aktuelle Termine auf Das Portal",
+  title: "Frauenkreis München — aktuelle Termine",
   description:
     "Frauenkreise in München: Mondkreise, Sister Circles, Frauen-Workshops und Frauen-Retreats. Aktuelle Termine aus der Münchner Szene auf Das Portal.",
   alternates: {

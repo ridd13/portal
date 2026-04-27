@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events in Hamburg — Termine & Community | Das Portal",
+  title: "Ganzheitliche Events in Hamburg — Termine & Community",
   description:
     "Finde ganzheitliche Events in Hamburg: Yoga, Breathwork, Kakaozeremonien, Retreats, Frauenkreise und mehr. Aktuelle Termine aus der Hamburger Community auf Das Portal.",
   alternates: {

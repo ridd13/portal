@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Kakaozeremonie Hamburg — Termine & Rituale auf Das Portal",
+  title: "Kakaozeremonie Hamburg — Termine & Rituale",
   description:
     "Kakaozeremonien in Hamburg: Aktuelle Termine, zeremonielle Abende und Community-Rituale mit Rohkakao. Finde deine nächste Kakaozeremonie auf Das Portal.",
   alternates: {

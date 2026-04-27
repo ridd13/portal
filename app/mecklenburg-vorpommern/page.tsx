@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Ganzheitliche Events in Mecklenburg-Vorpommern — Termine & Community | Das Portal",
+  title: "Ganzheitliche Events in Mecklenburg-Vorpommern — Termine & Community",
   description:
     "Ganzheitliche Events in Mecklenburg-Vorpommern: Retreats, Yoga, Meditation und Community-Formate in Rostock, Schwerin, Greifswald, Stralsund und der ganzen Region.",
   alternates: {

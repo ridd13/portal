@@ -5,7 +5,7 @@ import { deduplicateEvents, formatBerlinISO } from "@/lib/event-utils";
 import type { Event } from "@/lib/types";
 
 export const metadata: Metadata = {
-  title: "Yoga München — Klassen, Workshops & Retreats auf Das Portal",
+  title: "Yoga München — Klassen, Workshops & Retreats",
   description:
     "Yoga in München: Vinyasa, Yin, Hatha, Yoga-Workshops und Retreats. Aktuelle Termine aus der Münchner Szene auf Das Portal.",
   alternates: {
