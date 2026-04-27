@@ -117,12 +117,12 @@ export function AuthForm() {
 
       const data = await res.json();
       if (!res.ok) {
-        setError(data.error || "Magic Link konnte nicht gesendet werden.");
+        setError(data.error || "Anmelde-Link konnte nicht gesendet werden.");
         setIsLoading(false);
         return;
       }
 
-      setSuccess("Magic Link wurde gesendet! Prüfe dein E-Mail-Postfach.");
+      setSuccess("Anmelde-Link gesendet! Prüfe dein E-Mail-Postfach.");
       setIsLoading(false);
       return;
     }
@@ -241,62 +241,8 @@ export function AuthForm() {
             Beanspruche dein Profil als {hostName}
           </h2>
           <p className="mt-1 text-sm text-text-secondary">
-            Wir senden dir einen Magic Link per E-Mail. Damit bestätigst du deine Identität.
+            Wir senden dir einen Anmelde-Link per E-Mail. Damit bestätigst du deine Identität.
           </p>
-        </div>
-      ) : null}
-
-      {/* Mode tabs (not shown in claim mode) */}
-      {mode !== "claim" ? (
-        <div className="mb-5 flex rounded-full bg-bg-secondary p-1">
-          <button
-            type="button"
-            onClick={() => {
-              setPublicMode("magic-link");
-              setCaptchaToken(null);
-              setError(null);
-              setSuccess(null);
-            }}
-            className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${
-              mode === "magic-link"
-                ? "bg-bg-card text-text-primary shadow"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Magic Link
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setPublicMode("login");
-              setCaptchaToken(null);
-              setError(null);
-              setSuccess(null);
-            }}
-            className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${
-              mode === "login"
-                ? "bg-bg-card text-text-primary shadow"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Anmelden
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              setPublicMode("signup");
-              setCaptchaToken(null);
-              setError(null);
-              setSuccess(null);
-            }}
-            className={`flex-1 rounded-full px-3 py-2 text-sm font-semibold transition ${
-              mode === "signup"
-                ? "bg-bg-card text-text-primary shadow"
-                : "text-text-secondary hover:text-text-primary"
-            }`}
-          >
-            Registrieren
-          </button>
         </div>
       ) : null}
 
@@ -356,7 +302,7 @@ export function AuthForm() {
           {isLoading
             ? "Bitte warten..."
             : isMagicOrClaim
-              ? "Magic Link senden"
+              ? "Anmelde-Link senden"
               : mode === "login"
                 ? "Anmelden"
                 : "Konto erstellen"}
