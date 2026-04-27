@@ -203,6 +203,12 @@ Events werden aus Telegram mit `address`-Feld importiert, aber ohne `location_id
 ### React Purity Rule: Kein `Date.now()` im Render-Pfad
 Mit Next.js 16 + React 19 schlägt ESLint (`react-hooks/purity`) fehl, wenn `Date.now()` direkt in Komponenten-Renderpfaden verwendet wird (z. B. `app/claim/[token]/page.tsx`). Für Zeitvergleiche im Renderpfad stattdessen `new Date().getTime()` oder noch besser request-/datengetriebene Werte nutzen.
 
+### Claim Auto-Path: `claim_email` muss explizit selektiert werden
+Im Token-Claim-Flow (`app/claim/[token]/actions.ts`) darf `claim_email` nicht im `select(...)` fehlen. Wenn das Feld nicht geladen wird, bleibt `storedClaimEmail` immer `null` und der Magic-Link-Auto-Path wird stillschweigend übersprungen.
+
+### AuthForm Mode-Sync: Kein `setState` im Render oder Sync-Effect
+In `components/AuthForm.tsx` führen Mode-Syncs via `setState` im Renderpfad (und auch naive Sync-Effects) zu instabilen Zuständen und ESLint-Fehlern (`react-hooks/set-state-in-effect`). Für Claim/Auth-Modi stattdessen URL-forcierte Modus-Ableitung + separaten lokalen Tab-State nutzen.
+
 ---
 
 ## Kontext-Dateien
