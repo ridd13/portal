@@ -181,6 +181,9 @@ Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes 
 
 "Ja aber..." ist KEINE Bestätigung. Nur ein klares "Ja, lösch das" oder "Ja, mach den Rollback" zählt.
 
+### Layout darf kein `alternates.canonical` setzen
+`app/layout.tsx` darf **kein** `alternates: { canonical: "..." }` setzen. In Next.js App Router erben alle Child-Pages, die kein eigenes `alternates` definieren, den Wert vom Layout — das bedeutet alle Seiten ohne explizites Canonical bekommen die Homepage-URL. Regel: Jede öffentlich indexierbare Page-Datei setzt ihr eigenes `alternates: { canonical: "https://das-portal.online/..." }`. Neue Seiten ohne Canonical werden Google als Duplikate der Homepage gemeldet.
+
 ### Robots.txt / Sitemap / Layout: Keine dynamischen URLs auf Modul-Ebene
 `getSiteUrl()` auf Modul-Ebene in robots.ts/sitemap.ts/layout.tsx kann fehlschlagen wenn Env-Vars zur Runtime nicht verfügbar sind. Fallback ist `https://example.com` — das führt zu falschen Canonical-URLs in GSC und verhindert Indexierung. Lösung: URL **immer** hardcoden auf `https://das-portal.online`.
 
