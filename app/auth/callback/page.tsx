@@ -1,11 +1,10 @@
 "use client";
 
 import { Suspense, useEffect, useRef } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { createBrowserClient } from "@/lib/supabase";
 
 function CallbackHandler() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const handled = useRef(false);
 
@@ -25,7 +24,7 @@ function CallbackHandler() {
         // PKCE flow: server-issued code in query param
         const { data, error } = await supabase.auth.exchangeCodeForSession(code);
         if (error || !data.session) {
-          router.replace("/auth?error=invalid_code");
+          window.location.replace("/auth?error=invalid_code");
           return;
         }
         session = data.session;
@@ -34,7 +33,7 @@ function CallbackHandler() {
         // when detectSessionInUrl is true (default for browser clients)
         const { data } = await supabase.auth.getSession();
         if (!data.session) {
-          router.replace("/auth?error=no_session");
+          window.location.replace("/auth?error=no_session");
           return;
         }
         session = data.session;
@@ -52,7 +51,7 @@ function CallbackHandler() {
       });
 
       if (!syncRes.ok) {
-        router.replace("/auth?error=session_error");
+        window.location.replace("/auth?error=session_error");
         return;
       }
 
@@ -60,7 +59,7 @@ function CallbackHandler() {
       if (claimToken) {
         const user = session.user;
         if (!user.email) {
-          router.replace("/konto?claim_error=missing_email");
+          window.location.replace("/konto?claim_error=missing_email");
           return;
         }
 
@@ -76,30 +75,31 @@ function CallbackHandler() {
         const claimData = await claimRes.json();
 
         if (claimData.kind === "claimed") {
-          router.replace(
+          window.location.replace(
             claimData.type === "host"
               ? "/konto/profil?claimed=1"
               : `/konto?claimed=${claimData.type}`
           );
         } else if (claimData.kind === "email_mismatch") {
-          router.replace("/konto?claim_error=email_mismatch");
+          window.location.replace("/konto?claim_error=email_mismatch");
         } else {
-          router.replace("/konto?claim_error=invalid_token");
+          window.location.replace("/konto?claim_error=invalid_token");
         }
         return;
       }
 
       // Handle host slug (plain magic-link claim confirmation path)
       if (hostSlug) {
-        router.replace(`/auth?mode=claim-confirm&host=${encodeURIComponent(hostSlug)}`);
+        window.location.replace(`/auth?mode=claim-confirm&host=${encodeURIComponent(hostSlug)}`);
         return;
       }
 
-      router.replace("/konto");
+      // Full page navigation so middleware re-runs with the freshly-set cookies
+      window.location.replace("/konto");
     }
 
     handle();
-  }, [router, searchParams]);
+  }, [searchParams]);
 
   return (
     <div className="flex min-h-[40vh] items-center justify-center">

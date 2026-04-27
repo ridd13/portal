@@ -18,6 +18,7 @@ export default async function McpTokensPage() {
 
   const { user } = await getUserFromAccessToken(accessToken);
   if (!user) redirect("/auth?next=/konto/mcp-tokens");
+  if (user.email !== "lb@justclose.de") redirect("/konto");
 
   const supabase = getSupabaseAdminClient();
   const { data: tokens, error } = await supabase
