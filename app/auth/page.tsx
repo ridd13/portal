@@ -12,7 +12,7 @@ export default function AuthPage() {
           Anmelden bei Das Portal
         </h1>
         <p className="mt-3 text-text-secondary">
-          Verwalte dein Profil, deine Events und mehr.
+          Gib deine E-Mail ein — du bekommst einen Anmelde-Link zugeschickt.
         </p>
       </section>
       <Suspense>
