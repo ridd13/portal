@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { EventFilters } from "@/components/EventFilters";
 import { EventsClientWrapper } from "@/components/EventsClientWrapper";
+import { NewsletterCaptureForm } from "@/components/NewsletterCaptureForm";
 import { deduplicateEvents, getCityFromAddress, matchCity } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import type { Category, Event, EventFormat } from "@/lib/types";
@@ -304,6 +305,8 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
         fromDate={fromDate}
         toDate={toDate}
       />
+
+      <NewsletterCaptureForm variant="inline" source="events-page" />
     </div>
   );
 }

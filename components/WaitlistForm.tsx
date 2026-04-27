@@ -5,7 +5,7 @@ import { joinWaitlist, type WaitlistResult } from "@/app/actions/waitlist";
 
 declare global {
   interface Window {
-    plausible?: (event: string) => void;
+    plausible?: (event: string, options?: { props?: Record<string, string> }) => void;
   }
 }
 
