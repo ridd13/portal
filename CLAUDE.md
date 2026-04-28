@@ -229,6 +229,10 @@ In `components/AuthForm.tsx` führen Mode-Syncs via `setState` im Renderpfad (un
 ### Resend-Client: Kein Top-Level `new Resend(...)` — lazy initialisieren
 `const resend = new Resend(process.env.RESEND_API_KEY)` auf Modul-Ebene in `lib/email.ts` crasht den Build, wenn `RESEND_API_KEY` zur Build-Zeit nicht gesetzt ist. Lösung: lazy getter `getResend()` — identisches Muster wie `getSupabaseAdminClient()` in `lib/supabase-admin.ts`.
 
+### Auth-Middleware: `createBrowserClient` muss `@supabase/ssr` nutzen — nicht vanilla `supabase-js`
+Vanilla `createClient()` aus `@supabase/supabase-js` speichert die Session in **localStorage**. Die Middleware liest aber Cookies. Der manuelle `session-sync`-Cookie läuft nach `expiresIn` (~1h) ab; Supabase-Auto-Refresh erneuert nur localStorage, nicht den Cookie. Folge: Nach ~1h werden alle `/konto/*`-Zugriffe blockiert, obwohl die Session noch gültig ist.
+Lösung (in `lib/supabase.ts`): `createBrowserClient` auf `createBrowserClient` aus `@supabase/ssr` umstellen — dieser speichert die Session automatisch in Cookies und hält sie bei Auto-Refresh aktuell. In `middleware.ts`: `createServerClient` aus `@supabase/ssr` mit Cookie-Adapter + `supabase.auth.getUser()` nutzen statt einen manuellen Cookie zu lesen.
+
 ### Supabase `admin.generateLink()` ignoriert `redirectTo` wenn URL nicht in Allowlist
 Supabase fällt beim `redirectTo`-Argument in `admin.generateLink()` stillschweigend auf die hinterlegte **Site URL** zurück, wenn der übergebene Wert nicht in den **Redirect URLs** des Projekts steht. In Development-Projekten ist die Site URL oft `localhost:3000` — dann enthält jeder generierte Magic-Link einen `localhost`-Link.
 - **Kurzfristig:** `patchActionLinkRedirect()` in `lib/supabase-admin.ts` patcht `localhost` im `redirect_to`-Parameter der `action_link`-URL vor dem Versand.
