@@ -15,7 +15,13 @@ export interface Host {
   is_featured: boolean;
   featured_until: string | null;
   tagline: string | null;
-  offerings_text: string | null;
+  offerings: HostOffering[] | null;
+}
+
+export interface HostOffering {
+  title: string;
+  description: string;
+  price?: string;
 }
 
 export interface HostPreview {

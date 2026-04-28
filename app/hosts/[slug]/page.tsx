@@ -6,7 +6,7 @@ import { EventCard } from "@/components/EventCard";
 import { formatEventDate, FORMAT_LABELS, deduplicateEvents } from "@/lib/event-utils";
 import { getSupabaseServerClient } from "@/lib/supabase";
 import { getSiteUrl } from "@/lib/site-url";
-import type { Event, EventFormat, Host } from "@/lib/types";
+import type { Event, EventFormat, Host, HostOffering } from "@/lib/types";
 
 interface HostPageProps {
   params: Promise<{ slug: string }>;
@@ -146,9 +146,7 @@ export default async function HostPage({ params }: HostPageProps) {
     telegram: "M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z",
   };
 
-  const offerings = typedHost.offerings_text
-    ? typedHost.offerings_text.split("\n").map((l) => l.trim()).filter((l) => l.length > 0)
-    : [];
+  const offerings = (typedHost.offerings as HostOffering[] | null) ?? [];
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -446,22 +444,27 @@ export default async function HostPage({ params }: HostPageProps) {
             </div>
           ) : null}
 
-          {/* Präsenz: Angebote aus offerings_text (nur für is_featured) */}
+          {/* Präsenz: Angebote-Cards (nur für is_featured, aus offerings JSONB) */}
           {typedHost.is_featured && offerings.length > 0 ? (
             <div className="rounded-2xl border border-accent-primary/20 bg-linear-to-br from-[#faf6f1] to-[#f5ece1] p-5">
               <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-accent-primary">Angebote</h3>
-              <ul className="space-y-3">
-                {offerings.map((offering, i) => (
-                  <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed text-text-primary">
-                    <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-primary/15 text-xs text-accent-primary">
-                      <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12" />
-                      </svg>
-                    </span>
-                    {offering}
-                  </li>
+              <div className="space-y-3">
+                {offerings.slice(0, 6).map((offering, i) => (
+                  <div key={i} className="rounded-xl border border-accent-primary/15 bg-white/60 p-3.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <p className="text-sm font-semibold text-text-primary">{offering.title}</p>
+                      {offering.price ? (
+                        <span className="shrink-0 rounded-full bg-accent-primary/10 px-2 py-0.5 text-xs font-semibold text-accent-primary">
+                          {offering.price}
+                        </span>
+                      ) : null}
+                    </div>
+                    <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-text-secondary">
+                      {offering.description}
+                    </p>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
           ) : null}
 
