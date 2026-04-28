@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { cookies } from "next/headers";
 import ReactMarkdown from "react-markdown";
 import type { Metadata } from "next";
 import { formatEventDate, formatPrice, getHostPreview, getCityFromAddress, buildGoogleCalendarUrl, formatBerlinISO } from "@/lib/event-utils";
@@ -12,8 +13,13 @@ import { SingleEventMap } from "@/components/SingleEventMap";
 import { SocialLinks } from "@/components/SocialLinks";
 import { EventCard } from "@/components/EventCard";
 import { EventRegistration } from "@/components/EventRegistration";
+import { AdminDeleteEventButton } from "@/components/AdminDeleteEventButton";
 import { getSupabaseAdminClient } from "@/lib/supabase-admin";
+import { ACCESS_COOKIE } from "@/lib/auth-cookies";
+import { getUserFromAccessToken } from "@/lib/auth-server";
 import type { Event, Host, HostPreview } from "@/lib/types";
+
+const ADMIN_EMAIL = "lennert.bewernick@gmail.com";
 
 interface EventDetailProps {
   params: Promise<{ slug: string }>;
@@ -120,6 +126,14 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
 
   const relatedEvents = await getRelatedEvents(event);
 
+  const cookieStore = await cookies();
+  const accessToken = cookieStore.get(ACCESS_COOKIE)?.value;
+  let isAdmin = false;
+  if (accessToken) {
+    const { user } = await getUserFromAccessToken(accessToken);
+    isAdmin = user?.email === ADMIN_EMAIL;
+  }
+
   const hostRaw = event.hosts;
   const host = Array.isArray(hostRaw) ? hostRaw[0] : hostRaw;
   const hostPreview = getHostPreview({
@@ -196,6 +210,12 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <article className="mx-auto max-w-4xl space-y-8">
+        {isAdmin ? (
+          <div className="flex items-center justify-between rounded-xl border border-dashed border-red-200 bg-red-50/50 px-4 py-3">
+            <p className="text-xs text-red-500">Admin</p>
+            <AdminDeleteEventButton eventId={event.id} eventTitle={event.title} />
+          </div>
+        ) : null}
         <div className="overflow-hidden rounded-3xl border border-border bg-bg-card shadow-[0_10px_30px_rgba(44,36,24,0.08)]">
           {event.cover_image_url ? (
             <Image
