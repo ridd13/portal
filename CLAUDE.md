@@ -225,6 +225,10 @@ Mit Next.js 16 + React 19 schlägt ESLint (`react-hooks/purity`) fehl, wenn `Dat
 ### Claim Auto-Path: `claim_email` muss explizit selektiert werden
 Im Token-Claim-Flow (`app/claim/[token]/actions.ts`) darf `claim_email` nicht im `select(...)` fehlen. Wenn das Feld nicht geladen wird, bleibt `storedClaimEmail` immer `null` und der Magic-Link-Auto-Path wird stillschweigend übersprungen.
 
+### Events-List-Query: Fallback-Pattern wenn DB-Migration aussteht
+Wenn Code deployed wird, der eine neue Spalte in `hosts(...)` oder `events(...)` selektiert (z.B. `is_featured`), aber die DB-Migration (ALTER TABLE) noch nicht auf Production angewendet wurde, schlägt die PostgREST-Query fehl und zeigt die Error-Banner "Events konnten gerade nicht geladen werden". Die Error-Variable ist truthy, die Events-Liste bleibt leer.
+Lösung: `buildQuery(hostsSelect)`-Helper mit Fallback: erst `hosts(name, slug, is_featured)` versuchen; bei Fehler `console.error` mit Code+Message loggen und ohne `is_featured` wiederholen. Featured-Sorting entfällt im Fallback, aber Events sind sichtbar. Immer `migration_featured_listing.sql` in Supabase SQL Editor ausführen, bevor Code der `is_featured` benötigt deployed wird.
+
 ### AuthForm Mode-Sync: Kein `setState` im Render oder Sync-Effect
 In `components/AuthForm.tsx` führen Mode-Syncs via `setState` im Renderpfad (und auch naive Sync-Effects) zu instabilen Zuständen und ESLint-Fehlern (`react-hooks/set-state-in-effect`). Für Claim/Auth-Modi stattdessen URL-forcierte Modus-Ableitung + separaten lokalen Tab-State nutzen.
 
