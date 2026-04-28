@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { ACCESS_COOKIE } from "@/lib/auth-cookies";
+import { createServerClient } from "@supabase/ssr";
 
 /** Known city slugs (lowercase) that should render the event list, not event detail. */
 const CITY_SLUGS = new Set([
@@ -30,7 +30,7 @@ const CITY_SLUGS = new Set([
 
 const PLZ_REGEX = /^\d{5}$/;
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
 
   // --- City-Slug / PLZ rewrite for /events/<location> ---
@@ -79,12 +79,36 @@ export function middleware(request: NextRequest) {
 
   // --- Auth guard for /konto ---
   if (pathname.startsWith("/konto")) {
-    const accessToken = request.cookies.get(ACCESS_COOKIE)?.value;
-    if (!accessToken) {
+    let response = NextResponse.next({ request });
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll: () => request.cookies.getAll(),
+          setAll: (cookiesToSet) => {
+            cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+            response = NextResponse.next({ request });
+            cookiesToSet.forEach(({ name, value, options }) =>
+              response.cookies.set(name, value, options)
+            );
+          },
+        },
+      }
+    );
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
       const loginUrl = new URL("/auth", request.url);
       loginUrl.searchParams.set("next", `${pathname}${search}`);
       return NextResponse.redirect(loginUrl);
     }
+
+    return response;
   }
 
   return NextResponse.next();

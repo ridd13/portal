@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { createBrowserClient as createSupabaseSSRBrowserClient } from "@supabase/ssr";
 
 let serverClient: ReturnType<typeof createClient> | null = null;
 
@@ -22,9 +23,11 @@ export const getSupabaseServerClient = () => {
   return serverClient;
 };
 
+// Uses @supabase/ssr so sessions are stored in cookies (not localStorage).
+// This keeps the middleware's cookie-based auth check in sync with session refreshes.
 export const createBrowserClient = () => {
   const { url, key } = getSupabaseEnv();
-  return createClient(url, key);
+  return createSupabaseSSRBrowserClient(url, key);
 };
 
 export const createStatelessAuthClient = () => {
