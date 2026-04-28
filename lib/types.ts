@@ -14,6 +14,8 @@ export interface Host {
   region: string | null;
   is_featured: boolean;
   featured_until: string | null;
+  tagline: string | null;
+  offerings_text: string | null;
 }
 
 export interface HostPreview {

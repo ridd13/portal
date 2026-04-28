@@ -48,11 +48,6 @@ export function EventCard({ event }: EventCardProps) {
 
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div className="flex flex-wrap gap-1.5">
-          {isFeatured ? (
-            <span className="rounded-full bg-accent-sage/20 px-2.5 py-0.5 text-xs font-semibold text-accent-sage">
-              Featured
-            </span>
-          ) : null}
           {event.event_format && event.event_format !== "event" ? (
             <span
               className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${FORMAT_COLORS[event.event_format]}`}

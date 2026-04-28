@@ -146,17 +146,9 @@ export default async function HostPage({ params }: HostPageProps) {
     telegram: "M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z",
   };
 
-  // Parse 1:1 offers from description (lines starting with • or -)
-  const offers: string[] = [];
-  if (typedHost.description) {
-    const lines = typedHost.description.split("\n");
-    for (const line of lines) {
-      const trimmed = line.trim();
-      if ((trimmed.startsWith("\u2022") || trimmed.startsWith("-")) && trimmed.length > 5) {
-        offers.push(trimmed.replace(/^[•\-]\s*/, ""));
-      }
-    }
-  }
+  const offerings = typedHost.offerings_text
+    ? typedHost.offerings_text.split("\n").map((l) => l.trim()).filter((l) => l.length > 0)
+    : [];
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
@@ -188,14 +180,16 @@ export default async function HostPage({ params }: HostPageProps) {
               {typedHost.name}
             </h1>
             {typedHost.is_featured ? (
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-accent-sage/30 bg-accent-sage/10 px-3 py-1 text-xs font-semibold text-accent-sage">
-                <svg className="h-3 w-3" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <span className="inline-flex items-center justify-center rounded-full border border-accent-sage/30 bg-accent-sage/10 p-1.5 text-accent-sage" aria-label="Präsenz-Anbieter">
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
                 </svg>
-                Featured Partner
               </span>
             ) : null}
           </div>
+          {typedHost.tagline ? (
+            <p className="mt-1 text-sm italic text-text-secondary">{typedHost.tagline}</p>
+          ) : null}
           {typedHost.city ? (
             <p className="mt-1 text-sm text-text-muted">
               {[typedHost.city, typedHost.region].filter(Boolean).join(", ")}
@@ -341,6 +335,45 @@ export default async function HostPage({ params }: HostPageProps) {
 
         {/* Right Sidebar */}
         <div className="space-y-6">
+          {/* Präsenz: Direktkontakt-CTA (nur für is_featured) */}
+          {typedHost.is_featured && (typedHost.telegram_username || typedHost.email || typedHost.website_url) ? (
+            <div className="rounded-2xl border border-accent-sage/30 bg-accent-sage/5 p-5 text-center">
+              <p className="mb-3 text-sm text-text-secondary">
+                {typedHost.telegram_username
+                  ? "Direkt auf Telegram schreiben"
+                  : typedHost.email
+                  ? "Direkt Kontakt aufnehmen"
+                  : "Website besuchen"}
+              </p>
+              {typedHost.telegram_username ? (
+                <a
+                  href={`https://t.me/${typedHost.telegram_username}`}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="block w-full rounded-xl bg-accent-sage px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  Auf Telegram schreiben
+                </a>
+              ) : typedHost.email ? (
+                <a
+                  href={`mailto:${typedHost.email}`}
+                  className="block w-full rounded-xl bg-accent-sage px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  Kontakt aufnehmen
+                </a>
+              ) : (
+                <a
+                  href={typedHost.website_url!}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className="block w-full rounded-xl bg-accent-sage px-4 py-2.5 text-sm font-semibold text-white transition hover:brightness-95"
+                >
+                  Website besuchen
+                </a>
+              )}
+            </div>
+          ) : null}
+
           {/* Contact Box */}
           {hasContactInfo ? (
             <div className="rounded-2xl border border-border bg-bg-card p-5">
@@ -413,39 +446,22 @@ export default async function HostPage({ params }: HostPageProps) {
             </div>
           ) : null}
 
-          {/* Angebote (parsed from description bullet points) */}
-          {offers.length > 0 ? (
+          {/* Präsenz: Angebote aus offerings_text (nur für is_featured) */}
+          {typedHost.is_featured && offerings.length > 0 ? (
             <div className="rounded-2xl border border-accent-primary/20 bg-linear-to-br from-[#faf6f1] to-[#f5ece1] p-5">
               <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-accent-primary">Angebote</h3>
               <ul className="space-y-3">
-                {offers.map((offer, i) => (
+                {offerings.map((offering, i) => (
                   <li key={i} className="flex items-start gap-2.5 text-sm leading-relaxed text-text-primary">
                     <span className="mt-1 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-accent-primary/15 text-xs text-accent-primary">
                       <svg className="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                     </span>
-                    {offer}
+                    {offering}
                   </li>
                 ))}
               </ul>
-              {typedHost.website_url ? (
-                <a
-                  href={typedHost.website_url}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="mt-4 block rounded-xl bg-accent-primary px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-95"
-                >
-                  Termin anfragen
-                </a>
-              ) : typedHost.email ? (
-                <a
-                  href={`mailto:${typedHost.email}`}
-                  className="mt-4 block rounded-xl bg-accent-primary px-4 py-2.5 text-center text-sm font-semibold text-white transition hover:brightness-95"
-                >
-                  Kontakt aufnehmen
-                </a>
-              ) : null}
             </div>
           ) : null}
 
