@@ -29,14 +29,37 @@ function CallbackHandler() {
         }
         session = data.session;
       } else {
-        // Implicit flow: supabase-js parses hash fragment (#access_token=…) automatically
-        // when detectSessionInUrl is true (default for browser clients)
-        const { data } = await supabase.auth.getSession();
-        if (!data.session) {
-          window.location.replace("/auth?error=no_session");
-          return;
+        // @supabase/ssr uses flowType:'pkce' which rejects implicit-flow hash fragments.
+        // admin.generateLink() produces implicit-flow tokens (#access_token=…), so we
+        // must parse the hash manually and call setSession() before getSession() works.
+        const hash = typeof window !== "undefined" ? window.location.hash : "";
+        if (hash.includes("access_token")) {
+          const hashParams = new URLSearchParams(hash.substring(1));
+          const access_token = hashParams.get("access_token");
+          const refresh_token = hashParams.get("refresh_token");
+          if (access_token && refresh_token) {
+            const { data: setData, error: setError } = await supabase.auth.setSession({
+              access_token,
+              refresh_token,
+            });
+            if (setError || !setData.session) {
+              window.location.replace("/auth?error=invalid_token");
+              return;
+            }
+            session = setData.session;
+          } else {
+            window.location.replace("/auth?error=no_session");
+            return;
+          }
+        } else {
+          // Fallback: try getSession() in case a future PKCE path already set the session
+          const { data } = await supabase.auth.getSession();
+          if (!data.session) {
+            window.location.replace("/auth?error=no_session");
+            return;
+          }
+          session = data.session;
         }
-        session = data.session;
       }
 
       // Sync tokens to server-side httpOnly cookies so middleware/SSR can read them
