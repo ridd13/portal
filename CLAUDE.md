@@ -270,3 +270,12 @@ Für tieferen Business-Kontext und offene Aufgaben:
 - **Cowork (Claude in Desktop App):** Product Manager — erstellt Specs, Prompts, reviewt, testet via Browser
 - **Claude Code (Terminal):** Entwickler — setzt Prompts um, schreibt Code, führt Build aus
 - **Lennert:** Founder, macht finale Entscheidungen, liefert Business-Input
+
+### Auth-Middleware: `createBrowserClient` muss `@supabase/ssr` nutzen — nicht vanilla `supabase-js`
+`createBrowserClient()` aus `@supabase/ssr` initialisiert mit `flowType: 'pkce'` und speichert Session in Cookies. Die Middleware liest `sb-<ref>-auth-token` Cookie für `getUser()`. Wenn der Browser-Client diese Cookies nicht setzt (z.B. weil `setSession()` fehlschlägt), redirectet die Middleware immer auf `/auth`.
+
+**Lösung:** `session-sync` API Route setzt BEIDE Cookie-Typen server-seitig:
+1. `@supabase/ssr` Format-Cookies (`sb-<ref>-auth-token`) via `createServerClient` + `setSession()` → collected via `setAll` callback → auf den NextResponse gesetzt
+2. `portal-access-token` custom cookie via `setAuthSessionCookies()`
+
+Der Browser-Callback übergibt nur die Raw-Tokens — keine `createBrowserClient().setSession()` mehr für den Implicit-Flow. Alles läuft durch einen Server-API-Call.
