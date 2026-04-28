@@ -202,6 +202,11 @@ Am 01.04.2026 wurden ALLE Events (656) und Hosts (297) durch ein unbestätigtes 
 
 Außerdem: Domain-Redirect muss korrekt konfiguriert sein (das-portal.online = Primary, www → 308 Redirect). Ein 307 Redirect auf der Root-Domain führt dazu, dass Google robots.txt als "nicht erreichbar" meldet und die Seite nicht indexiert.
 
+### GSC: Eingereichte Sitemap-URL muss canonical sein (LBV-215)
+*Live-Sitemap-Content sauber* ≠ *eingereichte Sitemap-URL sauber*. Wir hatten 1.403 saubere non-www-URLs in `https://das-portal.online/sitemap.xml`, aber in der GSC-Property war die Sitemap unter `https://www.das-portal.online/sitemap.xml` eingereicht. Folge: GSC führte 165 URLs als „Gefunden – zurzeit nicht indexiert" unter dem WWW-Host, obwohl der Inhalt der Sitemap selbst sauber war. Der 308-Redirect auf das non-www-Pendant reicht nicht — GSC kategorisiert nach der **submit-URL**, nicht nach dem Endziel der Redirect-Chain.
+
+Regel: Wenn das Indexing-Problem nach Code-Audit weiterhin besteht, immer in **GSC → Sitemaps** prüfen, welche URLs als Sitemap eingereicht sind, und ob diese URL selbst canonical ist. Beim Audit nicht nur den Live-Output von `/sitemap.xml` checken.
+
 ### Navbar-Beschreibung aktuell
 Navbar zeigt: Logo | Veranstaltungen | Räume | Raumhalter | Eintragen (orange Button). Auth ist nicht in der Navbar verlinkt — Eintrittspunkte siehe Regel-Abschnitt "Auth".
 
