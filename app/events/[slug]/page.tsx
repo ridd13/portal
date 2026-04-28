@@ -147,13 +147,17 @@ export default async function EventDetailPage({ params }: EventDetailProps) {
   // Load registration count for capacity display
   let confirmedCount = 0;
   if (event.registration_enabled !== false) {
-    const adminClient = getSupabaseAdminClient();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { count } = await (adminClient.from("event_registrations") as any)
-      .select("id", { count: "exact", head: true })
-      .eq("event_id", event.id)
-      .eq("status", "confirmed");
-    confirmedCount = count || 0;
+    try {
+      const adminClient = getSupabaseAdminClient();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { count } = await (adminClient.from("event_registrations") as any)
+        .select("id", { count: "exact", head: true })
+        .eq("event_id", event.id)
+        .eq("status", "confirmed");
+      confirmedCount = count || 0;
+    } catch (e) {
+      console.error("[event detail] Registration count failed:", e);
+    }
   }
 
   const jsonLd = {

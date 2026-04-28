@@ -83,71 +83,81 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
     ? new Date(fromDate + "T00:00:00").toISOString()
     : new Date().toISOString();
 
-  // Explicit column select — omits description_sections, source_type,
-  // source_message_id, end_at, host_id, is_public, status, ticket_link,
-  // location_id, capacity, waitlist_enabled, registration_enabled.
-  // Detail page fetches the full row; list only needs preview fields.
-  const LIST_SELECT =
+  // Base column select — omits description_sections, source_type, source_message_id,
+  // end_at, host_id, is_public, status, ticket_link, location_id, capacity,
+  // waitlist_enabled, registration_enabled. Detail page fetches the full row.
+  const BASE_SELECT =
     "id, slug, title, description, start_at, cover_image_url, " +
     "location_name, address, geo_lat, geo_lng, " +
-    "event_format, tags, is_online, price_model, price_amount, created_at, " +
-    "hosts(name, slug, is_featured)";
+    "event_format, tags, is_online, price_model, price_amount, created_at";
 
-  let query = supabase
-    .from("events")
-    .select(LIST_SELECT)
-    .eq("is_public", true)
-    .eq("status", "published")
-    .gte("start_at", startFrom)
-    .order("start_at", { ascending: true })
-    .limit(300);
-
-  if (toDate) {
-    query = query.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
-  }
-
-  // Default: hide online events unless toggle is on
-  if (!showOnline) {
-    query = query.eq("is_online", false);
-  }
-
-  // Format filter
-  if (selectedFormat) {
-    query = query.eq("event_format", selectedFormat);
-  }
-
-  // Category filter: find event IDs via event_categories junction
+  // Category filter: look up event IDs before building the main query so the
+  // same IDs can be reused in a fallback query if needed.
+  let categoryEventIds: string[] | undefined;
   if (selectedCategory) {
     const { data: catEvents } = await supabase
       .from("event_categories")
       .select("event_id, categories!inner(slug)")
       .eq("categories.slug", selectedCategory);
+    categoryEventIds = (catEvents || []).map((row: { event_id: string }) => row.event_id);
+  }
 
-    const eventIds = (catEvents || []).map((row: { event_id: string }) => row.event_id);
-    if (eventIds.length > 0) {
-      query = query.in("id", eventIds);
+  // Query builder — accepts the hosts sub-select so we can fall back to a
+  // version without is_featured if the column migration hasn't been applied yet.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buildQuery = (hostsSelect: string): any => {
+    let q = supabase
+      .from("events")
+      .select(`${BASE_SELECT}, ${hostsSelect}`)
+      .eq("is_public", true)
+      .eq("status", "published")
+      .gte("start_at", startFrom)
+      .order("start_at", { ascending: true })
+      .limit(300);
+
+    if (toDate) {
+      q = q.lte("start_at", new Date(toDate + "T23:59:59").toISOString());
+    }
+    if (!showOnline) q = q.eq("is_online", false);
+    if (selectedFormat) q = q.eq("event_format", selectedFormat);
+
+    if (categoryEventIds !== undefined) {
+      if (categoryEventIds.length > 0) {
+        q = q.in("id", categoryEventIds);
+      } else {
+        q = q.eq("id", "00000000-0000-0000-0000-000000000000");
+      }
+    } else if (selectedTag) {
+      q = q.contains("tags", [selectedTag]);
+    }
+
+    if (selectedCity) q = q.ilike("address", `%${selectedCity}%`);
+    if (searchQuery) {
+      q = q.or(
+        `title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,location_name.ilike.%${searchQuery}%,address.ilike.%${searchQuery}%`
+      );
+    }
+
+    return q;
+  };
+
+  // Try with is_featured; if it fails (e.g. migration pending), fall back to
+  // hosts(name, slug) so events are still visible without featured sorting.
+  let activeHostsSelect = "hosts(name, slug, is_featured)";
+  let { data, error } = await buildQuery(activeHostsSelect);
+
+  if (error) {
+    console.error("[events/page] Primary query failed (code=%s): %s", error.code, error.message);
+    activeHostsSelect = "hosts(name, slug)";
+    const { data: fallbackData, error: fallbackError } = await buildQuery(activeHostsSelect);
+    if (!fallbackError) {
+      data = fallbackData;
+      error = null;
     } else {
-      // No events match this category — return empty
-      query = query.eq("id", "00000000-0000-0000-0000-000000000000");
+      console.error("[events/page] Fallback query also failed: %s", fallbackError.message);
     }
   }
 
-  // Legacy tag filter (backwards compatibility)
-  if (selectedTag && !selectedCategory) {
-    query = query.contains("tags", [selectedTag]);
-  }
-
-  if (selectedCity) {
-    query = query.ilike("address", `%${selectedCity}%`);
-  }
-
-  if (searchQuery) {
-    query = query.or(
-      `title.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,location_name.ilike.%${searchQuery}%,address.ilike.%${searchQuery}%`
-    );
-  }
-
-  const { data, error } = await query;
   let events = (data || []) as Event[];
 
   // Also find events matching search query by tag
@@ -162,7 +172,7 @@ export default async function EventsPage({ searchParams }: EventsPageProps) {
 
     let tagQuery = supabase
       .from("events")
-      .select(LIST_SELECT)
+      .select(`${BASE_SELECT}, ${activeHostsSelect}`)
       .eq("is_public", true)
       .eq("status", "published")
       .gte("start_at", startFrom)
