@@ -81,7 +81,7 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith("/konto")) {
     const accessToken = request.cookies.get(ACCESS_COOKIE)?.value;
     if (!accessToken) {
-      const loginUrl = new URL("/auth?mode=login", request.url);
+      const loginUrl = new URL("/auth", request.url);
       loginUrl.searchParams.set("next", `${pathname}${search}`);
       return NextResponse.redirect(loginUrl);
     }
