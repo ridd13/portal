@@ -235,6 +235,13 @@ In `components/AuthForm.tsx` führen Mode-Syncs via `setState` im Renderpfad (un
 ### Auth: Niemals `signInWithOtp()` für Magic Links nutzen — immer `admin.generateLink()` + Resend
 `supabase.auth.signInWithOtp()` lässt Supabase eine eigene E-Mail schicken (englisch, ungebrandtet, "Confirm Your Signup"). Stattdessen: `getSupabaseAdminClient().auth.admin.generateLink({ type: "magiclink", email, options: { redirectTo } })` → gibt `data.properties.action_link` zurück → diesen Link per Resend in branded E-Mail verschicken (`sendMagicLinkEmail` bzw. `sendClaimMagicLinkEmail` aus `lib/email.ts`). So bleibt volle Kontrolle über Inhalt, Sprache und Absender.
 
+### Auth-Callback: `@supabase/ssr` + `admin.generateLink()` = Implicit-Flow-Konflikt
+`createBrowserClient()` aus `@supabase/ssr` initialisiert mit `flowType: 'pkce'`. Wenn `_initialize()` einen Implicit-Flow-Hash (`#access_token=…`) erkennt, wirft es intern `AuthPKCEGrantCodeExchangeError` und speichert die Session NICHT. `getSession()` gibt anschließend null zurück → Login-Loop mit `?error=no_session`.
+
+`admin.generateLink({ type: "magiclink" })` produziert aber genau dieses Implicit-Flow-Format.
+
+Lösung in `app/auth/callback/page.tsx`: Vor `getSession()` den Hash-Fragment manuell prüfen — wenn `access_token` enthalten, `supabase.auth.setSession({ access_token, refresh_token })` direkt aufrufen. Erst wenn kein Hash vorhanden ist, zu `getSession()` fallen.
+
 ### Resend-Client: Kein Top-Level `new Resend(...)` — lazy initialisieren
 `const resend = new Resend(process.env.RESEND_API_KEY)` auf Modul-Ebene in `lib/email.ts` crasht den Build, wenn `RESEND_API_KEY` zur Build-Zeit nicht gesetzt ist. Lösung: lazy getter `getResend()` — identisches Muster wie `getSupabaseAdminClient()` in `lib/supabase-admin.ts`.
 
