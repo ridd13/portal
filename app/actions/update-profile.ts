@@ -66,9 +66,43 @@ export async function updateProfile(
   const avatarFile = formData.get("avatar") as File | null;
   if (avatarFile && avatarFile.size > 0) {
     const avatarUrl = await uploadImage(avatarFile, "hosts", host.slug || host.id);
-    if (avatarUrl) {
-      updates.avatar_url = avatarUrl;
+    if (avatarUrl) updates.avatar_url = avatarUrl;
+  }
+
+  // Banner upload
+  const bannerFile = formData.get("banner") as File | null;
+  if (bannerFile && bannerFile.size > 0) {
+    const bannerUrl = await uploadImage(bannerFile, "hosts", `${host.slug || host.id}-banner`);
+    if (bannerUrl) updates.banner_url = bannerUrl;
+  }
+
+  // Tagline (max 150 chars)
+  const taglineRaw = (formData.get("tagline") as string)?.trim();
+  updates.tagline = taglineRaw ? taglineRaw.slice(0, 150) : null;
+
+  // Offerings (serialised JSON from client)
+  const offeringsRaw = formData.get("offerings") as string | null;
+  if (offeringsRaw) {
+    try {
+      const parsed: unknown = JSON.parse(offeringsRaw);
+      if (Array.isArray(parsed)) {
+        updates.offerings = parsed
+          .filter((o) => o && typeof o === "object" && String((o as Record<string, unknown>).title ?? "").trim() && String((o as Record<string, unknown>).description ?? "").trim())
+          .slice(0, 6)
+          .map((o) => {
+            const item = o as Record<string, unknown>;
+            return {
+              title: String(item.title).trim().slice(0, 100),
+              description: String(item.description).trim().slice(0, 300),
+              ...(String(item.price ?? "").trim() ? { price: String(item.price).trim().slice(0, 50) } : {}),
+            };
+          });
+      }
+    } catch {
+      // ignore malformed JSON
     }
+  } else {
+    updates.offerings = null;
   }
 
   // Update

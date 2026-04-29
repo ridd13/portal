@@ -10,6 +10,7 @@ export interface Host {
   telegram_username: string | null;
   email: string | null;
   avatar_url: string | null;
+  banner_url: string | null;
   city: string | null;
   region: string | null;
   is_featured: boolean;

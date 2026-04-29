@@ -152,8 +152,20 @@ export default async function HostPage({ params }: HostPageProps) {
     <div className="mx-auto max-w-5xl space-y-8">
       {/* Hero Header */}
       <section className={`overflow-hidden rounded-3xl border bg-bg-card shadow-[0_8px_24px_rgba(44,36,24,0.07)] ${typedHost.is_featured ? "border-accent-sage/40" : "border-border"}`}>
-        {/* Cover gradient */}
-        <div className="h-32 bg-linear-to-br from-[#E9DACA] via-[#DDD5C8] to-[#C8D5C0]" />
+        {/* Cover: banner image or fallback gradient */}
+        {typedHost.banner_url ? (
+          <div className="relative h-32">
+            <Image
+              src={typedHost.banner_url}
+              alt=""
+              fill
+              className="object-cover"
+              priority={false}
+            />
+          </div>
+        ) : (
+          <div className="h-32 bg-linear-to-br from-[#E9DACA] via-[#DDD5C8] to-[#C8D5C0]" />
+        )}
 
         <div className="px-6 pb-6 sm:px-8 sm:pb-8">
           {/* Avatar overlapping the cover */}
