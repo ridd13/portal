@@ -79,30 +79,62 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
   const now = new Date().toISOString();
 
-  // Upcoming events at this location
-  const { data: upcomingData } = await supabase
-    .from("events")
-    .select("*, hosts(name, slug)")
-    .eq("location_id", loc.id)
-    .eq("is_public", true)
-    .eq("status", "published")
-    .gte("start_at", now)
-    .order("start_at", { ascending: true })
-    .limit(12);
+  // Fetch events by location_id AND by location_name (for Telegram-imported events that have no location_id).
+  // Run all 4 queries in parallel to keep latency low.
+  const [
+    { data: upcomingById },
+    { data: upcomingByName },
+    { data: pastById },
+    { data: pastByName },
+  ] = await Promise.all([
+    supabase
+      .from("events")
+      .select("*, hosts(name, slug)")
+      .eq("location_id", loc.id)
+      .eq("is_public", true)
+      .eq("status", "published")
+      .gte("start_at", now)
+      .order("start_at", { ascending: true })
+      .limit(12),
+    supabase
+      .from("events")
+      .select("*, hosts(name, slug)")
+      .is("location_id", null)
+      .ilike("location_name", `%${loc.name}%`)
+      .eq("is_public", true)
+      .eq("status", "published")
+      .gte("start_at", now)
+      .order("start_at", { ascending: true })
+      .limit(12),
+    supabase
+      .from("events")
+      .select("*, hosts(name, slug)")
+      .eq("location_id", loc.id)
+      .eq("is_public", true)
+      .eq("status", "published")
+      .lt("start_at", now)
+      .order("start_at", { ascending: false })
+      .limit(6),
+    supabase
+      .from("events")
+      .select("*, hosts(name, slug)")
+      .is("location_id", null)
+      .ilike("location_name", `%${loc.name}%`)
+      .eq("is_public", true)
+      .eq("status", "published")
+      .lt("start_at", now)
+      .order("start_at", { ascending: false })
+      .limit(6),
+  ]);
 
-  // Past events
-  const { data: pastData } = await supabase
-    .from("events")
-    .select("*, hosts(name, slug)")
-    .eq("location_id", loc.id)
-    .eq("is_public", true)
-    .eq("status", "published")
-    .lt("start_at", now)
-    .order("start_at", { ascending: false })
-    .limit(6);
-
-  const upcomingEvents = deduplicateEvents((upcomingData || []) as Event[]);
-  const pastEvents = deduplicateEvents((pastData || []) as Event[]);
+  const upcomingEvents = deduplicateEvents([
+    ...((upcomingById || []) as Event[]),
+    ...((upcomingByName || []) as Event[]),
+  ]).slice(0, 12);
+  const pastEvents = deduplicateEvents([
+    ...((pastById || []) as Event[]),
+    ...((pastByName || []) as Event[]),
+  ]).slice(0, 6);
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
