@@ -55,86 +55,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 3. Newsletter */}
+        {/* 3. Hosting */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            3. Newsletter
-          </h2>
-          <p className="mt-1 font-medium text-text-primary">Welche Daten verarbeiten wir?</p>
-          <p className="mt-1">
-            Wenn du dich für unseren wöchentlichen Newsletter „Hamburg diese Woche" anmeldest,
-            verarbeiten wir folgende Daten:
-          </p>
-          <ul className="mt-2 list-inside list-disc space-y-1">
-            <li>Deine E-Mail-Adresse</li>
-            <li>Den Zeitpunkt deiner Anmeldung</li>
-            <li>
-              Deine IP-Adresse zum Zeitpunkt der Anmeldung (zur Beweisbarkeit der Einwilligung)
-            </li>
-            <li>
-              Die Tatsache, ob du den Newsletter geöffnet und welche Links du geklickt hast
-              (anonymisiertes Tracking durch unseren Versanddienstleister)
-            </li>
-          </ul>
-          <p className="mt-3 font-medium text-text-primary">Rechtsgrundlage</p>
-          <p className="mt-1">
-            Die Verarbeitung erfolgt auf Grundlage deiner ausdrücklichen Einwilligung gemäß
-            Art. 6 Abs. 1 lit. a DSGVO und §7 Abs. 2 Nr. 3 UWG.
-          </p>
-          <p className="mt-2">
-            Wir nutzen das Double-Opt-In-Verfahren: Nach der Anmeldung erhältst du eine
-            Bestätigungs-E-Mail. Erst nach Klick auf den Bestätigungslink wirst du in den
-            Verteiler aufgenommen.
-          </p>
-          <p className="mt-3 font-medium text-text-primary">Zweck</p>
-          <p className="mt-1">
-            Versand eines wöchentlichen Newsletters mit kuratierten Hamburg-Events. Klick-Tracking
-            dient der Verbesserung der inhaltlichen Kuratierung.
-          </p>
-          <p className="mt-3 font-medium text-text-primary">Empfänger / Auftragsverarbeiter</p>
-          <p className="mt-1">
-            Wir nutzen für den Versand den Dienstleister:
-            <br />
-            <strong className="text-text-primary">Mailerlite Limited</strong>
-            <br />
-            38 Mount Street Upper, Dublin D02 PR89, Ireland
-            <br />
-            <a
-              href="https://www.mailerlite.com/legal/privacy-policy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-accent-primary underline"
-            >
-              Datenschutzerklärung Mailerlite
-            </a>
-          </p>
-          <p className="mt-2">
-            Mit Mailerlite haben wir einen Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO
-            abgeschlossen. Die Daten werden auf Servern in der EU verarbeitet.
-          </p>
-          <p className="mt-3 font-medium text-text-primary">Speicherdauer</p>
-          <p className="mt-1">
-            Wir speichern deine Daten, solange du den Newsletter abonniert hast. Nach deiner
-            Abmeldung werden deine Daten für 6 Monate in einer Sperrliste vorgehalten (zum Nachweis
-            der Einwilligung und um versehentliche Wiederanmeldungen zu vermeiden) und danach
-            vollständig gelöscht.
-          </p>
-          <p className="mt-3 font-medium text-text-primary">Widerrufsrecht</p>
-          <p className="mt-1">
-            Du kannst deine Einwilligung jederzeit widerrufen — entweder über den Abmelde-Link am
-            Ende jeder Newsletter-Mail oder per E-Mail an{" "}
-            <a href="mailto:hallo@das-portal.online" className="text-accent-primary underline">
-              hallo@das-portal.online
-            </a>
-            . Die Rechtmäßigkeit der bis zum Widerruf erfolgten Verarbeitung bleibt vom Widerruf
-            unberührt.
-          </p>
-        </div>
-
-        {/* 4. Hosting */}
-        <div>
-          <h2 className="font-serif text-lg font-normal text-text-primary">
-            4. Hosting
+            3. Hosting
           </h2>
           <p>
             Diese Website wird bei Vercel Inc., 440 N Barranca Ave #4133,
@@ -163,10 +87,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 5. Datenbank */}
+        {/* 4. Datenbank */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            5. Datenbank
+            4. Datenbank
           </h2>
           <p>
             Wir nutzen Supabase Inc. als Datenbankdienst. Die Projekt-Region
@@ -186,10 +110,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 6. Standortdaten */}
+        {/* 5. Standortdaten */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            6. Standortdaten
+            5. Standortdaten
           </h2>
           <p>
             <strong className="text-text-primary">
@@ -215,10 +139,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 7. Karten */}
+        {/* 6. Karten */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            7. Karten
+            6. Karten
           </h2>
           <p>
             Zur Darstellung der Karte werden OpenStreetMap-Kacheln via Leaflet
@@ -238,10 +162,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 8. Error Tracking */}
+        {/* 7. Error Tracking */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            8. Error Tracking
+            7. Error Tracking
           </h2>
           <p>
             Wir nutzen Sentry (Functional Software Inc.) zur Fehlererkennung.
@@ -266,10 +190,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 9. Analyse & Performance */}
+        {/* 8. Analyse & Performance */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            9. Analyse & Performance
+            8. Analyse & Performance
           </h2>
           <p>
             Wir nutzen <strong className="text-text-primary">Vercel Analytics</strong> und{" "}
@@ -300,10 +224,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 10. Cookies & Local Storage */}
+        {/* 9. Cookies & Local Storage */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            10. Cookies & Local Storage
+            9. Cookies & Local Storage
           </h2>
           <p>
             Diese Website setzt keine Tracking-Cookies ein. Wir verwenden
@@ -316,10 +240,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 11. Automatische Event-Erfassung */}
+        {/* 10. Automatische Event-Erfassung */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            11. Automatische Event-Erfassung
+            10. Automatische Event-Erfassung
           </h2>
           <p>
             Events werden teilweise automatisiert aus öffentlichen
@@ -356,10 +280,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 12. Profil-Beanspruchung */}
+        {/* 11. Profil-Beanspruchung */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            12. Profil-Beanspruchung
+            11. Profil-Beanspruchung
           </h2>
           <p>
             Anbieter können ihr automatisch erstelltes Profil
@@ -377,10 +301,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 13. Telegram */}
+        {/* 12. Telegram */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            13. Telegram-Kanal
+            12. Telegram-Kanal
           </h2>
           <p>
             Auf der Website verlinken wir unseren Telegram-Kanal
@@ -390,10 +314,10 @@ export default function DatenschutzPage() {
           </p>
         </div>
 
-        {/* 14. Betroffenenrechte */}
+        {/* 13. Betroffenenrechte */}
         <div>
           <h2 className="font-serif text-lg font-normal text-text-primary">
-            14. Deine Rechte
+            13. Deine Rechte
           </h2>
           <p>Du hast jederzeit das Recht auf:</p>
           <ul className="mt-2 list-inside list-disc space-y-1">
