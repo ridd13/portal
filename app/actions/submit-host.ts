@@ -19,6 +19,15 @@ export async function submitHost(
   _prev: SubmitResult,
   formData: FormData
 ): Promise<SubmitResult> {
+  try {
+    return await _submitHost(formData);
+  } catch (err) {
+    console.error("submitHost unhandled error:", err);
+    return { success: false, message: "Etwas ist schiefgelaufen. Bitte versuche es erneut." };
+  }
+}
+
+async function _submitHost(formData: FormData): Promise<SubmitResult> {
   // Honeypot
   if (formData.get("website_url_confirm")) {
     return { success: true, message: "Danke für deine Einreichung!" };
