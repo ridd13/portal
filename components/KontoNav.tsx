@@ -3,21 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-const BASE_NAV = [
+const NAV_ITEMS = [
   { href: "/konto", label: "Übersicht" },
   { href: "/konto/anmeldungen", label: "Anmeldungen" },
   { href: "/konto/profil", label: "Profil" },
 ];
 
-const ADMIN_ONLY_NAV = [{ href: "/konto/mcp-tokens", label: "MCP Tokens" }];
-
-export function KontoNav({ isAdmin = false }: { isAdmin?: boolean }) {
+export function KontoNav() {
   const pathname = usePathname();
-  const items = isAdmin ? [...BASE_NAV, ...ADMIN_ONLY_NAV] : BASE_NAV;
 
   return (
     <nav className="flex gap-1 overflow-x-auto rounded-xl bg-bg-secondary p-1">
-      {items.map(({ href, label }) => {
+      {NAV_ITEMS.map(({ href, label }) => {
         const isActive =
           href === "/konto" ? pathname === href : pathname.startsWith(href);
         return (
