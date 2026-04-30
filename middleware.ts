@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { ACCESS_COOKIE, REFRESH_COOKIE } from "@/lib/auth-cookies";
 
 /** Known city slugs (lowercase) that should render the event list, not event detail. */
 const CITY_SLUGS = new Set([
@@ -106,6 +107,26 @@ export async function middleware(request: NextRequest) {
       const loginUrl = new URL("/auth", request.url);
       loginUrl.searchParams.set("next", `${pathname}${search}`);
       return NextResponse.redirect(loginUrl);
+    }
+
+    // Sync portal-access-token after potential SSR token refresh so server
+    // components and server actions (which read ACCESS_COOKIE) stay in sync.
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      response.cookies.set(ACCESS_COOKIE, session.access_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: session.expires_in,
+      });
+      response.cookies.set(REFRESH_COOKIE, session.refresh_token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30,
+      });
     }
 
     return response;

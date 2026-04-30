@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { createServerClient } from "@supabase/ssr";
 import { setAuthSessionCookies } from "@/lib/auth-session";
 import { verifyTurnstileToken } from "@/lib/turnstile";
 import { createStatelessAuthClient } from "@/lib/supabase";
@@ -34,7 +35,27 @@ export async function POST(request: Request) {
     );
   }
 
+  // Build SSR-format cookies (sb-*-auth-token) so middleware's getUser() can see this session
+  const ssrCookiesToSet: { name: string; value: string; options: Record<string, unknown> }[] = [];
+  const ssrClient = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => [],
+        setAll: (cookies) => { ssrCookiesToSet.push(...cookies); },
+      },
+    }
+  );
+  await ssrClient.auth.setSession({
+    access_token: data.session.access_token,
+    refresh_token: data.session.refresh_token,
+  });
+
   const response = NextResponse.json({ ok: true });
+  ssrCookiesToSet.forEach(({ name, value, options }) => {
+    response.cookies.set(name, value, options as Parameters<typeof response.cookies.set>[2]);
+  });
   setAuthSessionCookies(
     response,
     data.session.access_token,
